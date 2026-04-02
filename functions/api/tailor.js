@@ -35,7 +35,7 @@ OUTPUT RULES:
 - If a keyword is important but unsupported by the source material, place it in missingKeywords instead of inserting it.
 - If something seems useful but unsupported, mention it in honestyWarnings.]`;
 
-const GEMINI_MODEL = 'gemini-2.0-flash-exp';
+const GEMINI_MODEL = 'gemini-1.5-flash';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 const CORS_HEADERS = {
