@@ -93,6 +93,46 @@ export async function onRequestPost(context) {
           responseMimeType: 'application/json',
           temperature: 0.3,
           maxOutputTokens: 4096,
+          responseSchema: {
+            type: 'OBJECT',
+            properties: {
+              tailoredSummary:    { type: 'STRING' },
+              tailoredExperience: {
+                type: 'ARRAY',
+                items: {
+                  type: 'OBJECT',
+                  properties: {
+                    role:    { type: 'STRING' },
+                    company: { type: 'STRING' },
+                    start:   { type: 'STRING' },
+                    end:     { type: 'STRING' },
+                    bullets: { type: 'ARRAY', items: { type: 'STRING' } },
+                  },
+                },
+              },
+              tailoredProjects: {
+                type: 'ARRAY',
+                items: {
+                  type: 'OBJECT',
+                  properties: {
+                    name:        { type: 'STRING' },
+                    description: { type: 'STRING' },
+                    bullets:     { type: 'ARRAY', items: { type: 'STRING' } },
+                  },
+                },
+              },
+              tailoredSkills:   { type: 'ARRAY', items: { type: 'STRING' } },
+              matchedKeywords:  { type: 'ARRAY', items: { type: 'STRING' } },
+              missingKeywords:  { type: 'ARRAY', items: { type: 'STRING' } },
+              atsNotes:         { type: 'STRING' },
+              honestyWarnings:  { type: 'ARRAY', items: { type: 'STRING' } },
+            },
+            required: [
+              'tailoredSummary', 'tailoredExperience', 'tailoredProjects',
+              'tailoredSkills', 'matchedKeywords', 'missingKeywords',
+              'atsNotes', 'honestyWarnings',
+            ],
+          },
         },
       }),
     });
@@ -123,18 +163,38 @@ export async function onRequestPost(context) {
     return jsonError('Gemini returned an empty response.', 502);
   }
 
+  // Temporary logging for debugging — remove once JSON parsing is stable
+  console.log('[tailor] raw Gemini text (first 1000 chars):', rawText.slice(0, 1000));
+  console.log('[tailor] rawText length:', rawText.length);
+
   // ── 6. Parse structured JSON from Gemini ─────────────────────
   let tailoredData;
   try {
-    tailoredData = JSON.parse(rawText);
+    // First, try to parse directly
+    tailoredData = JSON.parse(rawText.trim());
   } catch {
-    // Gemini sometimes wraps in markdown fences despite responseMimeType
-    const fenceMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (fenceMatch) {
-      try { tailoredData = JSON.parse(fenceMatch[1]); }
-      catch { return jsonError('Gemini returned malformed JSON.', 502); }
-    } else {
-      return jsonError('Gemini returned malformed JSON.', 502);
+    // If direct parse fails, try to clean up the text
+    let cleanedText = rawText.trim();
+
+    // Strip markdown code fences — works even when extra text precedes/follows
+    // e.g. "Here you go:\n```json\n{...}\n```\nDone."
+    cleanedText = cleanedText
+      .replace(/```(?:json)?\s*/gi, '')
+      .replace(/\s*```/g, '')
+      .trim();
+
+    // Try to extract JSON object from text (find first { to last })
+    const jsonStart = cleanedText.indexOf('{');
+    const jsonEnd = cleanedText.lastIndexOf('}');
+    if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+      cleanedText = cleanedText.substring(jsonStart, jsonEnd + 1);
+    }
+
+    try {
+      tailoredData = JSON.parse(cleanedText);
+    } catch (parseError) {
+      // If all parsing attempts fail, return error with raw text for debugging
+      return jsonError(`Gemini returned malformed JSON. Raw response: ${rawText.slice(0, 500)}`, 502);
     }
   }
 
@@ -201,7 +261,7 @@ function buildPrompt({ resumeText, jobDescription, targetRole, profileInfo }) {
     }
   }
 
-  lines.push(`Return a single JSON object with EXACTLY these fields — no markdown, no code fences, no extra text:
+  lines.push(`Return a single JSON object with EXACTLY these fields — no markdown, no code fences, no extra text, no explanations, no comments, ONLY the JSON object:
 {
   "tailoredSummary": "2-4 sentence professional summary tailored to this specific role",
   "tailoredExperience": [
