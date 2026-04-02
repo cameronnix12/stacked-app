@@ -124,13 +124,16 @@ export async function onRequestPost(context) {
               tailoredSkills:   { type: 'ARRAY', items: { type: 'STRING' } },
               matchedKeywords:  { type: 'ARRAY', items: { type: 'STRING' } },
               missingKeywords:  { type: 'ARRAY', items: { type: 'STRING' } },
-              atsNotes:         { type: 'STRING' },
-              honestyWarnings:  { type: 'ARRAY', items: { type: 'STRING' } },
+              atsNotes:                    { type: 'STRING' },
+              honestyWarnings:             { type: 'ARRAY', items: { type: 'STRING' } },
+              contentRanking:              { type: 'ARRAY', items: { type: 'STRING' } },
+              removedOrDeemphasizedContent:{ type: 'ARRAY', items: { type: 'STRING' } },
             },
             required: [
               'tailoredSummary', 'tailoredExperience', 'tailoredProjects',
               'tailoredSkills', 'matchedKeywords', 'missingKeywords',
-              'atsNotes', 'honestyWarnings',
+              'atsNotes', 'honestyWarnings', 'contentRanking',
+              'removedOrDeemphasizedContent',
             ],
           },
         },
@@ -207,7 +210,9 @@ export async function onRequestPost(context) {
     matchedKeywords:    Array.isArray(tailoredData.matchedKeywords)    ? tailoredData.matchedKeywords    : [],
     missingKeywords:    Array.isArray(tailoredData.missingKeywords)    ? tailoredData.missingKeywords    : [],
     atsNotes:           tailoredData.atsNotes           || '',
-    honestyWarnings:    Array.isArray(tailoredData.honestyWarnings)    ? tailoredData.honestyWarnings    : [],
+    honestyWarnings:              Array.isArray(tailoredData.honestyWarnings)              ? tailoredData.honestyWarnings              : [],
+    contentRanking:               Array.isArray(tailoredData.contentRanking)               ? tailoredData.contentRanking               : [],
+    removedOrDeemphasizedContent: Array.isArray(tailoredData.removedOrDeemphasizedContent) ? tailoredData.removedOrDeemphasizedContent : [],
   };
 
   return new Response(
@@ -261,30 +266,41 @@ function buildPrompt({ resumeText, jobDescription, targetRole, profileInfo }) {
     }
   }
 
-  lines.push(`Return a single JSON object with EXACTLY these fields — no markdown, no code fences, no extra text, no explanations, no comments, ONLY the JSON object:
+  lines.push(`CONTENT STRATEGY (do this mentally before writing):
+1. Rank all experience entries and projects by relevance to THIS specific job description. Most relevant first.
+2. Within each role, reorder bullets so the most job-aligned achievement comes first.
+3. If a role or project is largely irrelevant, reduce its bullets to 1-2 and keep them brief.
+4. Cut or minimize generic filler bullets (e.g. "assisted team", "participated in meetings").
+5. Strengthen every kept bullet: add specificity, quantify if numbers exist in the source, use strong action verbs that echo the JD.
+6. The summary must name the specific role/domain from the JD and reference 2-3 of the candidate's most relevant strengths.
+7. Skills list: include only skills clearly supported by the resume that are also relevant to the JD.
+
+Return a single JSON object with EXACTLY these fields — no markdown, no code fences, no extra text, ONLY the raw JSON object:
 {
-  "tailoredSummary": "2-4 sentence professional summary tailored to this specific role",
+  "tailoredSummary": "2-4 sentence professional summary specifically targeting this role, referencing key JD requirements",
   "tailoredExperience": [
     {
       "role": "exact job title from resume",
       "company": "exact company name from resume",
       "start": "start date from resume",
       "end": "end date or Present",
-      "bullets": ["rewritten achievement bullet", "..."]
+      "bullets": ["strongest most-relevant bullet first", "second bullet", "..."]
     }
   ],
   "tailoredProjects": [
     {
       "name": "project name from resume",
       "description": "one-line description",
-      "bullets": ["rewritten bullet", "..."]
+      "bullets": ["most relevant bullet first", "..."]
     }
   ],
-  "tailoredSkills": ["skill1", "skill2", "..."],
-  "matchedKeywords": ["keyword from JD that appears in resume", "..."],
-  "missingKeywords": ["important JD keyword NOT found in resume", "..."],
-  "atsNotes": "brief ATS feedback string",
-  "honestyWarnings": ["any content that could not be verified or was flagged", "..."]
+  "tailoredSkills": ["only skills present in resume that are relevant to this JD", "..."],
+  "matchedKeywords": ["exact keyword from JD that clearly appears in the tailored resume", "..."],
+  "missingKeywords": ["important JD keyword that is NOT supported by the resume", "..."],
+  "atsNotes": "1-2 sentence ATS feedback: what is strong and what gaps remain",
+  "honestyWarnings": ["specific content that was flagged as unverifiable or potentially embellished", "..."],
+  "contentRanking": ["most relevant role/project first", "second most relevant", "..."],
+  "removedOrDeemphasizedContent": ["brief description of what was cut or reduced and why", "..."]
 }`);
 
   return lines.join('\n');

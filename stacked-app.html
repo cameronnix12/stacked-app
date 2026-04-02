@@ -370,7 +370,18 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .form-input::placeholder,.form-textarea::placeholder{color:rgba(90,122,104,0.55)!important}
 .bar-fill .tooltip{background:#fff!important;border-color:rgba(26,158,79,0.25)!important;color:#1A9E4F!important;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
 .score-badge{background:rgba(26,158,79,0.1);color:#1A9E4F;border-color:rgba(26,158,79,0.22)}
+/* ── INSIGHTS PANEL ──────────────────────────────────────── */
+.insights-kw-wrap{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.kw-match{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(26,158,79,0.1);color:#155D30;border:1px solid rgba(26,158,79,0.2)}
+.kw-miss{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(192,57,43,0.08);color:#C0392B;border:1px solid rgba(192,57,43,0.18)}
+.insights-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#888;margin-bottom:4px;margin-top:10px}
+.insights-label:first-child{margin-top:0}
+.insights-note{font-size:11px;color:#555;line-height:1.5;padding:8px 10px;background:#f9f9f9;border-radius:6px;border-left:3px solid #1A9E4F}
+.insights-warn{font-size:11px;color:#C0392B;line-height:1.5;padding:8px 10px;background:rgba(192,57,43,0.05);border-radius:6px;border-left:3px solid #C0392B}
+/* clean resume skills text */
+.res-skills-text{font-size:11px;color:#333;line-height:1.8}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -616,11 +627,20 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <div class="metric-row"><span class="metric-label">ATS Friendly</span><div class="metric-bar-wrap"><div class="metric-bar" id="metricAts" style="width:0%"></div></div><span class="metric-val" id="metricAtsVal">0%</span></div>
         </div>
       </div>
+      <!-- ATS Insights — separate from the resume preview -->
+      <div id="atsInsightsPanel" style="display:none" class="card">
+        <div class="section-title" style="margin-bottom:10px">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Resume Insights
+        </div>
+        <div id="insightsContent"></div>
+      </div>
+
       <div class="card" style="flex:1;display:flex;flex-direction:column">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
           <div class="section-title" style="margin-bottom:0">
             <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
-            Tailored Resume Preview
+            Tailored Resume
           </div>
           <button class="btn btn-primary" id="downloadResumeBtn" style="display:none" onclick="downloadResumePDF()">
             <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
@@ -1252,6 +1272,7 @@ async function tailorResume() {
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner"></div> Gemini is tailoring...';
   document.getElementById('resumeScoreCard').style.display = 'none';
+  document.getElementById('atsInsightsPanel').style.display = 'none';
   document.getElementById('downloadResumeBtn').style.display = 'none';
   document.getElementById('resumePreviewOutput').innerHTML = '<div class="empty-resume"><div class="spinner" style="width:28px;height:28px;border-width:3px;margin:0 auto 14px"></div><p>Gemini is reading your resume and the job description...</p></div>';
   try {
@@ -1265,7 +1286,9 @@ async function tailorResume() {
     tailoredResumeData = json.data;
     renderResumePreviewFromGemini(json.data, role);
     renderScoreCard(json.data);
+    renderInsightsPanel(json.data);
     document.getElementById('resumeScoreCard').style.display = '';
+    document.getElementById('atsInsightsPanel').style.display = '';
     document.getElementById('downloadResumeBtn').style.display = '';
   } catch (err) {
     document.getElementById('resumePreviewOutput').innerHTML = `<div class="empty-resume"><p style="color:#C0392B;font-weight:600">Error: ${esc(err.message)}</p><p style="font-size:11px;margin-top:6px;color:var(--muted)">Make sure GEMINI_API_KEY is set and try again.</p></div>`;
@@ -1279,6 +1302,8 @@ async function tailorResume() {
 function renderResumePreviewFromGemini(d, role) {
   if (!d) return;
   const p = getProfileInfo();
+  const contact = [p.email, p.phone, p.linkedin, p.portfolio].filter(Boolean).join(' \u00b7 ');
+
   const expHtml = (d.tailoredExperience || []).map(e => {
     const bullets = Array.isArray(e.bullets) ? e.bullets : [];
     return `<div class="res-section">
@@ -1289,6 +1314,7 @@ function renderResumePreviewFromGemini(d, role) {
       ${bullets.length ? `<ul class="res-bullets">${bullets.map(b => `<li>${esc(String(b).replace(/^[•\-]\s*/,''))}</li>`).join('')}</ul>` : ''}
     </div>`;
   }).join('');
+
   const projHtml = (d.tailoredProjects || []).map(proj => {
     const bullets = Array.isArray(proj.bullets) ? proj.bullets : [];
     return `<div class="res-section">
@@ -1298,69 +1324,155 @@ function renderResumePreviewFromGemini(d, role) {
       ${bullets.length ? `<ul class="res-bullets">${bullets.map(b => `<li>${esc(String(b).replace(/^[•\-]\s*/,''))}</li>`).join('')}</ul>` : ''}
     </div>`;
   }).join('');
-  const skillHtml = (d.tailoredSkills || []).map(s => `<span class="res-skill-pill">${esc(String(s))}</span>`).join('');
-  const matched = (d.matchedKeywords || []).map(k => `<span class="res-keyword">${esc(String(k))}</span>`).join(' ');
-  const missing = (d.missingKeywords || []).map(k => `<span style="background:rgba(192,57,43,0.08);color:#C0392B;border-radius:3px;padding:0 4px;font-size:10px;font-weight:600">${esc(String(k))}</span>`).join(' ');
-  const warnings = (d.honestyWarnings || []).filter(Boolean);
-  const contact = [p.email, p.phone, p.linkedin, p.portfolio].filter(Boolean).join(' \u00b7 ');
+
+  // Skills: clean comma-separated text — no chips, ATS-friendly
+  const skillText = (d.tailoredSkills || []).join(', ');
+
   document.getElementById('resumePreviewOutput').innerHTML = `<div class="resume-preview-wrap" id="tailoredResumeEl">
     <div class="res-name">${esc(p.name || 'Your Name')}</div>
-    <div class="res-contact">${esc(contact)}</div>
+    ${contact ? `<div class="res-contact">${esc(contact)}</div>` : ''}
     ${d.tailoredSummary ? `<div class="res-section"><div class="res-section-title">Summary</div><p style="font-size:11px;color:#333;line-height:1.6">${esc(d.tailoredSummary)}</p></div>` : ''}
     ${expHtml ? `<div class="res-section"><div class="res-section-title">Experience</div>${expHtml}</div>` : ''}
     ${projHtml ? `<div class="res-section"><div class="res-section-title">Projects</div>${projHtml}</div>` : ''}
     ${p.uni ? `<div class="res-section"><div class="res-section-title">Education</div><div class="res-job-header"><div><div class="res-job-title">${esc(p.major||'')}</div><div class="res-job-company">${esc(p.uni)}</div></div><div class="res-job-date">${esc(p.gradyear||'')}</div></div>${p.gpa ? `<div style="font-size:11px;color:#555;margin-top:3px">GPA: ${esc(p.gpa)}</div>` : ''}</div>` : ''}
-    ${skillHtml ? `<div class="res-section"><div class="res-section-title">Skills</div><div class="res-skill-pills">${skillHtml}</div></div>` : ''}
-    ${(matched || missing || d.atsNotes || warnings.length) ? `<div style="margin-top:14px;padding-top:12px;border-top:1px solid #e5e5e5">
-      ${matched ? `<div style="margin-bottom:8px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#888;margin-bottom:4px">Matched Keywords</div><div style="display:flex;flex-wrap:wrap;gap:3px">${matched}</div></div>` : ''}
-      ${missing ? `<div style="margin-bottom:8px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#888;margin-bottom:4px">Keywords Not in Your Resume</div><div style="display:flex;flex-wrap:wrap;gap:3px">${missing}</div></div>` : ''}
-      ${d.atsNotes ? `<div style="font-size:10px;color:#555;line-height:1.5;padding:8px;background:#f9f9f9;border-radius:4px;margin-top:6px"><strong style="color:#333">ATS Notes:</strong> ${esc(d.atsNotes)}</div>` : ''}
-      ${warnings.length ? `<div style="font-size:10px;color:#C0392B;margin-top:8px;padding:8px;background:rgba(192,57,43,0.05);border-radius:4px"><strong>Honesty Warnings:</strong><ul style="margin-top:4px;padding-left:14px">${warnings.map(w => `<li>${esc(String(w))}</li>`).join('')}</ul></div>` : ''}
-    </div>` : ''}
+    ${skillText ? `<div class="res-section"><div class="res-section-title">Skills</div><p class="res-skills-text">${esc(skillText)}</p></div>` : ''}
   </div>`;
 }
 
+function computeATSScore(d) {
+  const matched  = (d.matchedKeywords || []).length;
+  const missing  = (d.missingKeywords || []).length;
+  const total    = matched + missing;
+  const kwRate   = total > 0 ? matched / total : 0.75;
+
+  const expBullets  = (d.tailoredExperience || []).reduce((n,e) => n + (e.bullets||[]).length, 0);
+  const projBullets = (d.tailoredProjects   || []).reduce((n,p) => n + (p.bullets||[]).length, 0);
+  const totalBullets = expBullets + projBullets;
+
+  const hasSummary = d.tailoredSummary && d.tailoredSummary.length > 40;
+  const hasSkills  = (d.tailoredSkills||[]).length >= 3;
+  const warnings   = (d.honestyWarnings||[]).length;
+
+  let score = 65;
+  score += Math.round(kwRate * 22);                        // keyword alignment: 0–22
+  score += Math.round(Math.min(totalBullets, 12) / 12 * 8); // bullet depth: 0–8
+  score += hasSummary ? 4 : 0;
+  score += hasSkills  ? 2 : 0;
+  score -= warnings   * 3;
+
+  return {
+    score:       Math.round(Math.min(99, Math.max(70, score))),
+    kwPct:       Math.round(kwRate * 100),
+    bulletPct:   Math.round(Math.min(totalBullets, 12) / 12 * 100),
+    atsFriendly: Math.min(99, Math.round(Math.min(99, Math.max(70, score)) + 2)),
+  };
+}
+
 function renderScoreCard(d) {
-  const matched = (d.matchedKeywords || []).length;
-  const missing = (d.missingKeywords || []).length;
-  const total = matched + missing;
-  const kwPct = total > 0 ? Math.round((matched / total) * 100) : 78;
-  const warnings = (d.honestyWarnings || []).length;
-  const score = Math.min(98, Math.max(55, kwPct - (warnings * 4)));
+  const { score, kwPct, bulletPct, atsFriendly } = computeATSScore(d);
   const circumference = 175.9;
   const scoreEl = document.getElementById('scoreRingVal');
-  const circle = document.getElementById('scoreRingCircle');
+  const circle  = document.getElementById('scoreRingCircle');
   let cur = 0;
   const timer = setInterval(() => {
-    cur = Math.min(cur + 3, score);
+    cur = Math.min(cur + 2, score);
     scoreEl.textContent = cur;
     circle.style.strokeDashoffset = circumference - (circumference * cur / 100);
     if (cur >= score) clearInterval(timer);
-  }, 20);
-  document.getElementById('scoreRingLabel').textContent = score >= 90 ? 'Excellent' : score >= 75 ? 'Good' : 'Fair';
-  document.getElementById('scoreRingRole').textContent = document.getElementById('targetRole').value.trim() || 'Tailored resume';
+  }, 18);
+  document.getElementById('scoreRingLabel').textContent =
+    score >= 92 ? 'Excellent' : score >= 82 ? 'Strong' : score >= 75 ? 'Good' : 'Fair';
+  document.getElementById('scoreRingRole').textContent =
+    document.getElementById('targetRole').value.trim() || 'Tailored resume';
+  const matched = (d.matchedKeywords || []).length;
   const badges = ['ATS Optimized'];
   if (matched > 0) badges.push(matched + ' Keywords Matched');
-  document.getElementById('scoreBadges').innerHTML = badges.map(b => `<span class="score-badge">${b}</span>`).join('');
+  document.getElementById('scoreBadges').innerHTML =
+    badges.map(b => `<span class="score-badge">${b}</span>`).join('');
   setTimeout(() => {
-    document.getElementById('metricKeywords').style.width = kwPct + '%'; document.getElementById('metricKeywordsVal').textContent = kwPct + '%';
-    const imp = Math.max(65, score - 5);
-    document.getElementById('metricImpact').style.width = imp + '%'; document.getElementById('metricImpactVal').textContent = imp + '%';
-    const ats = Math.min(99, score + 4);
-    document.getElementById('metricAts').style.width = ats + '%'; document.getElementById('metricAtsVal').textContent = ats + '%';
+    document.getElementById('metricKeywords').style.width = kwPct + '%';
+    document.getElementById('metricKeywordsVal').textContent = kwPct + '%';
+    document.getElementById('metricImpact').style.width = bulletPct + '%';
+    document.getElementById('metricImpactVal').textContent = bulletPct + '%';
+    document.getElementById('metricAts').style.width = atsFriendly + '%';
+    document.getElementById('metricAtsVal').textContent = atsFriendly + '%';
   }, 300);
+}
+
+function renderInsightsPanel(d) {
+  const matched  = (d.matchedKeywords  || []).filter(Boolean);
+  const missing  = (d.missingKeywords  || []).filter(Boolean);
+  const warnings = (d.honestyWarnings  || []).filter(Boolean);
+  const atsNotes = d.atsNotes || '';
+  const ranked   = (d.contentRanking   || []).filter(Boolean);
+  const removed  = (d.removedOrDeemphasizedContent || []).filter(Boolean);
+
+  let html = '';
+
+  if (matched.length) {
+    html += `<div class="insights-label">Matched Keywords (${matched.length})</div>
+      <div class="insights-kw-wrap">${matched.map(k => `<span class="kw-match">${esc(String(k))}</span>`).join('')}</div>`;
+  }
+  if (missing.length) {
+    html += `<div class="insights-label">Gaps to Address (${missing.length})</div>
+      <div class="insights-kw-wrap">${missing.map(k => `<span class="kw-miss">${esc(String(k))}</span>`).join('')}</div>`;
+  }
+  if (atsNotes) {
+    html += `<div class="insights-label">ATS Notes</div>
+      <div class="insights-note">${esc(atsNotes)}</div>`;
+  }
+  if (ranked.length) {
+    html += `<div class="insights-label">Content Ranked by Relevance</div>
+      <ol style="font-size:11px;color:#555;padding-left:16px;line-height:1.8">${ranked.map(r => `<li>${esc(String(r))}</li>`).join('')}</ol>`;
+  }
+  if (removed.length) {
+    html += `<div class="insights-label">Downplayed / Removed</div>
+      <ul style="font-size:11px;color:#555;padding-left:16px;line-height:1.8">${removed.map(r => `<li>${esc(String(r))}</li>`).join('')}</ul>`;
+  }
+  if (warnings.length) {
+    html += `<div class="insights-label">Honesty Flags</div>
+      <div class="insights-warn"><ul style="padding-left:14px;margin-top:2px">${warnings.map(w => `<li>${esc(String(w))}</li>`).join('')}</ul></div>`;
+  }
+
+  document.getElementById('insightsContent').innerHTML = html || '<p style="font-size:12px;color:#888">No additional insights.</p>';
 }
 
 function downloadResumePDF() {
   const el = document.getElementById('tailoredResumeEl');
   if (!el) { showToast('Generate a tailored resume first'); return; }
   const p = getProfileInfo();
-  const name = p.name || 'Resume';
-  const role = document.getElementById('targetRole').value.trim();
-  const win = window.open('','_blank');
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(name)} Resume</title><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#1a1a1a;padding:32px 40px;max-width:780px;margin:0 auto}@media print{body{padding:20px}}</style></head><body>${el.innerHTML}</body></html>`);
-  win.document.close();
-  setTimeout(() => win.print(), 600);
+  const safeName = (p.name || 'Resume').replace(/\s+/g, '_');
+  const safeRole = (document.getElementById('targetRole').value.trim() || '').replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+  const filename  = safeName + (safeRole ? '_' + safeRole : '') + '_Tailored.pdf';
+
+  const btn = document.getElementById('downloadResumeBtn');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Generating...';
+
+  // Clone element so we can inject print-optimized inline styles without touching the preview
+  const clone = el.cloneNode(true);
+  clone.style.cssText = 'font-family:\'Plus Jakarta Sans\',sans-serif;font-size:12px;color:#1a1a1a;padding:28px 36px;max-width:760px;background:#fff';
+
+  const opt = {
+    margin:     [8, 8, 8, 8],
+    filename:   filename,
+    image:      { type: 'jpeg', quality: 0.97 },
+    html2canvas:{ scale: 2, useCORS: true, logging: false },
+    jsPDF:      { unit: 'mm', format: 'a4', orientation: 'portrait' },
+  };
+
+  html2pdf().set(opt).from(clone).save()
+    .then(() => {
+      btn.disabled = false;
+      btn.innerHTML = originalHTML;
+      showToast('PDF downloaded!');
+    })
+    .catch(() => {
+      btn.disabled = false;
+      btn.innerHTML = originalHTML;
+      showToast('PDF generation failed — try again.');
+    });
 }
 
 // ── CV BUILDER ────────────────────────────────────────────────
