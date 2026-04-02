@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stacked</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:         #EDF4F0;
+  --bg-card:    #FFFFFF;
+  --bg-card2:   #F4F9F6;
+  --border:     rgba(0,0,0,0.09);
+  --border-lit: rgba(26,158,79,0.32);
+  --text:       #111D14;
+  --muted:      #5A7A68;
+  --primary:    #1A9E4F;
+  --primary-lt: #1A9E4F;
+  --primary-dim:#D8F0E3;
+  --teal:       #1AA89A;
+  --lime:       #7AAD20;
+  --emerald:    #0D9168;
+  --red:        #C0392B;
+  --yellow:     #C4960E;
+  --sidebar-w:  240px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(34,197,94,0.25);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:rgba(34,197,94,0.4)}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow-x:hidden;font-size:14px}
+
+/* SIDEBAR */
+#sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--bg-card);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100}
+.sidebar-logo{padding:22px 18px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--primary),var(--teal));border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-text{font-size:17px;font-weight:800;background:linear-gradient(135deg,var(--primary-lt),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.3px}
+.sidebar-nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px;list-style:none}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;cursor:pointer;transition:background 0.15s,color 0.15s;color:var(--muted);font-size:13px;font-weight:500;border-left:2px solid transparent;user-select:none}
+.nav-item:hover{background:rgba(34,197,94,0.05);color:var(--text)}
+.nav-item.active{background:rgba(34,197,94,0.09);color:var(--primary-lt);border-left-color:var(--primary)}
+.nav-item svg{flex-shrink:0;width:17px;height:17px}
+.sidebar-bottom{padding:10px 8px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:2px}
+.user-chip{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;cursor:pointer;transition:background 0.15s}
+.user-chip:hover{background:rgba(255,255,255,0.04)}
+.avatar{width:32px;height:32px;background:linear-gradient(135deg,var(--primary),var(--teal));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* MAIN */
+#main{margin-left:var(--sidebar-w);flex:1;min-height:100vh;display:flex;flex-direction:column}
+.view{flex:1;padding:28px 32px;animation:fadeIn 0.18s ease;display:none}
+.view.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* SHARED */
+.view-header{margin-bottom:24px}
+.view-header h1{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.4px}
+.view-header p{font-size:13px;color:var(--muted);margin-top:3px}
+.view-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.view-header-row h1{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.4px}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:13px;padding:18px}
+.card2{background:var(--bg-card2);border:1px solid var(--border);border-radius:11px;padding:14px}
+.section-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.section-title svg{width:15px;height:15px;color:var(--primary)}
+
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:600;letter-spacing:0.1px}
+.badge-wishlist{background:rgba(99,122,110,0.15);color:var(--muted)}
+.badge-applied{background:rgba(26,168,154,0.12);color:var(--teal)}
+.badge-oa{background:rgba(122,173,32,0.12);color:var(--lime)}
+.badge-interview{background:rgba(26,158,79,0.15);color:var(--primary-lt)}
+.badge-offer{background:rgba(13,145,104,0.15);color:var(--emerald)}
+.badge-rejected{background:rgba(192,57,43,0.1);color:#E07068}
+
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;border:none;font-family:inherit;white-space:nowrap}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-lt);transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,158,79,0.25)}
+.btn-secondary{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text)}
+.btn-secondary:hover{background:rgba(255,255,255,0.09)}
+.btn-ghost{background:transparent;color:var(--muted);padding:6px 10px}
+.btn-ghost:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+.btn-danger{background:rgba(192,57,43,0.12);border:1px solid rgba(192,57,43,0.2);color:#E07068}
+.btn-danger:hover{background:rgba(192,57,43,0.2)}
+
+.form-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;display:block}
+.form-input,.form-textarea,.form-select{width:100%;background:var(--bg-card2);border:1px solid var(--border);border-radius:9px;padding:10px 13px;font-size:13px;font-family:inherit;color:var(--text);outline:none;transition:border-color 0.15s;resize:vertical}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--border-lit);box-shadow:0 0 0 3px rgba(26,158,79,0.07)}
+.form-input::placeholder,.form-textarea::placeholder{color:rgba(99,122,110,0.5)}
+.form-select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='%23637A6E'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.form-field{display:flex;flex-direction:column;margin-bottom:12px}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* EMPTY STATE */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;gap:12px}
+.empty-icon{width:48px;height:48px;background:rgba(26,158,79,0.08);border-radius:12px;display:flex;align-items:center;justify-content:center}
+.empty-icon svg{width:24px;height:24px;color:var(--primary)}
+.empty-title{font-size:14px;font-weight:700;color:var(--text)}
+.empty-sub{font-size:13px;color:var(--muted);max-width:260px;line-height:1.6}
+
+/* DASHBOARD */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:13px;padding:18px;transition:border-color 0.2s,transform 0.2s;position:relative;overflow:hidden}
+.stat-card:hover{border-color:var(--border-lit);transform:translateY(-1px)}
+.stat-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.stat-value{font-size:30px;font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1}
+.stat-delta{font-size:11px;color:var(--primary);font-weight:600;margin-top:5px;display:flex;align-items:center;gap:3px}
+.dash-grid{display:grid;grid-template-columns:60% 1fr;gap:14px}
+.dash-left{display:flex;flex-direction:column;gap:14px}
+.dash-right{display:flex;flex-direction:column;gap:14px}
+.pipeline-bars{display:flex;flex-direction:column;gap:9px}
+.pipeline-row{display:flex;align-items:center;gap:10px}
+.pipeline-label{font-size:12px;color:var(--muted);font-weight:500;width:130px;flex-shrink:0}
+.pipeline-bar-wrap{flex:1;height:7px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden}
+.pipeline-bar{height:100%;border-radius:99px;transition:width 0.7s cubic-bezier(0.34,1.2,0.64,1)}
+.pipeline-count{font-size:12px;font-weight:700;color:var(--text);width:18px;text-align:right}
+.app-table{width:100%;border-collapse:collapse}
+.app-table th{text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;padding:0 10px 9px;border-bottom:1px solid var(--border)}
+.app-table td{padding:10px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle}
+.app-table tbody tr{transition:background 0.15s;cursor:pointer}
+.app-table tbody tr:hover{background:rgba(26,158,79,0.04)}
+.app-table tbody tr:last-child td{border-bottom:none}
+.company-cell{display:flex;align-items:center;gap:9px}
+.company-logo{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.company-name-text{font-weight:600;color:var(--text)}
+.deadline-item{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+.deadline-item:last-child{border-bottom:none}
+.deadline-company{font-size:13px;font-weight:600;color:var(--text)}
+.deadline-role{font-size:11px;color:var(--muted);margin-top:1px}
+.deadline-date{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px}
+.deadline-red{background:rgba(192,57,43,0.1);color:#E07068}
+.deadline-yellow{background:rgba(196,150,14,0.1);color:#D4A520}
+.deadline-green{background:rgba(26,158,79,0.1);color:var(--primary-lt)}
+.quick-actions{display:flex;flex-direction:column;gap:7px}
+.quick-btn{display:flex;align-items:center;gap:9px;padding:10px 13px;background:var(--bg-card2);border:1px solid var(--border);border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text);transition:all 0.15s;font-family:inherit;text-align:left}
+.quick-btn:hover{border-color:var(--border-lit);background:rgba(26,158,79,0.05);color:var(--primary-lt);transform:translateX(2px)}
+.quick-btn svg{width:15px;height:15px;color:var(--primary);flex-shrink:0}
+.ring-wrap{position:relative;flex-shrink:0}
+.ring-wrap svg{display:block}
+.ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.ring-val{font-size:20px;font-weight:800;color:var(--primary-lt);line-height:1}
+.ring-label{font-size:10px;color:var(--muted);font-weight:500;margin-top:1px}
+.score-card-inner{display:flex;align-items:center;gap:16px;margin-bottom:12px}
+.score-detail h3{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+.score-detail p{font-size:11px;color:var(--muted);margin-bottom:9px}
+.score-badges{display:flex;gap:5px;flex-wrap:wrap}
+.score-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:5px;background:rgba(26,158,79,0.1);color:var(--primary-lt);border:1px solid rgba(26,158,79,0.18)}
+.score-metrics{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.metric-row{display:flex;align-items:center;gap:9px;font-size:12px}
+.metric-label{color:var(--muted);width:88px;flex-shrink:0}
+.metric-bar-wrap{flex:1;height:5px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden}
+.metric-bar{height:100%;border-radius:99px;background:var(--primary)}
+.metric-val{font-size:11px;font-weight:700;color:var(--text);width:32px;text-align:right}
+
+/* FILTER TABS */
+.filter-tabs{display:flex;gap:3px;margin-bottom:18px;background:var(--bg-card);border:1px solid var(--border);border-radius:11px;padding:4px;width:fit-content}
+.filter-tab{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);transition:all 0.15s;user-select:none;white-space:nowrap}
+.filter-tab.active{background:rgba(26,158,79,0.14);color:var(--primary-lt)}
+.filter-tab:hover:not(.active){color:var(--text)}
+.filter-tab .tab-count{font-size:10px;opacity:0.65;margin-left:3px}
+
+/* KANBAN */
+.kanban-board{display:flex;gap:11px;overflow-x:auto;padding-bottom:16px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.kanban-col{flex-shrink:0;width:210px;background:var(--bg-card);border:1px solid var(--border);border-radius:13px;padding:12px;display:flex;flex-direction:column;gap:9px;min-height:200px}
+.kanban-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.kanban-col-name{font-size:12px;font-weight:700;color:var(--text)}
+.kanban-count{font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,0.06);color:var(--muted)}
+.kanban-card{background:var(--bg-card2);border:1px solid var(--border);border-radius:9px;padding:11px;cursor:pointer;transition:all 0.15s;position:relative}
+.kanban-card:hover{border-color:var(--border-lit);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.25)}
+.kcard-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:7px}
+.kcard-company{display:flex;align-items:center;gap:7px}
+.kcard-logo{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0}
+.kcard-name{font-size:12px;font-weight:700;color:var(--text)}
+.kcard-role{font-size:10px;color:var(--muted);margin-top:1px}
+.kcard-action{background:transparent;border:none;cursor:pointer;color:var(--muted);transition:color 0.15s;padding:1px;display:flex}
+.kcard-action:hover{color:var(--primary-lt)}
+.kcard-action svg{width:13px;height:13px}
+.kcard-footer{display:flex;align-items:center;justify-content:space-between;margin-top:7px}
+.kcard-date{font-size:10px;color:var(--muted)}
+.kcard-starred{color:var(--lime)}
+.col-add-btn{display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;border:1px dashed rgba(255,255,255,0.1);border-radius:8px;cursor:pointer;font-size:11px;color:var(--muted);transition:all 0.15s;background:transparent;font-family:inherit;width:100%}
+.col-add-btn:hover{border-color:var(--border-lit);color:var(--primary-lt);background:rgba(26,158,79,0.04)}
+
+/* AI RESUME */
+.ai-layout{display:grid;grid-template-columns:42% 1fr;gap:18px;height:calc(100vh - 120px)}
+.ai-panel{overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-right:4px}
+.drop-zone{border:1.5px dashed var(--border-lit);border-radius:11px;padding:24px 16px;text-align:center;cursor:pointer;transition:all 0.2s;background:rgba(26,158,79,0.02)}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--primary-lt);background:rgba(26,158,79,0.05)}
+.drop-zone p{font-size:12px;color:var(--muted);margin-top:6px}
+.drop-zone strong{color:var(--primary-lt)}
+.drop-zone-icon{width:36px;height:36px;background:rgba(26,158,79,0.1);border-radius:9px;display:flex;align-items:center;justify-content:center;margin:0 auto 6px}
+.drop-zone-icon svg{width:20px;height:20px;color:var(--primary)}
+.file-uploaded{display:flex;align-items:center;gap:10px;padding:10px 13px;background:rgba(26,158,79,0.07);border:1px solid rgba(26,158,79,0.18);border-radius:9px}
+.file-uploaded svg{width:16px;height:16px;color:var(--primary);flex-shrink:0}
+.file-name{font-size:12px;font-weight:600;color:var(--primary-lt);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file-remove{background:none;border:none;cursor:pointer;color:var(--muted);display:flex;padding:2px;transition:color 0.15s}
+.file-remove:hover{color:var(--text)}
+.file-remove svg{width:12px;height:12px}
+.tone-toggle{display:flex;gap:5px;flex-wrap:wrap}
+.tone-btn{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;background:var(--bg-card2);border:1px solid var(--border);color:var(--muted);transition:all 0.15s;font-family:inherit}
+.tone-btn.active{background:rgba(26,158,79,0.12);border-color:var(--border-lit);color:var(--primary-lt)}
+.tone-btn:hover:not(.active){border-color:rgba(255,255,255,0.14);color:var(--text)}
+.tailor-btn{width:100%;padding:13px;border-radius:11px;border:none;background:var(--primary);color:#fff;font-size:14px;font-weight:800;cursor:pointer;transition:all 0.2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px}
+.tailor-btn:hover{background:var(--primary-lt);transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,158,79,0.28)}
+.tailor-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+.ai-preview-panel{overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-right:4px}
+.resume-preview-wrap{background:#fff;border-radius:10px;padding:26px 30px;color:#1a1a1a;font-size:12px;line-height:1.5;flex:1;box-shadow:0 0 0 1px rgba(255,255,255,0.08),0 16px 40px rgba(0,0,0,0.35)}
+.res-name{font-size:19px;font-weight:800;color:#111;margin-bottom:2px}
+.res-contact{color:#555;font-size:11px;margin-bottom:12px;padding-bottom:12px;border-bottom:1.5px solid #e5e5e5}
+.res-section{margin-bottom:14px}
+.res-section-title{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#1A9E4F;margin-bottom:7px;padding-bottom:3px;border-bottom:1px solid #e8f5e9}
+.res-job-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px}
+.res-job-title{font-weight:700;font-size:12px;color:#111}
+.res-job-company{font-size:11px;color:#444;font-weight:600}
+.res-job-date{font-size:11px;color:#777}
+.res-bullets{padding-left:0;list-style:none;margin-top:4px}
+.res-bullets li{font-size:11px;color:#333;margin-bottom:3px;padding-left:12px;position:relative;line-height:1.5}
+.res-bullets li::before{content:'•';position:absolute;left:0;color:#1A9E4F;font-weight:700}
+.res-keyword{background:rgba(26,158,79,0.12);color:#155D30;border-radius:3px;padding:0 3px;font-weight:600}
+.res-skill-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.res-skill-pill{font-size:10px;padding:2px 7px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;color:#155D30;font-weight:600}
+.empty-resume{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:300px;gap:10px;text-align:center;padding:24px}
+.empty-resume svg{width:32px;height:32px;color:rgba(99,122,110,0.4)}
+.empty-resume p{font-size:13px;color:var(--muted)}
+
+/* CV BUILDER */
+.cv-layout{display:grid;grid-template-columns:50% 1fr;gap:18px;height:calc(100vh - 120px)}
+.cv-form-panel{overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-right:4px}
+.cv-section{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:15px}
+.cv-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.cv-section-title{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px}
+.cv-section-title svg{width:14px;height:14px;color:var(--primary)}
+.ai-enhance-btn{font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;border:1px solid var(--border-lit);background:rgba(26,158,79,0.06);color:var(--primary-lt);cursor:pointer;font-family:inherit;transition:all 0.15s;display:flex;align-items:center;gap:3px}
+.ai-enhance-btn:hover{background:rgba(26,158,79,0.12)}
+.tag-input-area{display:flex;flex-wrap:wrap;gap:5px;padding:7px;background:var(--bg-card2);border:1px solid var(--border);border-radius:9px;min-height:42px;cursor:text;transition:border-color 0.15s}
+.tag-input-area:focus-within{border-color:var(--border-lit)}
+.skill-tag{display:flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(26,158,79,0.1);border:1px solid rgba(26,158,79,0.18);border-radius:6px;font-size:11px;font-weight:600;color:var(--primary-lt)}
+.skill-tag button{background:none;border:none;cursor:pointer;color:var(--primary-lt);padding:0;display:flex;align-items:center;opacity:0.6;transition:opacity 0.15s}
+.skill-tag button:hover{opacity:1}
+.tag-text-input{background:none;border:none;outline:none;color:var(--text);font-size:11px;font-family:inherit;min-width:80px;padding:2px 4px}
+.tag-text-input::placeholder{color:rgba(99,122,110,0.4)}
+.cv-preview-panel{overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-right:4px}
+.cv-preview-wrap{background:#fff;border-radius:10px;padding:26px 30px;color:#1a1a1a;font-size:12px;line-height:1.5;box-shadow:0 0 0 1px rgba(255,255,255,0.08),0 16px 40px rgba(0,0,0,0.35)}
+.cv-name{font-size:20px;font-weight:800;color:#111;margin-bottom:1px}
+.cv-tagline{font-size:11px;color:#1A9E4F;font-weight:600;margin-bottom:7px}
+.cv-contact{font-size:11px;color:#555;margin-bottom:12px;padding-bottom:12px;border-bottom:2px solid #111}
+.cv-section-t{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#111;border-bottom:1.5px solid #111;padding-bottom:2px;margin-bottom:7px;margin-top:12px}
+.save-banner{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(26,158,79,0.08);border:1px solid rgba(26,158,79,0.18);border-radius:9px;font-size:12px;font-weight:600;color:var(--primary-lt)}
+.save-banner svg{width:14px;height:14px}
+
+/* ANALYTICS */
+.analytics-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.analytics-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.date-range-sel{display:flex;gap:3px;background:var(--bg-card);border:1px solid var(--border);border-radius:9px;padding:3px}
+.date-btn{padding:5px 13px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);transition:all 0.15s;border:none;background:transparent;font-family:inherit}
+.date-btn.active{background:rgba(26,158,79,0.14);color:var(--primary-lt)}
+.date-btn:hover:not(.active){color:var(--text)}
+.bar-chart{display:flex;align-items:flex-end;gap:7px;height:120px;padding:0 4px;margin-top:14px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;position:relative}
+.bar-val{font-size:9px;font-weight:700;color:var(--primary);position:absolute;top:0}
+.bar-fill{width:100%;border-radius:4px 4px 0 0;background:var(--primary);transition:height 0.6s ease;position:relative;cursor:pointer;min-height:3px;opacity:0.8}
+.bar-fill:hover{opacity:1}
+.bar-fill .tooltip{position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:var(--bg-card2);border:1px solid var(--border-lit);border-radius:6px;padding:3px 7px;font-size:10px;font-weight:700;color:var(--primary-lt);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.15s}
+.bar-fill:hover .tooltip{opacity:1}
+.bar-label{font-size:9px;color:var(--muted)}
+.donut-chart-wrap{display:flex;align-items:center;gap:18px;margin-top:14px}
+.donut-legend{flex:1;display:flex;flex-direction:column;gap:7px}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12px}
+.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.legend-label{color:var(--muted);flex:1}
+.legend-val{font-weight:700;color:var(--text)}
+.funnel-chart{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.funnel-row{display:flex;align-items:center;gap:10px}
+.funnel-label{font-size:11px;color:var(--muted);width:120px;flex-shrink:0}
+.funnel-bar-wrap{flex:1;height:22px;background:rgba(255,255,255,0.04);border-radius:5px;overflow:hidden;position:relative}
+.funnel-bar{height:100%;border-radius:5px;transition:width 0.6s ease;display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.85)}
+.funnel-pct{font-size:11px;font-weight:700;color:var(--text);width:38px;text-align:right}
+.insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.insight-card{background:var(--bg-card);border:1px solid var(--border);border-radius:13px;padding:16px;transition:border-color 0.2s,transform 0.2s}
+.insight-card:hover{border-color:var(--border-lit);transform:translateY(-1px)}
+.insight-icon{width:32px;height:32px;background:rgba(26,158,79,0.09);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.insight-icon svg{width:16px;height:16px;color:var(--primary)}
+.insight-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.insight-sub{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* PROFILE */
+.profile-header-card{display:flex;align-items:center;gap:20px;padding:24px;background:var(--bg-card);border:1px solid var(--border);border-radius:13px;margin-bottom:20px}
+.profile-avatar-lg{width:64px;height:64px;background:linear-gradient(135deg,var(--primary),var(--teal));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0;cursor:pointer;transition:filter 0.2s}
+.profile-avatar-lg:hover{filter:brightness(1.1)}
+.profile-header-info h2{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.3px}
+.profile-header-info p{font-size:13px;color:var(--muted);margin-top:2px}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.profile-section{background:var(--bg-card);border:1px solid var(--border);border-radius:13px;padding:18px}
+.profile-section.full{grid-column:span 2}
+.profile-section-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:7px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.profile-section-title svg{width:15px;height:15px;color:var(--primary)}
+.profile-save-row{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;grid-column:span 2}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:460px;transform:translateY(14px) scale(0.98);transition:transform 0.2s;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.modal-overlay.open .modal{transform:translateY(0) scale(1)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modal-title{font-size:16px;font-weight:800;color:var(--text)}
+.modal-close{background:rgba(255,255,255,0.07);border:none;border-radius:7px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:all 0.15s}
+.modal-close:hover{background:rgba(255,255,255,0.12);color:var(--text)}
+.modal-close svg{width:12px;height:12px}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+
+/* MOBILE */
+#mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg-card);border-top:1px solid var(--border);z-index:200;padding:6px 0}
+.mobile-nav-inner{display:flex;justify-content:space-around}
+.mobile-nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 10px;cursor:pointer;color:var(--muted);transition:color 0.15s;background:none;border:none;font-family:inherit}
+.mobile-nav-btn.active{color:var(--primary-lt)}
+.mobile-nav-btn svg{width:20px;height:20px}
+.mobile-nav-btn span{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px}
+
+/* LOADING SPINNER */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media (max-width:768px){
+  #sidebar{display:none}
+  #mobile-nav{display:block}
+  #main{margin-left:0;padding-bottom:70px}
+  .view{padding:14px}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .dash-grid,.ai-layout,.cv-layout,.analytics-grid-2,.profile-grid{grid-template-columns:1fr}
+  .profile-section.full{grid-column:span 1}
+  .analytics-grid-3,.insights-grid{grid-template-columns:1fr}
+  .view-header-row{flex-direction:column;align-items:flex-start}
+  .profile-save-row{grid-column:span 1}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+
+/* ─── KEEP SIDEBAR & MOBILE NAV DARK ─────────────────────── */
+#sidebar{background:#0D1610!important;border-right-color:rgba(255,255,255,0.08)!important}
+#sidebar .sidebar-logo{border-bottom-color:rgba(255,255,255,0.08)}
+.logo-text{background:linear-gradient(135deg,#2EBF65,#1AA89A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#sidebar .nav-item{color:#637A6E}
+#sidebar .nav-item:hover{background:rgba(34,197,94,0.05)!important;color:#CDD9D1}
+#sidebar .nav-item.active{background:rgba(34,197,94,0.09)!important;color:#2EBF65!important;border-left-color:#1A9E4F}
+#sidebar .sidebar-bottom{border-top-color:rgba(255,255,255,0.08)!important}
+#sidebar .user-chip:hover{background:rgba(255,255,255,0.04)!important}
+#sidebar .user-name{color:#CDD9D1}
+#sidebar .user-role{color:#637A6E}
+#mobile-nav{background:#0D1610!important;border-top-color:rgba(255,255,255,0.08)!important}
+#mobile-nav .mobile-nav-btn{color:#637A6E}
+#mobile-nav .mobile-nav-btn.active{color:#2EBF65}
+/* ─── FIX INVISIBLE rgba-WHITE ON LIGHT BG ───────────────── */
+.btn-secondary{background:rgba(0,0,0,0.04)!important;border-color:rgba(0,0,0,0.12)!important}
+.btn-secondary:hover{background:rgba(0,0,0,0.08)!important}
+.btn-ghost:hover{background:rgba(0,0,0,0.05)!important}
+.pipeline-bar-wrap{background:rgba(0,0,0,0.07)!important}
+.metric-bar-wrap{background:rgba(0,0,0,0.07)!important}
+.kanban-count{background:rgba(0,0,0,0.07)!important}
+.col-add-btn{border-color:rgba(0,0,0,0.14)!important}
+.funnel-bar-wrap{background:rgba(0,0,0,0.07)!important}
+.app-table td{border-bottom-color:rgba(0,0,0,0.06)!important}
+.modal-close{background:rgba(0,0,0,0.06)!important}
+.modal-close:hover{background:rgba(0,0,0,0.1)!important;color:var(--text)!important}
+.kanban-card:hover{box-shadow:0 4px 14px rgba(0,0,0,0.09)!important}
+.modal{box-shadow:0 8px 40px rgba(0,0,0,0.14)!important}
+.resume-preview-wrap,.cv-preview-wrap{box-shadow:0 0 0 1px rgba(0,0,0,0.07),0 4px 20px rgba(0,0,0,0.07)!important}
+.stat-card:hover{box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+.form-input::placeholder,.form-textarea::placeholder{color:rgba(90,122,104,0.55)!important}
+.bar-fill .tooltip{background:#fff!important;border-color:rgba(26,158,79,0.25)!important;color:#1A9E4F!important;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.score-badge{background:rgba(26,158,79,0.1);color:#1A9E4F;border-color:rgba(26,158,79,0.22)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside id="sidebar" role="navigation" aria-label="Main navigation">
+  <div class="sidebar-logo">
+    <div class="logo-icon" aria-hidden="true">
+      <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><rect x="2" y="10" width="14" height="3" rx="1.5" fill="white" opacity="0.9"/><rect x="2" y="5" width="14" height="3" rx="1.5" fill="white"/><rect x="2" y="15" width="8" height="2" rx="1" fill="white" opacity="0.6"/></svg>
+    </div>
+    <span class="logo-text">Stacked</span>
+  </div>
+  <ul class="sidebar-nav" role="list">
+    <li class="nav-item active" data-view="dashboard" role="listitem" tabindex="0" aria-label="Dashboard">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+      Dashboard
+    </li>
+    <li class="nav-item" data-view="applications" role="listitem" tabindex="0" aria-label="Applications">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+      Applications
+    </li>
+    <li class="nav-item" data-view="ai-resume" role="listitem" tabindex="0" aria-label="AI Resume">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+      AI Resume
+    </li>
+    <li class="nav-item" data-view="cv-builder" role="listitem" tabindex="0" aria-label="CV Builder">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/></svg>
+      CV Builder
+    </li>
+    <li class="nav-item" data-view="analytics" role="listitem" tabindex="0" aria-label="Analytics">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+      Analytics
+    </li>
+  </ul>
+  <div class="sidebar-bottom">
+    <div class="user-chip" id="profileChip" role="button" tabindex="0" aria-label="Open profile">
+      <div class="avatar" id="sidebarAvatar">?</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebarName">Set up profile</div>
+        <div class="user-role" id="sidebarRole">Click to get started</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MOBILE NAV -->
+<nav id="mobile-nav" aria-label="Mobile navigation">
+  <div class="mobile-nav-inner">
+    <button class="mobile-nav-btn active" data-view="dashboard" aria-label="Dashboard">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="mobile-nav-btn" data-view="applications" aria-label="Applications">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+      <span>Apps</span>
+    </button>
+    <button class="mobile-nav-btn" data-view="ai-resume" aria-label="AI Resume">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+      <span>AI</span>
+    </button>
+    <button class="mobile-nav-btn" data-view="analytics" aria-label="Analytics">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+      <span>Stats</span>
+    </button>
+    <button class="mobile-nav-btn" data-view="profile" aria-label="Profile">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+      <span>Profile</span>
+    </button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+<!-- ══ DASHBOARD ══ -->
+<section class="view active" id="view-dashboard" aria-label="Dashboard">
+  <div class="view-header">
+    <h1 id="dashGreeting">Good morning</h1>
+    <p id="dashSubtitle">Here is your internship search overview</p>
+  </div>
+  <div class="stats-row" role="region" aria-label="Key statistics">
+    <div class="stat-card">
+      <div class="stat-label">Applied</div>
+      <div class="stat-value" id="stat-applied">0</div>
+      <div class="stat-delta" id="stat-applied-delta" style="color:var(--muted)">No applications yet</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Interviews</div>
+      <div class="stat-value" id="stat-interviews">0</div>
+      <div class="stat-delta" id="stat-int-delta" style="color:var(--muted)">No interviews yet</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Offers</div>
+      <div class="stat-value" id="stat-offers">0</div>
+      <div class="stat-delta" id="stat-offer-delta" style="color:var(--muted)">Keep applying</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Response Rate</div>
+      <div class="stat-value" id="stat-rate">0%</div>
+      <div class="stat-delta" id="stat-rate-delta" style="color:var(--muted)">Needs more data</div>
+    </div>
+  </div>
+  <div class="dash-grid">
+    <div class="dash-left">
+      <div class="card">
+        <div class="section-title">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+          Application Pipeline
+        </div>
+        <div class="pipeline-bars" id="pipelineBars" role="list" aria-label="Pipeline stages"></div>
+      </div>
+      <div class="card">
+        <div class="section-title">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+          Recent Applications
+        </div>
+        <div id="recentAppsContainer"></div>
+      </div>
+    </div>
+    <div class="dash-right">
+      <div class="card">
+        <div class="section-title">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+          Upcoming Deadlines
+        </div>
+        <div id="deadlinesContainer"></div>
+      </div>
+      <div class="card">
+        <div class="section-title">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+          Quick Actions
+        </div>
+        <div class="quick-actions">
+          <button class="quick-btn" onclick="openAddModal()">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+            Add Application
+          </button>
+          <button class="quick-btn" onclick="switchView('ai-resume')">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            Tailor Resume with AI
+          </button>
+          <button class="quick-btn" onclick="switchView('analytics')">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+            View Analytics
+          </button>
+          <button class="quick-btn" onclick="switchView('cv-builder')">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+            Build CV
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ APPLICATIONS ══ -->
+<section class="view" id="view-applications" aria-label="Applications">
+  <div class="view-header-row">
+    <h1>My Applications</h1>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="filter-tabs" role="tablist" id="appFilterTabs">
+        <div class="filter-tab active" data-filter="all" role="tab" tabindex="0">All <span class="tab-count" id="fc-all">0</span></div>
+        <div class="filter-tab" data-filter="active" role="tab" tabindex="0">Active <span class="tab-count" id="fc-active">0</span></div>
+        <div class="filter-tab" data-filter="interview" role="tab" tabindex="0">Interviews <span class="tab-count" id="fc-interview">0</span></div>
+        <div class="filter-tab" data-filter="offer" role="tab" tabindex="0">Offers <span class="tab-count" id="fc-offer">0</span></div>
+      </div>
+      <button class="btn btn-primary" onclick="openAddModal()">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+        Add Application
+      </button>
+    </div>
+  </div>
+  <div class="kanban-board" id="kanbanBoard" role="region" aria-label="Application kanban board"></div>
+</section>
+
+<!-- ══ AI RESUME ══ -->
+<section class="view" id="view-ai-resume" aria-label="AI Resume Tailor">
+  <div class="view-header">
+    <h1>AI Resume Tailor</h1>
+    <p>Paste your resume or CV text, paste a job description, and get a Gemini-tailored version</p>
+  </div>
+  <div class="ai-layout">
+    <div class="ai-panel">
+      <div class="card">
+        <div class="section-title">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+          Step 1, Paste Your Current Resume or CV
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="resumeTextInput">Your resume or CV text</label>
+          <textarea class="form-textarea" id="resumeTextInput" rows="10" placeholder="Paste your full resume or CV here — include summary, experience, education, skills, and projects. The more detail you include, the better Gemini can tailor it."></textarea>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm3 1h6v4H7V5zm6 6H7v2h6v-2z" clip-rule="evenodd"/></svg>
+          Step 2, Paste the Job Description
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="jdInput">Job Description</label>
+          <textarea class="form-textarea" id="jdInput" rows="7" placeholder="Paste the full job description here. Include requirements, responsibilities, and any keywords you want the AI to focus on."></textarea>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="targetRole">Target Role Title</label>
+          <input class="form-input" id="targetRole" type="text" placeholder="e.g. Software Engineer Intern at Google">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Tone</label>
+          <div class="tone-toggle">
+            <button class="tone-btn active" onclick="setTone(this)">Professional</button>
+            <button class="tone-btn" onclick="setTone(this)">Concise</button>
+            <button class="tone-btn" onclick="setTone(this)">Achievement-focused</button>
+          </div>
+        </div>
+      </div>
+      <button class="tailor-btn" id="tailorBtn" onclick="tailorResume()">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        Tailor My Resume
+      </button>
+    </div>
+    <div class="ai-preview-panel">
+      <div id="resumeScoreCard" style="display:none" class="card">
+        <div class="section-title">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          Resume Score
+        </div>
+        <div class="score-card-inner">
+          <div class="ring-wrap">
+            <svg width="72" height="72" viewBox="0 0 72 72">
+              <circle cx="36" cy="36" r="28" fill="none" stroke="rgba(26,158,79,0.1)" stroke-width="6"/>
+              <circle id="scoreRingCircle" cx="36" cy="36" r="28" fill="none" stroke="#1A9E4F" stroke-width="6" stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="175.9" transform="rotate(-90 36 36)" style="transition:stroke-dashoffset 0.8s ease"/>
+            </svg>
+            <div class="ring-center"><div class="ring-val" id="scoreRingVal">0</div><div class="ring-label">/ 100</div></div>
+          </div>
+          <div class="score-detail">
+            <h3 id="scoreRingLabel">Calculating...</h3>
+            <p id="scoreRingRole" style="font-size:11px;color:var(--muted)"></p>
+            <div class="score-badges" id="scoreBadges"></div>
+          </div>
+        </div>
+        <div class="score-metrics">
+          <div class="metric-row"><span class="metric-label">Keywords</span><div class="metric-bar-wrap"><div class="metric-bar" id="metricKeywords" style="width:0%"></div></div><span class="metric-val" id="metricKeywordsVal">0%</span></div>
+          <div class="metric-row"><span class="metric-label">Impact</span><div class="metric-bar-wrap"><div class="metric-bar" id="metricImpact" style="width:0%"></div></div><span class="metric-val" id="metricImpactVal">0%</span></div>
+          <div class="metric-row"><span class="metric-label">ATS Friendly</span><div class="metric-bar-wrap"><div class="metric-bar" id="metricAts" style="width:0%"></div></div><span class="metric-val" id="metricAtsVal">0%</span></div>
+        </div>
+      </div>
+      <div class="card" style="flex:1;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div class="section-title" style="margin-bottom:0">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+            Tailored Resume Preview
+          </div>
+          <button class="btn btn-primary" id="downloadResumeBtn" style="display:none" onclick="downloadResumePDF()">
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            Download PDF
+          </button>
+        </div>
+        <div id="resumePreviewOutput">
+          <div class="empty-resume">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+            <p>Upload your resume and paste a job description, then click "Tailor My Resume" to generate a customized version you can download.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CV BUILDER ══ -->
+<section class="view" id="view-cv-builder" aria-label="CV Builder">
+  <div class="view-header-row">
+    <div>
+      <h1>CV Builder</h1>
+      <p style="font-size:13px;color:var(--muted);margin-top:2px">Your information is saved automatically as you type</p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-secondary" onclick="saveCVData()">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293z"/></svg>
+        Save
+      </button>
+      <button class="btn btn-primary" onclick="downloadCVPDF()">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        Download PDF
+      </button>
+    </div>
+  </div>
+  <div class="cv-layout">
+    <div class="cv-form-panel">
+      <!-- Personal Info -->
+      <div class="cv-section">
+        <div class="cv-section-header">
+          <div class="cv-section-title">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+            Personal Info
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-field"><label class="form-label" for="cv-fname">First Name</label><input class="form-input" id="cv-fname" type="text" placeholder="First name" oninput="updateCVPreview()"></div>
+          <div class="form-field"><label class="form-label" for="cv-lname">Last Name</label><input class="form-input" id="cv-lname" type="text" placeholder="Last name" oninput="updateCVPreview()"></div>
+          <div class="form-field"><label class="form-label" for="cv-email">Email</label><input class="form-input" id="cv-email" type="email" placeholder="you@email.com" oninput="updateCVPreview()"></div>
+          <div class="form-field"><label class="form-label" for="cv-phone">Phone</label><input class="form-input" id="cv-phone" type="tel" placeholder="+1 (555) 000-0000" oninput="updateCVPreview()"></div>
+          <div class="form-field"><label class="form-label" for="cv-linkedin">LinkedIn</label><input class="form-input" id="cv-linkedin" type="text" placeholder="linkedin.com/in/yourname" oninput="updateCVPreview()"></div>
+          <div class="form-field"><label class="form-label" for="cv-portfolio">Portfolio / GitHub</label><input class="form-input" id="cv-portfolio" type="text" placeholder="github.com/yourname" oninput="updateCVPreview()"></div>
+        </div>
+      </div>
+      <!-- Summary -->
+      <div class="cv-section">
+        <div class="cv-section-header">
+          <div class="cv-section-title">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm3 1h6v4H7V5zm6 6H7v2h6v-2z" clip-rule="evenodd"/></svg>
+            Professional Summary
+          </div>
+          <button class="ai-enhance-btn" onclick="aiEnhanceSummary()">
+            <svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            AI Enhance
+          </button>
+        </div>
+        <textarea class="form-textarea" id="cv-summary" rows="4" placeholder="A brief overview of your background, key skills, and what you're looking for." oninput="updateCVPreview()"></textarea>
+      </div>
+      <!-- Education -->
+      <div class="cv-section">
+        <div class="cv-section-header">
+          <div class="cv-section-title">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/></svg>
+            Education
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-field"><label class="form-label" for="cv-uni">University / School</label><input class="form-input" id="cv-uni" type="text" placeholder="University Name" oninput="updateCVPreview()"></div>
+          <div class="form-field"><label class="form-label" for="cv-degree">Degree</label><input class="form-input" id="cv-degree" type="text" placeholder="e.g. B.S. Computer Science" oninput="updateCVPreview()"></div>
+          <div class="form-field"><label class="form-label" for="cv-gradyear">Expected Graduation</label><input class="form-input" id="cv-gradyear" type="text" placeholder="May 2026" oninput="updateCVPreview()"></div>
+          <div class="form-field"><label class="form-label" for="cv-gpa">GPA (optional)</label><input class="form-input" id="cv-gpa" type="text" placeholder="3.8 / 4.0" oninput="updateCVPreview()"></div>
+        </div>
+      </div>
+      <!-- Experience -->
+      <div class="cv-section">
+        <div class="cv-section-header">
+          <div class="cv-section-title">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+            Experience
+          </div>
+          <button class="ai-enhance-btn" onclick="aiEnhanceExperience()">
+            <svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            AI Enhance
+          </button>
+        </div>
+        <div id="expEntries">
+          <div class="exp-entry" style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+            <div class="form-grid-2" style="margin-bottom:8px">
+              <div class="form-field"><label class="form-label">Company</label><input class="form-input cv-exp-company" type="text" placeholder="Company name" oninput="updateCVPreview()"></div>
+              <div class="form-field"><label class="form-label">Role</label><input class="form-input cv-exp-role" type="text" placeholder="Your title" oninput="updateCVPreview()"></div>
+              <div class="form-field"><label class="form-label">Start</label><input class="form-input cv-exp-start" type="text" placeholder="Jun 2024" oninput="updateCVPreview()"></div>
+              <div class="form-field"><label class="form-label">End</label><input class="form-input cv-exp-end" type="text" placeholder="Aug 2024 (or Present)" oninput="updateCVPreview()"></div>
+            </div>
+            <div class="form-field"><label class="form-label">Bullet Points (one per line)</label><textarea class="form-textarea cv-exp-bullets" rows="4" placeholder="• Led redesign of checkout flow, increasing conversion by 18%&#10;• Built React components used across 3 product teams" oninput="updateCVPreview()"></textarea></div>
+          </div>
+          <div class="exp-entry">
+            <div class="form-grid-2" style="margin-bottom:8px">
+              <div class="form-field"><label class="form-label">Company</label><input class="form-input cv-exp-company" type="text" placeholder="Company name" oninput="updateCVPreview()"></div>
+              <div class="form-field"><label class="form-label">Role</label><input class="form-input cv-exp-role" type="text" placeholder="Your title" oninput="updateCVPreview()"></div>
+              <div class="form-field"><label class="form-label">Start</label><input class="form-input cv-exp-start" type="text" placeholder="Jun 2023" oninput="updateCVPreview()"></div>
+              <div class="form-field"><label class="form-label">End</label><input class="form-input cv-exp-end" type="text" placeholder="Aug 2023" oninput="updateCVPreview()"></div>
+            </div>
+            <div class="form-field"><label class="form-label">Bullet Points (one per line)</label><textarea class="form-textarea cv-exp-bullets" rows="4" placeholder="• Developed Python scripts to automate reporting, saving 5 hours/week&#10;• Collaborated with senior engineers on production deployments" oninput="updateCVPreview()"></textarea></div>
+          </div>
+        </div>
+      </div>
+      <!-- Skills -->
+      <div class="cv-section">
+        <div class="cv-section-header">
+          <div class="cv-section-title">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+            Skills
+          </div>
+        </div>
+        <div class="tag-input-area" onclick="document.getElementById('cvSkillInput').focus()" role="list" id="cvSkillTags" aria-label="Skills list"></div>
+        <input id="cvSkillInput" class="tag-text-input" style="margin-top:6px;width:100%;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;padding:8px 12px" type="text" placeholder="Type a skill and press Enter" onkeydown="addCVSkill(event)">
+      </div>
+    </div>
+    <!-- CV Preview -->
+    <div class="cv-preview-panel">
+      <div class="card" style="flex:1">
+        <div class="section-title">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+          Live Preview
+        </div>
+        <div class="cv-preview-wrap" id="cvPreviewWrap">
+          <div style="text-align:center;padding:40px 0;color:#aaa;font-size:13px">Fill in your details on the left to see your CV preview here.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ANALYTICS ══ -->
+<section class="view" id="view-analytics" aria-label="Analytics">
+  <div class="view-header-row">
+    <h1>Analytics</h1>
+    <div class="date-range-sel" role="group" aria-label="Date range">
+      <button class="date-btn active" onclick="setDateRange(this,'30')" aria-pressed="true">30 days</button>
+      <button class="date-btn" onclick="setDateRange(this,'90')" aria-pressed="false">3 months</button>
+      <button class="date-btn" onclick="setDateRange(this,'all')" aria-pressed="false">All time</button>
+    </div>
+  </div>
+  <div class="analytics-grid-3">
+    <div class="card">
+      <div class="stat-label">Total Applications</div>
+      <div class="stat-value" id="an-total" style="font-size:28px">0</div>
+      <div class="stat-delta" id="an-total-sub" style="color:var(--muted);font-size:11px">No data yet</div>
+    </div>
+    <div class="card">
+      <div class="stat-label">Interview Rate</div>
+      <div class="stat-value" id="an-int-rate" style="font-size:28px">0%</div>
+      <div class="stat-delta" id="an-int-sub" style="color:var(--muted);font-size:11px">Interviews / Applied</div>
+    </div>
+    <div class="card">
+      <div class="stat-label">Offer Rate</div>
+      <div class="stat-value" id="an-offer-rate" style="font-size:28px">0%</div>
+      <div class="stat-delta" id="an-offer-sub" style="color:var(--muted);font-size:11px">Offers / Applied</div>
+    </div>
+  </div>
+  <div class="analytics-grid-2">
+    <div class="card">
+      <div class="section-title">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+        Applications by Week
+      </div>
+      <div class="bar-chart" id="weeklyChart" aria-label="Applications per week bar chart"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clip-rule="evenodd"/></svg>
+        Application Funnel
+      </div>
+      <div class="funnel-chart" id="funnelChart" aria-label="Application stage funnel"></div>
+    </div>
+  </div>
+  <div style="margin-bottom:18px">
+    <div class="card">
+      <div class="section-title">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.412.094-.82.236-1.2a5 5 0 10-4.472 0c.142.38.221.788.236 1.2h4z"/></svg>
+        Insights
+      </div>
+      <div class="insights-grid" id="insightsGrid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROFILE ══ -->
+<section class="view" id="view-profile" aria-label="Profile">
+  <div class="view-header-row">
+    <h1>My Profile</h1>
+    <button class="btn btn-primary" onclick="saveProfile()">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293z"/></svg>
+      Save Profile
+    </button>
+  </div>
+  <div class="profile-header-card">
+    <div class="profile-avatar-lg" id="profileAvatarLg">?</div>
+    <div class="profile-header-info">
+      <h2 id="profileHeaderName">Your Name</h2>
+      <p id="profileHeaderSub">Add your details below to get started</p>
+    </div>
+  </div>
+  <div class="profile-grid">
+    <!-- Personal -->
+    <div class="profile-section">
+      <div class="profile-section-title">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+        Personal Info
+      </div>
+      <div class="form-grid-2">
+        <div class="form-field"><label class="form-label" for="p-fname">First Name</label><input class="form-input" id="p-fname" type="text" placeholder="First name"></div>
+        <div class="form-field"><label class="form-label" for="p-lname">Last Name</label><input class="form-input" id="p-lname" type="text" placeholder="Last name"></div>
+        <div class="form-field"><label class="form-label" for="p-email">Email</label><input class="form-input" id="p-email" type="email" placeholder="you@email.com"></div>
+        <div class="form-field"><label class="form-label" for="p-phone">Phone</label><input class="form-input" id="p-phone" type="tel" placeholder="+1 (555) 000-0000"></div>
+        <div class="form-field"><label class="form-label" for="p-linkedin">LinkedIn</label><input class="form-input" id="p-linkedin" type="text" placeholder="linkedin.com/in/yourname"></div>
+        <div class="form-field"><label class="form-label" for="p-portfolio">Portfolio / GitHub</label><input class="form-input" id="p-portfolio" type="text" placeholder="github.com/yourname"></div>
+      </div>
+    </div>
+    <!-- Academic -->
+    <div class="profile-section">
+      <div class="profile-section-title">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z"/></svg>
+        Academic Info
+      </div>
+      <div class="form-field"><label class="form-label" for="p-uni">University</label><input class="form-input" id="p-uni" type="text" placeholder="University name"></div>
+      <div class="form-field"><label class="form-label" for="p-major">Major</label><input class="form-input" id="p-major" type="text" placeholder="e.g. Computer Science"></div>
+      <div class="form-grid-2">
+        <div class="form-field"><label class="form-label" for="p-gradyear">Grad Year</label><input class="form-input" id="p-gradyear" type="text" placeholder="2026"></div>
+        <div class="form-field"><label class="form-label" for="p-gpa">GPA</label><input class="form-input" id="p-gpa" type="text" placeholder="3.8 / 4.0"></div>
+      </div>
+    </div>
+    <!-- Summary -->
+    <div class="profile-section full">
+      <div class="profile-section-title">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm3 1h6v4H7V5zm6 6H7v2h6v-2z" clip-rule="evenodd"/></svg>
+        Professional Summary
+      </div>
+      <textarea class="form-textarea" id="p-summary" rows="3" placeholder="A short bio about yourself for AI resume tailoring. Include your background, goals, and strengths."></textarea>
+    </div>
+    <!-- Skills -->
+    <div class="profile-section full">
+      <div class="profile-section-title">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+        Skills (used for AI resume tailoring)
+      </div>
+      <div class="tag-input-area" onclick="document.getElementById('profileSkillInput').focus()" role="list" id="profileSkillTags" aria-label="Skills"></div>
+      <input id="profileSkillInput" class="tag-text-input" style="margin-top:6px;width:100%;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;padding:8px 12px" type="text" placeholder="Type a skill and press Enter" onkeydown="addProfileSkill(event)">
+    </div>
+    <!-- Experience for AI -->
+    <div class="profile-section full">
+      <div class="profile-section-title">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5z" clip-rule="evenodd"/></svg>
+        Work Experience (used for AI resume tailoring)
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Describe your past roles. This context helps the AI tailor your resume accurately.</p>
+      <div id="profileExpEntries">
+        <div class="profile-exp-entry" style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)">
+          <div class="form-grid-2" style="margin-bottom:8px">
+            <div class="form-field"><label class="form-label">Company</label><input class="form-input p-exp-company" type="text" placeholder="Company name"></div>
+            <div class="form-field"><label class="form-label">Role</label><input class="form-input p-exp-role" type="text" placeholder="Your title"></div>
+            <div class="form-field"><label class="form-label">Start</label><input class="form-input p-exp-start" type="text" placeholder="Jun 2024"></div>
+            <div class="form-field"><label class="form-label">End</label><input class="form-input p-exp-end" type="text" placeholder="Aug 2024"></div>
+          </div>
+          <div class="form-field"><label class="form-label">Responsibilities and achievements</label><textarea class="form-textarea p-exp-desc" rows="3" placeholder="Describe what you did, what you built, and the impact you had."></textarea></div>
+        </div>
+        <div class="profile-exp-entry">
+          <div class="form-grid-2" style="margin-bottom:8px">
+            <div class="form-field"><label class="form-label">Company</label><input class="form-input p-exp-company" type="text" placeholder="Company name"></div>
+            <div class="form-field"><label class="form-label">Role</label><input class="form-input p-exp-role" type="text" placeholder="Your title"></div>
+            <div class="form-field"><label class="form-label">Start</label><input class="form-input p-exp-start" type="text" placeholder="Jun 2023"></div>
+            <div class="form-field"><label class="form-label">End</label><input class="form-input p-exp-end" type="text" placeholder="Aug 2023"></div>
+          </div>
+          <div class="form-field"><label class="form-label">Responsibilities and achievements</label><textarea class="form-textarea p-exp-desc" rows="3" placeholder="Describe what you did, what you built, and the impact you had."></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div class="profile-save-row">
+      <button class="btn btn-secondary" onclick="clearProfile()">Clear All</button>
+      <button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ADD APPLICATION MODAL -->
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle">Add Application</h2>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+    <div>
+      <div class="form-field"><label class="form-label" for="m-company">Company *</label><input class="form-input" id="m-company" type="text" placeholder="e.g. Anthropic" autocomplete="organization"></div>
+      <div class="form-field"><label class="form-label" for="m-role">Role *</label><input class="form-input" id="m-role" type="text" placeholder="e.g. Software Engineer Intern"></div>
+      <div class="form-field"><label class="form-label" for="m-status">Status</label>
+        <select class="form-select" id="m-status">
+          <option value="wishlist">Wishlist</option>
+          <option value="applied" selected>Applied</option>
+          <option value="oa">Online Assessment</option>
+          <option value="interview">Interview</option>
+          <option value="offer">Offer</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="form-field"><label class="form-label" for="m-deadline">Deadline</label><input class="form-input" id="m-deadline" type="date"></div>
+      <div class="form-field"><label class="form-label" for="m-notes">Notes</label><textarea class="form-textarea" id="m-notes" rows="2" placeholder="Referral, requirements, key notes..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveApplication()">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+        Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ── DATA ─────────────────────────────────────────────────────
+const STATUSES = ['wishlist','applied','oa','interview','offer','rejected'];
+const STATUS_LABELS = {wishlist:'Wishlist',applied:'Applied',oa:'Online Assessment',interview:'Interview',offer:'Offer',rejected:'Rejected'};
+const STATUS_COLORS = {wishlist:'var(--muted)',applied:'var(--teal)',oa:'var(--lime)',interview:'var(--primary-lt)',offer:'var(--emerald)',rejected:'#E07068'};
+const LOGO_COLORS = ['#4285F4','#E91E63','#FF5722','#9C27B0','#3F51B5','#009688','#F44336','#2196F3','#FF9800','#795548','#607D8B','#673AB7'];
+
+let applications = [];
+let profile = {};
+let tailoredResumeData = null;
+
+let analyticsRange = '30';
+
+function loadData() {
+  try { applications = JSON.parse(localStorage.getItem('stacked_apps') || '[]'); } catch(e){ applications=[]; }
+  try { profile = JSON.parse(localStorage.getItem('stacked_profile') || '{}'); } catch(e){ profile={}; }
+}
+
+function saveApps() { localStorage.setItem('stacked_apps', JSON.stringify(applications)); }
+function saveProfileData() { localStorage.setItem('stacked_profile', JSON.stringify(profile)); }
+
+// ── GREETING ─────────────────────────────────────────────────
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+// ── SIDEBAR / PROFILE CHIP ───────────────────────────────────
+function updateSidebarUser() {
+  const fname = profile.fname || '';
+  const lname = profile.lname || '';
+  const fullName = (fname + ' ' + lname).trim();
+  const initials = ((fname[0]||'') + (lname[0]||'')).toUpperCase() || '?';
+  document.getElementById('sidebarAvatar').textContent = initials;
+  document.getElementById('sidebarName').textContent = fullName || 'Set up profile';
+  document.getElementById('sidebarRole').textContent = profile.major && profile.uni ? profile.major + ', ' + profile.uni : 'Click to get started';
+  document.getElementById('profileAvatarLg').textContent = initials;
+  const name = fullName || 'Your Name';
+  document.getElementById('profileHeaderName').textContent = name;
+  document.getElementById('profileHeaderSub').textContent = profile.uni ? profile.major + ' at ' + profile.uni : 'Add your details below to get started';
+  const greeting = getGreeting();
+  document.getElementById('dashGreeting').textContent = fname ? greeting + ', ' + fname : greeting;
+}
+
+// ── VIEW SWITCHING ────────────────────────────────────────────
+function switchView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const el = document.getElementById('view-' + id);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.nav-item[data-view], .mobile-nav-btn[data-view]').forEach(item => {
+    const active = item.dataset.view === id;
+    item.classList.toggle('active', active);
+    if (active) item.setAttribute('aria-current','page'); else item.removeAttribute('aria-current');
+  });
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'applications') renderKanban();
+  if (id === 'analytics') renderAnalytics();
+  if (id === 'profile') loadProfileForm();
+}
+
+document.querySelectorAll('.nav-item[data-view], .mobile-nav-btn[data-view]').forEach(item => {
+  item.addEventListener('click', () => switchView(item.dataset.view));
+  item.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); switchView(item.dataset.view); } });
+});
+document.getElementById('profileChip').addEventListener('click', () => switchView('profile'));
+document.getElementById('profileChip').addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); switchView('profile'); } });
+
+// ── APPLICATIONS MODAL ────────────────────────────────────────
+let editingId = null;
+function openAddModal(id) {
+  editingId = id || null;
+  const app = id ? applications.find(a => a.id === id) : null;
+  document.getElementById('modalTitle').textContent = app ? 'Edit Application' : 'Add Application';
+  document.getElementById('m-company').value = app ? app.company : '';
+  document.getElementById('m-role').value = app ? app.role : '';
+  document.getElementById('m-status').value = app ? app.status : 'applied';
+  document.getElementById('m-deadline').value = app ? (app.deadline||'') : '';
+  document.getElementById('m-notes').value = app ? (app.notes||'') : '';
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('m-company').focus();
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  editingId = null;
+}
+function saveApplication() {
+  const company = document.getElementById('m-company').value.trim();
+  const role = document.getElementById('m-role').value.trim();
+  if (!company || !role) { document.getElementById('m-company').focus(); return; }
+  if (editingId) {
+    const app = applications.find(a => a.id === editingId);
+    if (app) {
+      app.company = company; app.role = role;
+      app.status = document.getElementById('m-status').value;
+      app.deadline = document.getElementById('m-deadline').value;
+      app.notes = document.getElementById('m-notes').value.trim();
+    }
+  } else {
+    applications.push({
+      id: Date.now().toString(),
+      company, role,
+      status: document.getElementById('m-status').value,
+      deadline: document.getElementById('m-deadline').value,
+      notes: document.getElementById('m-notes').value.trim(),
+      appliedDate: new Date().toISOString().split('T')[0],
+      starred: false,
+      color: LOGO_COLORS[Math.floor(Math.random() * LOGO_COLORS.length)]
+    });
+  }
+  saveApps();
+  closeModal();
+  const current = document.querySelector('.view.active');
+  if (current && current.id === 'view-applications') renderKanban();
+  if (current && current.id === 'view-dashboard') renderDashboard();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('modalOverlay').classList.contains('open')) closeModal(); });
+
+function deleteApplication(id) {
+  if (!confirm('Remove this application?')) return;
+  applications = applications.filter(a => a.id !== id);
+  saveApps();
+  renderKanban();
+}
+
+function toggleStar(id) {
+  const app = applications.find(a => a.id === id);
+  if (app) { app.starred = !app.starred; saveApps(); renderKanban(); }
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────
+function renderDashboard() {
+  const total = applications.filter(a => a.status !== 'wishlist').length;
+  const interviews = applications.filter(a => a.status === 'interview').length;
+  const offers = applications.filter(a => a.status === 'offer').length;
+  const responded = applications.filter(a => ['interview','offer','rejected'].includes(a.status)).length;
+  const rateNum = total > 0 ? Math.round((responded / total) * 100) : 0;
+  document.getElementById('stat-applied').textContent = total;
+  document.getElementById('stat-interviews').textContent = interviews;
+  document.getElementById('stat-offers').textContent = offers;
+  document.getElementById('stat-rate').textContent = rateNum + '%';
+  document.getElementById('stat-applied-delta').textContent = total === 0 ? 'No applications yet' : total + ' total tracked';
+  document.getElementById('stat-applied-delta').style.color = total === 0 ? 'var(--muted)' : 'var(--primary)';
+  document.getElementById('stat-int-delta').textContent = interviews === 0 ? 'No interviews yet' : interviews + ' active';
+  document.getElementById('stat-int-delta').style.color = interviews === 0 ? 'var(--muted)' : 'var(--teal)';
+  document.getElementById('stat-offer-delta').textContent = offers === 0 ? 'Keep applying' : offers + (offers===1?' offer':' offers');
+  document.getElementById('stat-offer-delta').style.color = offers === 0 ? 'var(--muted)' : 'var(--emerald)';
+  document.getElementById('stat-rate-delta').textContent = total < 3 ? 'Needs more data' : (rateNum >= 30 ? 'Above average' : 'Keep applying');
+  document.getElementById('stat-rate-delta').style.color = 'var(--muted)';
+
+  // Pipeline bars
+  const stages = STATUSES.map(s => ({ s, count: applications.filter(a => a.status === s).length }));
+  const maxCount = Math.max(...stages.map(x => x.count), 1);
+  const pb = document.getElementById('pipelineBars');
+  if (applications.length === 0) {
+    pb.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 20 20" fill="currentColor" width="24" height="24"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5z"/></svg></div><div class="empty-title">No applications yet</div><div class="empty-sub">Add your first application to see pipeline data</div></div>';
+  } else {
+    pb.innerHTML = stages.map(({ s, count }) =>
+      `<div class="pipeline-row" role="listitem">
+        <div class="pipeline-label">${STATUS_LABELS[s]}</div>
+        <div class="pipeline-bar-wrap"><div class="pipeline-bar" style="width:${Math.round((count/maxCount)*100)}%;background:${STATUS_COLORS[s]}"></div></div>
+        <div class="pipeline-count">${count}</div>
+      </div>`
+    ).join('');
+  }
+
+  // Recent apps
+  const recent = [...applications].sort((a,b) => (b.appliedDate||'').localeCompare(a.appliedDate||'')).slice(0,5);
+  const rac = document.getElementById('recentAppsContainer');
+  if (recent.length === 0) {
+    rac.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 20 20" fill="currentColor" width="24" height="24"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg></div><div class="empty-title">No applications yet</div><div class="empty-sub">Track your first internship application to get started</div><button class="btn btn-primary" onclick="openAddModal()" style="margin-top:4px">Add Application</button></div>';
+  } else {
+    rac.innerHTML = `<table class="app-table" aria-label="Recent applications"><thead><tr><th>Company</th><th>Role</th><th>Date</th><th>Status</th></tr></thead><tbody>${
+      recent.map(a => `<tr onclick="openAddModal('${a.id}')"><td><div class="company-cell"><div class="company-logo" style="background:${a.color||'#4285F4'}">${(a.company[0]||'?').toUpperCase()}</div><span class="company-name-text">${esc(a.company)}</span></div></td><td style="color:var(--muted)">${esc(a.role)}</td><td style="color:var(--muted)">${a.appliedDate ? fmtDate(a.appliedDate) : ''}</td><td><span class="badge badge-${a.status}">${STATUS_LABELS[a.status]}</span></td></tr>`).join('')
+    }</tbody></table>`;
+  }
+
+  // Deadlines
+  const dc = document.getElementById('deadlinesContainer');
+  const withDeadlines = applications.filter(a => a.deadline && a.status !== 'offer' && a.status !== 'rejected').sort((a,b) => a.deadline.localeCompare(b.deadline)).slice(0,4);
+  if (withDeadlines.length === 0) {
+    dc.innerHTML = '<div class="empty-state" style="padding:24px"><div class="empty-title" style="font-size:13px">No deadlines tracked</div><div class="empty-sub">Add deadline dates when creating applications</div></div>';
+  } else {
+    const today = new Date(); today.setHours(0,0,0,0);
+    dc.innerHTML = withDeadlines.map(a => {
+      const d = new Date(a.deadline); const diff = Math.round((d - today) / 86400000);
+      const cls = diff <= 3 ? 'deadline-red' : diff <= 7 ? 'deadline-yellow' : 'deadline-green';
+      const label = diff < 0 ? 'Overdue' : diff === 0 ? 'Today' : diff === 1 ? 'Tomorrow' : diff + ' days';
+      return `<div class="deadline-item"><div><div class="deadline-company">${esc(a.company)}</div><div class="deadline-role">${esc(a.role)}</div></div><span class="deadline-date ${cls}">${label}</span></div>`;
+    }).join('');
+  }
+}
+
+// ── KANBAN ────────────────────────────────────────────────────
+let activeFilter = 'all';
+function renderKanban() {
+  updateFilterCounts();
+  const board = document.getElementById('kanbanBoard');
+  let filtered = applications;
+  if (activeFilter === 'active') filtered = applications.filter(a => !['offer','rejected'].includes(a.status));
+  else if (activeFilter === 'interview') filtered = applications.filter(a => a.status === 'interview');
+  else if (activeFilter === 'offer') filtered = applications.filter(a => a.status === 'offer');
+  board.innerHTML = STATUSES.map(s => {
+    const cards = filtered.filter(a => a.status === s);
+    return `<div class="kanban-col" data-status="${s}">
+      <div class="kanban-header">
+        <span class="kanban-col-name">${STATUS_LABELS[s]}</span>
+        <span class="kanban-count">${cards.length}</span>
+      </div>
+      ${cards.length === 0 ? '<div style="padding:16px 0;text-align:center;font-size:11px;color:var(--muted)">No applications</div>' : cards.map(a => renderKCard(a)).join('')}
+      <button class="col-add-btn" onclick="openAddModalWithStatus('${s}')">
+        <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+        Add
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function renderKCard(a) {
+  const starSvg = a.starred
+    ? `<svg viewBox="0 0 20 20" fill="var(--lime)"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>`
+    : `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>`;
+  return `<div class="kanban-card" tabindex="0" aria-label="${esc(a.company)}, ${esc(a.role)}">
+    <div class="kcard-top">
+      <div class="kcard-company">
+        <div class="kcard-logo" style="background:${a.color||'#4285F4'}">${(a.company[0]||'?').toUpperCase()}</div>
+        <div><div class="kcard-name">${esc(a.company)}</div><div class="kcard-role">${esc(a.role)}</div></div>
+      </div>
+      <button class="kcard-action" onclick="toggleStar('${a.id}')" aria-label="${a.starred?'Unstar':'Star'} ${esc(a.company)}">${starSvg}</button>
+    </div>
+    <div class="kcard-footer">
+      <span class="kcard-date">${a.appliedDate ? fmtDate(a.appliedDate) : 'No date'}</span>
+      <div style="display:flex;gap:4px">
+        <button class="kcard-action" onclick="openAddModal('${a.id}')" aria-label="Edit">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
+        </button>
+        <button class="kcard-action" onclick="deleteApplication('${a.id}')" aria-label="Delete" style="color:rgba(192,57,43,0.5)">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+        </button>
+      </div>
+    </div>
+    ${a.deadline ? `<div style="font-size:10px;color:var(--muted);margin-top:5px">Deadline: ${fmtDate(a.deadline)}</div>` : ''}
+  </div>`;
+}
+
+function openAddModalWithStatus(status) {
+  openAddModal();
+  setTimeout(() => { document.getElementById('m-status').value = status; }, 10);
+}
+
+function updateFilterCounts() {
+  document.getElementById('fc-all').textContent = applications.length;
+  document.getElementById('fc-active').textContent = applications.filter(a => !['offer','rejected'].includes(a.status)).length;
+  document.getElementById('fc-interview').textContent = applications.filter(a => a.status === 'interview').length;
+  document.getElementById('fc-offer').textContent = applications.filter(a => a.status === 'offer').length;
+}
+
+document.getElementById('appFilterTabs').addEventListener('click', e => {
+  const tab = e.target.closest('.filter-tab');
+  if (!tab) return;
+  document.querySelectorAll('#appFilterTabs .filter-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  activeFilter = tab.dataset.filter;
+  renderKanban();
+});
+
+// ── AI RESUME ─────────────────────────────────────────────────
+function setTone(btn) { btn.closest('.tone-toggle').querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+
+function getProfileInfo() {
+  return {
+    name: ((profile.fname||'') + ' ' + (profile.lname||'')).trim(),
+    email: profile.email||'', phone: profile.phone||'',
+    linkedin: profile.linkedin||'', portfolio: profile.portfolio||'',
+    uni: profile.uni||'', major: profile.major||'',
+    gradyear: profile.gradyear||'', gpa: profile.gpa||'',
+    summary: profile.summary||'', skills: profile.skills||[]
+  };
+}
+
+async function tailorResume() {
+  const resumeText = document.getElementById('resumeTextInput').value.trim();
+  const jd = document.getElementById('jdInput').value.trim();
+  const role = document.getElementById('targetRole').value.trim();
+  if (!resumeText || resumeText.length < 50) {
+    document.getElementById('resumeTextInput').focus();
+    showToast('Please paste your resume or CV text first (minimum 50 characters)');
+    return;
+  }
+  if (!jd) { document.getElementById('jdInput').focus(); showToast('Please paste the job description first'); return; }
+  const btn = document.getElementById('tailorBtn');
+  const btnOriginal = '<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> Tailor My Resume';
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Gemini is tailoring...';
+  document.getElementById('resumeScoreCard').style.display = 'none';
+  document.getElementById('downloadResumeBtn').style.display = 'none';
+  document.getElementById('resumePreviewOutput').innerHTML = '<div class="empty-resume"><div class="spinner" style="width:28px;height:28px;border-width:3px;margin:0 auto 14px"></div><p>Gemini is reading your resume and the job description...</p></div>';
+  try {
+    const res = await fetch('/api/tailor', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resumeText, jobDescription: jd, targetRole: role, profileInfo: getProfileInfo() })
+    });
+    const json = await res.json();
+    if (!res.ok || !json.success) throw new Error(json.error || 'Unknown error from server');
+    tailoredResumeData = json.data;
+    renderResumePreviewFromGemini(json.data, role);
+    renderScoreCard(json.data);
+    document.getElementById('resumeScoreCard').style.display = '';
+    document.getElementById('downloadResumeBtn').style.display = '';
+  } catch (err) {
+    document.getElementById('resumePreviewOutput').innerHTML = `<div class="empty-resume"><p style="color:#C0392B;font-weight:600">Error: ${esc(err.message)}</p><p style="font-size:11px;margin-top:6px;color:var(--muted)">Make sure GEMINI_API_KEY is set and try again.</p></div>`;
+    showToast('Error: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = btnOriginal;
+  }
+}
+
+function renderResumePreviewFromGemini(d, role) {
+  if (!d) return;
+  const p = getProfileInfo();
+  const expHtml = (d.tailoredExperience || []).map(e => {
+    const bullets = Array.isArray(e.bullets) ? e.bullets : [];
+    return `<div class="res-section">
+      <div class="res-job-header">
+        <div><div class="res-job-title">${esc(e.role||'')}</div><div class="res-job-company">${esc(e.company||'')}</div></div>
+        <div class="res-job-date">${esc(e.start||'')}${e.end ? ' \u2013 ' + esc(e.end) : ''}</div>
+      </div>
+      ${bullets.length ? `<ul class="res-bullets">${bullets.map(b => `<li>${esc(String(b).replace(/^[•\-]\s*/,''))}</li>`).join('')}</ul>` : ''}
+    </div>`;
+  }).join('');
+  const projHtml = (d.tailoredProjects || []).map(proj => {
+    const bullets = Array.isArray(proj.bullets) ? proj.bullets : [];
+    return `<div class="res-section">
+      <div class="res-job-header">
+        <div><div class="res-job-title">${esc(proj.name||'')}</div>${proj.description ? `<div class="res-job-company">${esc(proj.description)}</div>` : ''}</div>
+      </div>
+      ${bullets.length ? `<ul class="res-bullets">${bullets.map(b => `<li>${esc(String(b).replace(/^[•\-]\s*/,''))}</li>`).join('')}</ul>` : ''}
+    </div>`;
+  }).join('');
+  const skillHtml = (d.tailoredSkills || []).map(s => `<span class="res-skill-pill">${esc(String(s))}</span>`).join('');
+  const matched = (d.matchedKeywords || []).map(k => `<span class="res-keyword">${esc(String(k))}</span>`).join(' ');
+  const missing = (d.missingKeywords || []).map(k => `<span style="background:rgba(192,57,43,0.08);color:#C0392B;border-radius:3px;padding:0 4px;font-size:10px;font-weight:600">${esc(String(k))}</span>`).join(' ');
+  const warnings = (d.honestyWarnings || []).filter(Boolean);
+  const contact = [p.email, p.phone, p.linkedin, p.portfolio].filter(Boolean).join(' \u00b7 ');
+  document.getElementById('resumePreviewOutput').innerHTML = `<div class="resume-preview-wrap" id="tailoredResumeEl">
+    <div class="res-name">${esc(p.name || 'Your Name')}</div>
+    <div class="res-contact">${esc(contact)}</div>
+    ${d.tailoredSummary ? `<div class="res-section"><div class="res-section-title">Summary</div><p style="font-size:11px;color:#333;line-height:1.6">${esc(d.tailoredSummary)}</p></div>` : ''}
+    ${expHtml ? `<div class="res-section"><div class="res-section-title">Experience</div>${expHtml}</div>` : ''}
+    ${projHtml ? `<div class="res-section"><div class="res-section-title">Projects</div>${projHtml}</div>` : ''}
+    ${p.uni ? `<div class="res-section"><div class="res-section-title">Education</div><div class="res-job-header"><div><div class="res-job-title">${esc(p.major||'')}</div><div class="res-job-company">${esc(p.uni)}</div></div><div class="res-job-date">${esc(p.gradyear||'')}</div></div>${p.gpa ? `<div style="font-size:11px;color:#555;margin-top:3px">GPA: ${esc(p.gpa)}</div>` : ''}</div>` : ''}
+    ${skillHtml ? `<div class="res-section"><div class="res-section-title">Skills</div><div class="res-skill-pills">${skillHtml}</div></div>` : ''}
+    ${(matched || missing || d.atsNotes || warnings.length) ? `<div style="margin-top:14px;padding-top:12px;border-top:1px solid #e5e5e5">
+      ${matched ? `<div style="margin-bottom:8px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#888;margin-bottom:4px">Matched Keywords</div><div style="display:flex;flex-wrap:wrap;gap:3px">${matched}</div></div>` : ''}
+      ${missing ? `<div style="margin-bottom:8px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#888;margin-bottom:4px">Keywords Not in Your Resume</div><div style="display:flex;flex-wrap:wrap;gap:3px">${missing}</div></div>` : ''}
+      ${d.atsNotes ? `<div style="font-size:10px;color:#555;line-height:1.5;padding:8px;background:#f9f9f9;border-radius:4px;margin-top:6px"><strong style="color:#333">ATS Notes:</strong> ${esc(d.atsNotes)}</div>` : ''}
+      ${warnings.length ? `<div style="font-size:10px;color:#C0392B;margin-top:8px;padding:8px;background:rgba(192,57,43,0.05);border-radius:4px"><strong>Honesty Warnings:</strong><ul style="margin-top:4px;padding-left:14px">${warnings.map(w => `<li>${esc(String(w))}</li>`).join('')}</ul></div>` : ''}
+    </div>` : ''}
+  </div>`;
+}
+
+function renderScoreCard(d) {
+  const matched = (d.matchedKeywords || []).length;
+  const missing = (d.missingKeywords || []).length;
+  const total = matched + missing;
+  const kwPct = total > 0 ? Math.round((matched / total) * 100) : 78;
+  const warnings = (d.honestyWarnings || []).length;
+  const score = Math.min(98, Math.max(55, kwPct - (warnings * 4)));
+  const circumference = 175.9;
+  const scoreEl = document.getElementById('scoreRingVal');
+  const circle = document.getElementById('scoreRingCircle');
+  let cur = 0;
+  const timer = setInterval(() => {
+    cur = Math.min(cur + 3, score);
+    scoreEl.textContent = cur;
+    circle.style.strokeDashoffset = circumference - (circumference * cur / 100);
+    if (cur >= score) clearInterval(timer);
+  }, 20);
+  document.getElementById('scoreRingLabel').textContent = score >= 90 ? 'Excellent' : score >= 75 ? 'Good' : 'Fair';
+  document.getElementById('scoreRingRole').textContent = document.getElementById('targetRole').value.trim() || 'Tailored resume';
+  const badges = ['ATS Optimized'];
+  if (matched > 0) badges.push(matched + ' Keywords Matched');
+  document.getElementById('scoreBadges').innerHTML = badges.map(b => `<span class="score-badge">${b}</span>`).join('');
+  setTimeout(() => {
+    document.getElementById('metricKeywords').style.width = kwPct + '%'; document.getElementById('metricKeywordsVal').textContent = kwPct + '%';
+    const imp = Math.max(65, score - 5);
+    document.getElementById('metricImpact').style.width = imp + '%'; document.getElementById('metricImpactVal').textContent = imp + '%';
+    const ats = Math.min(99, score + 4);
+    document.getElementById('metricAts').style.width = ats + '%'; document.getElementById('metricAtsVal').textContent = ats + '%';
+  }, 300);
+}
+
+function downloadResumePDF() {
+  const el = document.getElementById('tailoredResumeEl');
+  if (!el) { showToast('Generate a tailored resume first'); return; }
+  const p = getProfileInfo();
+  const name = p.name || 'Resume';
+  const role = document.getElementById('targetRole').value.trim();
+  const win = window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(name)} Resume</title><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#1a1a1a;padding:32px 40px;max-width:780px;margin:0 auto}@media print{body{padding:20px}}</style></head><body>${el.innerHTML}</body></html>`);
+  win.document.close();
+  setTimeout(() => win.print(), 600);
+}
+
+// ── CV BUILDER ────────────────────────────────────────────────
+function updateCVPreview() {
+  const fn = document.getElementById('cv-fname').value.trim();
+  const ln = document.getElementById('cv-lname').value.trim();
+  const name = (fn + ' ' + ln).trim() || 'Your Name';
+  const email = document.getElementById('cv-email').value.trim();
+  const phone = document.getElementById('cv-phone').value.trim();
+  const linkedin = document.getElementById('cv-linkedin').value.trim();
+  const portfolio = document.getElementById('cv-portfolio').value.trim();
+  const summary = document.getElementById('cv-summary').value.trim();
+  const uni = document.getElementById('cv-uni').value.trim();
+  const degree = document.getElementById('cv-degree').value.trim();
+  const gradYear = document.getElementById('cv-gradyear').value.trim();
+  const gpa = document.getElementById('cv-gpa').value.trim();
+  const contact = [email, phone, linkedin, portfolio].filter(Boolean).join(' · ');
+  const skills = Array.from(document.querySelectorAll('#cvSkillTags .skill-tag')).map(t => t.querySelector('span') ? t.querySelector('span').textContent : t.textContent.replace('×','').trim()).filter(Boolean);
+  const exps = [];
+  document.querySelectorAll('#expEntries .exp-entry').forEach(e => {
+    const co = e.querySelector('.cv-exp-company')?.value?.trim();
+    const ro = e.querySelector('.cv-exp-role')?.value?.trim();
+    const st = e.querySelector('.cv-exp-start')?.value?.trim();
+    const en = e.querySelector('.cv-exp-end')?.value?.trim();
+    const bu = e.querySelector('.cv-exp-bullets')?.value?.trim();
+    if (co || ro) exps.push({ company: co||'', role: ro||'', start: st||'', end: en||'', bullets: bu ? bu.split('\n').filter(l=>l.trim()) : [] });
+  });
+  const html = `
+    <div class="cv-name">${esc(name)}</div>
+    ${degree ? `<div class="cv-tagline">${esc(degree)}</div>` : ''}
+    <div class="cv-contact">${esc(contact)}</div>
+    ${summary ? `<div class="cv-section-t">Profile</div><p style="font-size:11px;color:#333;line-height:1.6;margin-bottom:8px">${esc(summary)}</p>` : ''}
+    ${exps.length ? `<div class="cv-section-t">Experience</div>${exps.map(e => `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:2px"><div><div style="font-weight:700;font-size:12px">${esc(e.role)}</div><div style="font-size:11px;color:#444">${esc(e.company)}</div></div><div style="font-size:11px;color:#777">${esc(e.start)} ${e.end ? '– ' + esc(e.end) : ''}</div></div>${e.bullets.length ? `<ul style="padding-left:14px;margin-top:3px">${e.bullets.map(b => `<li style="font-size:11px;color:#333;margin-bottom:2px">${esc(b.replace(/^[•\-]\s*/,''))}</li>`).join('')}</ul>` : ''}</div>`).join('')}` : ''}
+    ${uni ? `<div class="cv-section-t">Education</div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><div><div style="font-weight:700;font-size:12px">${esc(degree||'')}</div><div style="font-size:11px;color:#444">${esc(uni)}</div></div><div style="font-size:11px;color:#777">${esc(gradYear)}</div></div>${gpa ? `<div style="font-size:11px;color:#555">GPA: ${esc(gpa)}</div>` : ''}` : ''}
+    ${skills.length ? `<div class="cv-section-t">Skills</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">${skills.map(s => `<span style="font-size:10px;padding:2px 8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;color:#155D30;font-weight:600">${esc(s)}</span>`).join('')}</div>` : ''}
+  `;
+  document.getElementById('cvPreviewWrap').innerHTML = html;
+}
+
+function addCVSkill(e) {
+  if (e.key !== 'Enter') return;
+  const val = e.target.value.trim(); if (!val) return;
+  const container = document.getElementById('cvSkillTags');
+  const tag = document.createElement('span'); tag.className = 'skill-tag'; tag.setAttribute('role','listitem');
+  tag.innerHTML = `<span>${esc(val)}</span><button onclick="this.closest('.skill-tag').remove();updateCVPreview()" aria-label="Remove ${esc(val)}"><svg width="9" height="9" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></button>`;
+  container.appendChild(tag); e.target.value = ''; updateCVPreview();
+}
+
+function saveCVData() {
+  const fn = document.getElementById('cv-fname').value.trim();
+  const ln = document.getElementById('cv-lname').value.trim();
+  if (!fn && !ln) { showToast('Add your name first'); return; }
+  showToast('CV saved');
+}
+
+function downloadCVPDF() {
+  const preview = document.getElementById('cvPreviewWrap');
+  const name = ((document.getElementById('cv-fname').value||'') + ' ' + (document.getElementById('cv-lname').value||'')).trim() || 'CV';
+  const win = window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(name)} CV</title><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#1a1a1a;padding:32px 40px;max-width:780px;margin:0 auto}.cv-section-t{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#111;border-bottom:1.5px solid #111;padding-bottom:2px;margin-bottom:7px;margin-top:12px}@media print{body{padding:20px}}</style></head><body>${preview.innerHTML}</body></html>`);
+  win.document.close();
+  setTimeout(() => win.print(), 600);
+}
+
+function buildCVTextFromForm() {
+  const parts = [];
+  const fn = document.getElementById('cv-fname')?.value?.trim();
+  const ln = document.getElementById('cv-lname')?.value?.trim();
+  if (fn || ln) parts.push('Name: ' + [fn, ln].filter(Boolean).join(' '));
+  const summary = document.getElementById('cv-summary')?.value?.trim();
+  if (summary) parts.push('\nPROFESSIONAL SUMMARY:\n' + summary);
+  const uni = document.getElementById('cv-uni')?.value?.trim();
+  const degree = document.getElementById('cv-degree')?.value?.trim();
+  const gpa = document.getElementById('cv-gpa')?.value?.trim();
+  if (uni || degree) parts.push('\nEDUCATION:\n' + (degree||'') + (uni ? ' at ' + uni : '') + (gpa ? ', GPA: ' + gpa : ''));
+  const exps = [];
+  document.querySelectorAll('#expEntries .exp-entry').forEach(e => {
+    const co = e.querySelector('.cv-exp-company')?.value?.trim();
+    const ro = e.querySelector('.cv-exp-role')?.value?.trim();
+    const st = e.querySelector('.cv-exp-start')?.value?.trim();
+    const en = e.querySelector('.cv-exp-end')?.value?.trim();
+    const bu = e.querySelector('.cv-exp-bullets')?.value?.trim();
+    if (co || ro) exps.push((ro||'Role') + ' at ' + (co||'Company') + (st ? ' (' + st + (en ? ' - ' + en : '') + ')' : '') + '\n' + (bu||''));
+  });
+  if (exps.length) parts.push('\nEXPERIENCE:\n' + exps.join('\n\n'));
+  const skills = Array.from(document.querySelectorAll('#cvSkillTags .skill-tag')).map(t => t.querySelector('span')?.textContent || '').filter(Boolean);
+  if (skills.length) parts.push('\nSKILLS:\n' + skills.join(', '));
+  return parts.join('\n');
+}
+
+async function aiEnhanceSummary() {
+  const textarea = document.getElementById('cv-summary');
+  const current = textarea.value.trim();
+  if (!current || current.length < 20) { showToast('Add a summary first to enhance it'); return; }
+  const btn = event?.currentTarget;
+  const originalHTML = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.innerHTML = '<div class="spinner" style="width:10px;height:10px;border-width:1.5px"></div>'; }
+  try {
+    const cvText = buildCVTextFromForm() || ('Professional Summary: ' + current);
+    const res = await fetch('/api/tailor', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        resumeText: cvText,
+        jobDescription: 'Rewrite and improve this professional summary. Make it concise (2-3 sentences), professionally impactful, and free of first-person phrasing. Use strong, active language.',
+        profileInfo: getProfileInfo()
+      })
+    });
+    const json = await res.json();
+    if (!res.ok || !json.success) throw new Error(json.error || 'Enhancement failed');
+    if (json.data?.tailoredSummary) {
+      textarea.value = json.data.tailoredSummary;
+      updateCVPreview();
+      showToast('Summary enhanced by Gemini');
+    } else { showToast('No enhanced summary returned'); }
+  } catch (err) { showToast('Error: ' + err.message); }
+  finally { if (btn) { btn.disabled = false; btn.innerHTML = originalHTML; } }
+}
+
+async function aiEnhanceExperience() {
+  let hasContent = false;
+  document.querySelectorAll('#expEntries .exp-entry').forEach(e => { if (e.querySelector('.cv-exp-company')?.value?.trim()) hasContent = true; });
+  if (!hasContent) { showToast('Add experience entries first'); return; }
+  const btn = event?.currentTarget;
+  const originalHTML = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.innerHTML = '<div class="spinner" style="width:10px;height:10px;border-width:1.5px"></div>'; }
+  try {
+    const cvText = buildCVTextFromForm();
+    const res = await fetch('/api/tailor', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        resumeText: cvText,
+        jobDescription: 'Strengthen all experience bullet points with strong action verbs, specific outcomes, and clear professional language. Preserve all facts and dates exactly as provided.',
+        profileInfo: getProfileInfo()
+      })
+    });
+    const json = await res.json();
+    if (!res.ok || !json.success) throw new Error(json.error || 'Enhancement failed');
+    if (json.data?.tailoredExperience?.length > 0) {
+      const geminiExps = json.data.tailoredExperience;
+      document.querySelectorAll('#expEntries .exp-entry').forEach((entry, i) => {
+        const geminiExp = geminiExps[i];
+        if (!geminiExp) return;
+        const bulletsTA = entry.querySelector('.cv-exp-bullets');
+        if (bulletsTA && Array.isArray(geminiExp.bullets) && geminiExp.bullets.length > 0) {
+          bulletsTA.value = geminiExp.bullets.join('\n');
+        }
+      });
+      updateCVPreview();
+      showToast('Experience enhanced by Gemini');
+    } else { showToast('No enhanced experience returned'); }
+  } catch (err) { showToast('Error: ' + err.message); }
+  finally { if (btn) { btn.disabled = false; btn.innerHTML = originalHTML; } }
+}
+
+// ── ANALYTICS ─────────────────────────────────────────────────
+function setDateRange(btn, range) {
+  document.querySelectorAll('.date-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+  btn.classList.add('active'); btn.setAttribute('aria-pressed','true');
+  analyticsRange = range;
+  renderAnalytics();
+}
+
+function getFilteredApps() {
+  if (analyticsRange === 'all') return applications;
+  const days = parseInt(analyticsRange);
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
+  const cutoffStr = cutoff.toISOString().split('T')[0];
+  return applications.filter(a => !a.appliedDate || a.appliedDate >= cutoffStr);
+}
+
+function renderAnalytics() {
+  const apps = getFilteredApps();
+  const total = apps.length;
+  const nonWishlist = apps.filter(a => a.status !== 'wishlist');
+  const interviews = apps.filter(a => a.status === 'interview').length;
+  const offers = apps.filter(a => a.status === 'offer').length;
+  const intRate = nonWishlist.length > 0 ? Math.round((interviews / nonWishlist.length) * 100) : 0;
+  const offerRate = nonWishlist.length > 0 ? Math.round((offers / nonWishlist.length) * 100) : 0;
+  document.getElementById('an-total').textContent = total;
+  document.getElementById('an-total-sub').textContent = total === 0 ? 'No data yet' : 'Tracked applications';
+  document.getElementById('an-int-rate').textContent = intRate + '%';
+  document.getElementById('an-int-sub').textContent = interviews + ' interviews from ' + nonWishlist.length + ' applied';
+  document.getElementById('an-offer-rate').textContent = offerRate + '%';
+  document.getElementById('an-offer-sub').textContent = offers + ' offers from ' + nonWishlist.length + ' applied';
+
+  // Weekly bar chart
+  const weeklyChart = document.getElementById('weeklyChart');
+  const weeks = [];
+  for (let i = 7; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i * 7);
+    const start = new Date(d); start.setDate(start.getDate() - 7);
+    const label = 'W' + (8 - i);
+    const count = apps.filter(a => { if (!a.appliedDate) return false; const ad = new Date(a.appliedDate); return ad >= start && ad < d; }).length;
+    weeks.push({ label, count });
+  }
+  const maxW = Math.max(...weeks.map(w => w.count), 1);
+  if (apps.length === 0) {
+    weeklyChart.innerHTML = '<div style="width:100%;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted)">No data yet</div>';
+  } else {
+    weeklyChart.innerHTML = weeks.map(w => `<div class="bar-col"><span class="bar-val">${w.count||''}</span><div class="bar-fill" style="height:${Math.round((w.count/maxW)*100)}%" title="${w.count} apps"><div class="tooltip">${w.count} apps</div></div><span class="bar-label">${w.label}</span></div>`).join('');
+  }
+
+  // Funnel
+  const funnelChart = document.getElementById('funnelChart');
+  const stagesForFunnel = [
+    { label: 'Applied', key: 'applied', count: apps.filter(a => a.status !== 'wishlist').length },
+    { label: 'Online Assessment', key: 'oa', count: apps.filter(a => ['oa','interview','offer'].includes(a.status)).length },
+    { label: 'Interview', key: 'interview', count: apps.filter(a => ['interview','offer'].includes(a.status)).length },
+    { label: 'Offer', key: 'offer', count: apps.filter(a => a.status === 'offer').length },
+  ];
+  const maxF = stagesForFunnel[0].count || 1;
+  if (apps.length === 0) {
+    funnelChart.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:16px 0">Add applications to see your funnel</div>';
+  } else {
+    funnelChart.innerHTML = stagesForFunnel.map(s => {
+      const pct = Math.round((s.count / maxF) * 100);
+      const colors = { applied: 'var(--teal)', oa: 'var(--lime)', interview: 'var(--primary)', offer: 'var(--emerald)' };
+      return `<div class="funnel-row"><span class="funnel-label">${s.label}</span><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:${pct}%;background:${colors[s.key]}">${s.count > 0 ? s.count : ''}</div></div><span class="funnel-pct">${pct}%</span></div>`;
+    }).join('');
+  }
+
+  // Insights
+  const ig = document.getElementById('insightsGrid');
+  if (apps.length < 3) {
+    ig.innerHTML = '<div style="grid-column:span 3;text-align:center;padding:32px;font-size:13px;color:var(--muted)">Add at least 3 applications to unlock insights.</div>';
+  } else {
+    const dayOfWeek = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const dayCounts = Array(7).fill(0);
+    apps.forEach(a => { if (a.appliedDate) { const d = new Date(a.appliedDate); dayCounts[d.getDay()]++; } });
+    const bestDay = dayOfWeek[dayCounts.indexOf(Math.max(...dayCounts))];
+    const avgDays = apps.filter(a => a.appliedDate).length > 0 ? Math.round(apps.reduce((acc, a) => { if (!a.appliedDate) return acc; return acc + Math.round((Date.now() - new Date(a.appliedDate)) / 86400000); }, 0) / apps.filter(a => a.appliedDate).length) : 0;
+    ig.innerHTML = `
+      <div class="insight-card"><div class="insight-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg></div><div class="insight-title">Most active day: ${bestDay}</div><div class="insight-sub">You submit the most applications on ${bestDay}s. Consistency on that day helps build momentum.</div></div>
+      <div class="insight-card"><div class="insight-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg></div><div class="insight-title">Avg application age: ${avgDays}d</div><div class="insight-sub">The average application in your tracker is ${avgDays} days old. Follow up on anything over 2 weeks with no response.</div></div>
+      <div class="insight-card"><div class="insight-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clip-rule="evenodd"/></svg></div><div class="insight-title">Interview conversion: ${intRate}%</div><div class="insight-sub">${intRate >= 20 ? 'Strong rate. Keep tailoring your resume for each role using the AI tool.' : 'Try using the AI Resume Tailor to improve keyword match and boost your interview rate.'}</div></div>
+    `;
+  }
+}
+
+// ── PROFILE ───────────────────────────────────────────────────
+function loadProfileForm() {
+  const p = profile;
+  const fields = { fname:'p-fname', lname:'p-lname', email:'p-email', phone:'p-phone', linkedin:'p-linkedin', portfolio:'p-portfolio', uni:'p-uni', major:'p-major', gradyear:'p-gradyear', gpa:'p-gpa', summary:'p-summary' };
+  Object.entries(fields).forEach(([k,id]) => { const el = document.getElementById(id); if (el) el.value = p[k]||''; });
+  // Skills
+  const st = document.getElementById('profileSkillTags'); st.innerHTML = '';
+  (p.skills||[]).forEach(s => addTagToContainer(st, s, 'profileSkillTags'));
+  // Experience
+  const entries = document.querySelectorAll('#profileExpEntries .profile-exp-entry');
+  const exps = p.experience || [];
+  entries.forEach((entry, i) => {
+    const exp = exps[i] || {};
+    const co = entry.querySelector('.p-exp-company'); if (co) co.value = exp.company||'';
+    const ro = entry.querySelector('.p-exp-role'); if (ro) ro.value = exp.role||'';
+    const st2 = entry.querySelector('.p-exp-start'); if (st2) st2.value = exp.start||'';
+    const en = entry.querySelector('.p-exp-end'); if (en) en.value = exp.end||'';
+    const de = entry.querySelector('.p-exp-desc'); if (de) de.value = exp.desc||'';
+  });
+}
+
+function saveProfile() {
+  const fields = { fname:'p-fname', lname:'p-lname', email:'p-email', phone:'p-phone', linkedin:'p-linkedin', portfolio:'p-portfolio', uni:'p-uni', major:'p-major', gradyear:'p-gradyear', gpa:'p-gpa', summary:'p-summary' };
+  Object.entries(fields).forEach(([k,id]) => { const el = document.getElementById(id); if (el) profile[k] = el.value.trim(); });
+  profile.skills = Array.from(document.querySelectorAll('#profileSkillTags .skill-tag')).map(t => { const sp = t.querySelector('span'); return sp ? sp.textContent.trim() : t.textContent.replace('×','').trim(); }).filter(Boolean);
+  const exps = [];
+  document.querySelectorAll('#profileExpEntries .profile-exp-entry').forEach(entry => {
+    exps.push({ company: entry.querySelector('.p-exp-company')?.value?.trim()||'', role: entry.querySelector('.p-exp-role')?.value?.trim()||'', start: entry.querySelector('.p-exp-start')?.value?.trim()||'', end: entry.querySelector('.p-exp-end')?.value?.trim()||'', desc: entry.querySelector('.p-exp-desc')?.value?.trim()||'' });
+  });
+  profile.experience = exps;
+  saveProfileData();
+  // Sync to CV builder
+  syncProfileToCV();
+  updateSidebarUser();
+  showToast('Profile saved');
+}
+
+function syncProfileToCV() {
+  const p = profile;
+  const sync = { fname:'cv-fname', lname:'cv-lname', email:'cv-email', phone:'cv-phone', linkedin:'cv-linkedin', portfolio:'cv-portfolio', uni:'cv-uni', major:'cv-degree', gradyear:'cv-gradyear', gpa:'cv-gpa', summary:'cv-summary' };
+  Object.entries(sync).forEach(([k,id]) => { const el = document.getElementById(id); if (el && p[k]) el.value = p[k]; });
+  updateCVPreview();
+}
+
+function clearProfile() {
+  if (!confirm('Clear all profile data?')) return;
+  profile = {};
+  saveProfileData();
+  loadProfileForm();
+  updateSidebarUser();
+  showToast('Profile cleared');
+}
+
+function addProfileSkill(e) {
+  if (e.key !== 'Enter') return;
+  const val = e.target.value.trim(); if (!val) return;
+  addTagToContainer(document.getElementById('profileSkillTags'), val, 'profileSkillTags');
+  e.target.value = '';
+}
+
+function addTagToContainer(container, val, containerId) {
+  const tag = document.createElement('span'); tag.className = 'skill-tag'; tag.setAttribute('role','listitem');
+  tag.innerHTML = `<span>${esc(val)}</span><button onclick="this.closest('.skill-tag').remove()" aria-label="Remove ${esc(val)}"><svg width="9" height="9" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></button>`;
+  container.appendChild(tag);
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(msg) {
+  const existing = document.getElementById('toastEl');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.id = 'toastEl';
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#fff;border:1px solid rgba(26,158,79,0.3);border-radius:10px;padding:10px 16px;font-size:13px;font-weight:600;color:#111D14;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.12);animation:fadeIn 0.2s ease';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 2500);
+}
+
+// ── UTILS ─────────────────────────────────────────────────────
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtDate(s) { try { const d = new Date(s + 'T00:00:00'); return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); } catch(e){ return s; } }
+
+// ── INIT ──────────────────────────────────────────────────────
+loadData();
+updateSidebarUser();
+renderDashboard();
+switchView('dashboard');
+// Sync profile to CV on load
+if (Object.keys(profile).length > 0) syncProfileToCV();
+</script>
+</body>
+</html>
