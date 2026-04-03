@@ -989,59 +989,105 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 </section>
 
 <!-- ══ BILLING ══ -->
-<section class="view" id="view-billing" aria-label="Billing">
-  <div class="view-header"><h1>Billing</h1><p>Manage your Stacked subscription and usage</p></div>
-  <div style="max-width:680px;display:flex;flex-direction:column;gap:14px">
-    <div class="card" style="padding:24px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px">Current Plan</div>
-          <div style="font-size:11px;color:var(--muted)">You are on the free plan</div>
-        </div>
-        <span style="background:rgba(74,222,128,0.12);color:#4ADE80;border:1px solid rgba(74,222,128,0.25);padding:4px 12px;border-radius:99px;font-size:11px;font-weight:700">Free</span>
+<section class="view" id="view-billing" aria-label="Billing" style="padding-bottom:0">
+  <!-- Billing inner fills full height -->
+  <div style="display:flex;flex-direction:column;gap:16px;height:100%">
+
+    <!-- Top row: current plan (muted, small) + billing toggle -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:12px;color:rgba(255,255,255,0.3);font-weight:500">Current plan:</span>
+        <span style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.4);padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600">Free — 3 uses/mo</span>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
-        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px;text-align:center">
-          <div style="font-size:20px;font-weight:800;color:var(--text)">50</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:3px">AI Resume Tailors/mo</div>
-        </div>
-        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px;text-align:center">
-          <div style="font-size:20px;font-weight:800;color:var(--text)">50</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:3px">Cover Letters/mo</div>
-        </div>
-        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px;text-align:center">
-          <div style="font-size:20px;font-weight:800;color:var(--text)">∞</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:3px">Applications tracked</div>
-        </div>
-      </div>
-      <div style="background:linear-gradient(135deg,rgba(74,222,128,0.07),rgba(74,222,128,0.03));border:1px solid rgba(74,222,128,0.18);border-radius:12px;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
-        <div>
-          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">Upgrade to Pro</div>
-          <div style="font-size:12px;color:var(--muted)">Unlimited AI tailoring, priority support, advanced analytics</div>
-        </div>
-        <button class="btn btn-primary" onclick="showToast('Pro plan coming soon!')">Upgrade — $9/mo</button>
+      <!-- Billing toggle -->
+      <div style="display:flex;align-items:center;gap:10px">
+        <span id="bill-monthly-label" style="font-size:12px;font-weight:600;color:var(--text)">Monthly</span>
+        <button onclick="toggleBilling()" id="billToggle" style="width:44px;height:24px;border-radius:99px;background:rgba(74,222,128,0.25);border:1px solid rgba(74,222,128,0.3);cursor:pointer;position:relative;transition:background 0.2s;padding:0">
+          <span id="billToggleKnob" style="position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:left 0.2s;display:block"></span>
+        </button>
+        <span id="bill-yearly-label" style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.4)">Yearly</span>
+        <span id="bill-save-badge" style="background:rgba(74,222,128,0.15);color:#4ADE80;border:1px solid rgba(74,222,128,0.25);padding:2px 9px;border-radius:99px;font-size:10px;font-weight:700;opacity:0.4">Save 45%</span>
       </div>
     </div>
-    <div class="card" style="padding:22px">
-      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:16px">Plan Comparison</div>
-      <table style="width:100%;border-collapse:collapse;border:1px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden">
-        <thead>
-          <tr>
-            <th style="padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.07)">Feature</th>
-            <th style="padding:10px 14px;text-align:center;font-size:11px;font-weight:700;color:var(--muted);background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.07);border-left:1px solid rgba(255,255,255,0.07)">Free</th>
-            <th style="padding:10px 14px;text-align:center;font-size:11px;font-weight:700;color:#4ADE80;background:rgba(74,222,128,0.06);border-bottom:1px solid rgba(255,255,255,0.07);border-left:1px solid rgba(255,255,255,0.07)">Pro</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td style="padding:10px 14px;font-size:12px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,0.06)">AI Resume Tailoring</td><td style="padding:10px 14px;text-align:center;font-size:12px;color:rgba(255,255,255,0.5);border-bottom:1px solid rgba(255,255,255,0.06);border-left:1px solid rgba(255,255,255,0.07)">50/mo</td><td style="padding:10px 14px;text-align:center;font-size:12px;font-weight:600;color:#4ADE80;border-bottom:1px solid rgba(255,255,255,0.06);border-left:1px solid rgba(255,255,255,0.07);background:rgba(74,222,128,0.03)">Unlimited</td></tr>
-          <tr><td style="padding:10px 14px;font-size:12px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)">Cover Letter Generator</td><td style="padding:10px 14px;text-align:center;font-size:12px;color:rgba(255,255,255,0.5);border-bottom:1px solid rgba(255,255,255,0.06);border-left:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.02)">50/mo</td><td style="padding:10px 14px;text-align:center;font-size:12px;font-weight:600;color:#4ADE80;border-bottom:1px solid rgba(255,255,255,0.06);border-left:1px solid rgba(255,255,255,0.07);background:rgba(74,222,128,0.04)">Unlimited</td></tr>
-          <tr><td style="padding:10px 14px;font-size:12px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,0.06)">Application Tracking</td><td style="padding:10px 14px;text-align:center;font-size:12px;color:rgba(255,255,255,0.5);border-bottom:1px solid rgba(255,255,255,0.06);border-left:1px solid rgba(255,255,255,0.07)">Unlimited</td><td style="padding:10px 14px;text-align:center;font-size:12px;font-weight:600;color:#4ADE80;border-bottom:1px solid rgba(255,255,255,0.06);border-left:1px solid rgba(255,255,255,0.07);background:rgba(74,222,128,0.03)">Unlimited</td></tr>
-          <tr><td style="padding:10px 14px;font-size:12px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)">Analytics</td><td style="padding:10px 14px;text-align:center;font-size:12px;color:rgba(255,255,255,0.5);border-bottom:1px solid rgba(255,255,255,0.06);border-left:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.02)">Basic</td><td style="padding:10px 14px;text-align:center;font-size:12px;font-weight:600;color:#4ADE80;border-bottom:1px solid rgba(255,255,255,0.06);border-left:1px solid rgba(255,255,255,0.07);background:rgba(74,222,128,0.04)">Advanced</td></tr>
-          <tr><td style="padding:10px 14px;font-size:12px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,0.06)">Priority Support</td><td style="padding:10px 14px;text-align:center;font-size:12px;color:#F87171;border-bottom:1px solid rgba(255,255,255,0.06);border-left:1px solid rgba(255,255,255,0.07)">✗</td><td style="padding:10px 14px;text-align:center;font-size:12px;font-weight:600;color:#4ADE80;border-bottom:1px solid rgba(255,255,255,0.06);border-left:1px solid rgba(255,255,255,0.07);background:rgba(74,222,128,0.03)">✓</td></tr>
-          <tr><td style="padding:10px 14px;font-size:12px;color:var(--muted)">PDF Export</td><td style="padding:10px 14px;text-align:center;font-size:12px;color:#4ADE80;border-left:1px solid rgba(255,255,255,0.07)">✓</td><td style="padding:10px 14px;text-align:center;font-size:12px;font-weight:600;color:#4ADE80;border-left:1px solid rgba(255,255,255,0.07);background:rgba(74,222,128,0.03)">✓</td></tr>
-        </tbody>
-      </table>
+
+    <!-- Main pricing grid: Free (small/muted) + Pro (dominant) -->
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:14px;flex:1;min-height:0">
+
+      <!-- FREE card — muted, clearly inferior -->
+      <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:0">
+        <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px">Free</div>
+        <div style="font-size:36px;font-weight:900;color:rgba(255,255,255,0.5);letter-spacing:-1px;line-height:1">$0</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:4px;margin-bottom:20px">forever</div>
+        <div style="display:flex;flex-direction:column;gap:9px;flex:1">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.35)"><span style="color:#F87171;font-size:13px;flex-shrink:0">✗</span>3 AI resume tailors/mo</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.35)"><span style="color:#F87171;font-size:13px;flex-shrink:0">✗</span>3 cover letters/mo</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.35)"><span style="color:rgba(255,255,255,0.25);font-size:13px;flex-shrink:0">✓</span>Application tracking</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.2)"><span style="font-size:13px;flex-shrink:0">🔒</span>Advanced analytics</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.2)"><span style="font-size:13px;flex-shrink:0">🔒</span>Priority support</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.2)"><span style="font-size:13px;flex-shrink:0">🔒</span>Unlimited AI access</div>
+        </div>
+        <div style="margin-top:18px;padding:10px;border:1px solid rgba(255,255,255,0.07);border-radius:9px;text-align:center;font-size:12px;color:rgba(255,255,255,0.25);font-weight:600">Current Plan</div>
+      </div>
+
+      <!-- PRO card — dominant, glowing -->
+      <div style="background:rgba(10,10,10,0.9);border:1.5px solid rgba(74,222,128,0.4);border-radius:16px;padding:26px;display:flex;flex-direction:column;position:relative;box-shadow:0 0 40px rgba(74,222,128,0.12),0 0 80px rgba(74,222,128,0.06);overflow:hidden">
+        <!-- glow overlay -->
+        <div style="position:absolute;top:-60px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(74,222,128,0.1) 0%,transparent 70%);pointer-events:none"></div>
+        <!-- Most Popular badge -->
+        <div style="position:absolute;top:20px;right:20px;background:#4ADE80;color:#080C08;font-size:10px;font-weight:800;padding:3px 11px;border-radius:99px;letter-spacing:0.3px">MOST POPULAR</div>
+
+        <div style="font-size:12px;font-weight:700;color:#4ADE80;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px">Pro</div>
+
+        <!-- Price display -->
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+          <span id="proPrice" style="font-size:52px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1">$12</span>
+          <span id="proPer" style="font-size:14px;color:rgba(255,255,255,0.45);font-weight:500">/month</span>
+        </div>
+        <div id="proSubprice" style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:6px;min-height:18px"></div>
+        <div id="proYearlySavings" style="font-size:12px;color:#4ADE80;font-weight:600;margin-bottom:22px;min-height:18px"></div>
+
+        <!-- Feature list -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;flex:1">
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)"><span style="width:18px;height:18px;background:rgba(74,222,128,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:#4ADE80">✓</span>Unlimited AI resume tailors</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)"><span style="width:18px;height:18px;background:rgba(74,222,128,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:#4ADE80">✓</span>Unlimited cover letters</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)"><span style="width:18px;height:18px;background:rgba(74,222,128,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:#4ADE80">✓</span>Unlimited application tracking</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)"><span style="width:18px;height:18px;background:rgba(74,222,128,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:#4ADE80">✓</span>Advanced analytics</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)"><span style="width:18px;height:18px;background:rgba(74,222,128,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:#4ADE80">✓</span>Priority support</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)"><span style="width:18px;height:18px;background:rgba(74,222,128,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:#4ADE80">✓</span>PDF export</div>
+        </div>
+
+        <!-- CTA -->
+        <button onclick="showToast('Pro plan coming soon!')" style="width:100%;padding:16px;border-radius:12px;border:none;background:#4ADE80;color:#080C08;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-0.3px;box-shadow:0 4px 24px rgba(74,222,128,0.4);transition:all 0.15s" onmouseover="this.style.background='#22C55E';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#4ADE80';this.style.transform=''">
+          Get Pro — <span id="ctaPrice">$12/mo</span>
+        </button>
+        <div style="text-align:center;font-size:11px;color:rgba(255,255,255,0.35);margin-top:8px">Fall recruiting opens in April — get unlimited access before it starts</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:7px">
+          <span style="font-size:10px;color:rgba(255,255,255,0.25);display:flex;align-items:center;gap:4px"><span style="color:#4ADE80">✓</span> Cancel anytime</span>
+          <span style="font-size:10px;color:rgba(255,255,255,0.25);display:flex;align-items:center;gap:4px"><span style="color:#4ADE80">✓</span> No credit card games</span>
+          <span style="font-size:10px;color:rgba(255,255,255,0.25);display:flex;align-items:center;gap:4px"><span style="color:#4ADE80">✓</span> Instant access</span>
+        </div>
+      </div>
     </div>
+
+    <!-- Social proof + comparison row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px">
+        <div style="font-size:18px;margin-bottom:8px">🎉</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.6;margin-bottom:10px">"Got a Google interview after tailoring my resume with Stacked. Went from 0 callbacks to 3 in one week."</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);font-weight:600">— CS student, UCLA</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px">
+        <div style="font-size:18px;margin-bottom:8px">🚀</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.6;margin-bottom:10px">"The cover letter tool writes better than I do. Used it for 12 applications and landed my first internship offer."</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);font-weight:600">— ME student, Georgia Tech</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px">
+        <div style="font-size:18px;margin-bottom:8px">💼</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.6;margin-bottom:10px">"I was burning through my 3 free tailors in 2 days. Upgraded and haven't looked back — worth every dollar."</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);font-weight:600">— Finance student, NYU</div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -2279,6 +2325,45 @@ function downloadResumePDF() {
       showToast('PDF generation failed — try again.');
       console.error('[PDF]', err);
     });
+}
+
+// ── BILLING ───────────────────────────────────────────────────
+let billingYearly = false;
+function toggleBilling() {
+  billingYearly = !billingYearly;
+  const knob = document.getElementById('billToggleKnob');
+  const toggle = document.getElementById('billToggle');
+  const monthlyLabel = document.getElementById('bill-monthly-label');
+  const yearlyLabel = document.getElementById('bill-yearly-label');
+  const saveBadge = document.getElementById('bill-save-badge');
+  const proPrice = document.getElementById('proPrice');
+  const proPer = document.getElementById('proPer');
+  const proSub = document.getElementById('proSubprice');
+  const proSavings = document.getElementById('proYearlySavings');
+  const ctaPrice = document.getElementById('ctaPrice');
+  if (billingYearly) {
+    knob.style.left = '23px';
+    toggle.style.background = 'rgba(74,222,128,0.5)';
+    monthlyLabel.style.color = 'rgba(255,255,255,0.4)';
+    yearlyLabel.style.color = 'var(--text)';
+    saveBadge.style.opacity = '1';
+    proPrice.textContent = '$79';
+    proPer.textContent = '/year';
+    proSub.textContent = 'Just $6.58/mo — billed annually';
+    proSavings.textContent = 'You save $65 vs monthly billing';
+    ctaPrice.textContent = '$79/year';
+  } else {
+    knob.style.left = '3px';
+    toggle.style.background = 'rgba(74,222,128,0.25)';
+    monthlyLabel.style.color = 'var(--text)';
+    yearlyLabel.style.color = 'rgba(255,255,255,0.4)';
+    saveBadge.style.opacity = '0.4';
+    proPrice.textContent = '$12';
+    proPer.textContent = '/month';
+    proSub.textContent = '';
+    proSavings.textContent = '';
+    ctaPrice.textContent = '$12/mo';
+  }
 }
 
 // ── HELP CENTER ───────────────────────────────────────────────
