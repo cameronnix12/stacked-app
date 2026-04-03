@@ -187,44 +187,63 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 /* AI RESUME */
 .ai-layout{display:grid;grid-template-columns:42% 1fr;gap:18px;height:calc(100vh - 120px)}
 .ai-panel{overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-right:4px}
-.drop-zone{border:1.5px dashed var(--border-lit);border-radius:11px;padding:24px 16px;text-align:center;cursor:pointer;transition:all 0.2s;background:rgba(26,158,79,0.02)}
-.drop-zone:hover,.drop-zone.drag-over{border-color:var(--primary-lt);background:rgba(26,158,79,0.05)}
-.drop-zone p{font-size:12px;color:var(--muted);margin-top:6px}
-.drop-zone strong{color:var(--primary-lt)}
-.drop-zone-icon{width:36px;height:36px;background:rgba(26,158,79,0.1);border-radius:9px;display:flex;align-items:center;justify-content:center;margin:0 auto 6px}
-.drop-zone-icon svg{width:20px;height:20px;color:var(--primary)}
-.file-uploaded{display:flex;align-items:center;gap:10px;padding:10px 13px;background:rgba(26,158,79,0.07);border:1px solid rgba(26,158,79,0.18);border-radius:9px}
-.file-uploaded svg{width:16px;height:16px;color:var(--primary);flex-shrink:0}
-.file-name{font-size:12px;font-weight:600;color:var(--primary-lt);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.file-remove{background:none;border:none;cursor:pointer;color:var(--muted);display:flex;padding:2px;transition:color 0.15s}
-.file-remove:hover{color:var(--text)}
-.file-remove svg{width:12px;height:12px}
 .tone-toggle{display:flex;gap:5px;flex-wrap:wrap}
 .tone-btn{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;background:var(--bg-card2);border:1px solid var(--border);color:var(--muted);transition:all 0.15s;font-family:inherit}
 .tone-btn.active{background:rgba(26,158,79,0.12);border-color:var(--border-lit);color:var(--primary-lt)}
-.tone-btn:hover:not(.active){border-color:rgba(255,255,255,0.14);color:var(--text)}
+.tone-btn:hover:not(.active){color:var(--text)}
 .tailor-btn{width:100%;padding:13px;border-radius:11px;border:none;background:var(--primary);color:#fff;font-size:14px;font-weight:800;cursor:pointer;transition:all 0.2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px}
 .tailor-btn:hover{background:var(--primary-lt);transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,158,79,0.28)}
 .tailor-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
-.ai-preview-panel{overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-right:4px}
-.resume-preview-wrap{background:#fff;border-radius:10px;padding:26px 30px;color:#1a1a1a;font-size:12px;line-height:1.5;flex:1;box-shadow:0 0 0 1px rgba(255,255,255,0.08),0 16px 40px rgba(0,0,0,0.35)}
-.res-name{font-size:19px;font-weight:800;color:#111;margin-bottom:2px}
-.res-contact{color:#555;font-size:11px;margin-bottom:12px;padding-bottom:12px;border-bottom:1.5px solid #e5e5e5}
-.res-section{margin-bottom:14px}
-.res-section-title{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#1A9E4F;margin-bottom:7px;padding-bottom:3px;border-bottom:1px solid #e8f5e9}
-.res-job-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px}
-.res-job-title{font-weight:700;font-size:12px;color:#111}
-.res-job-company{font-size:11px;color:#444;font-weight:600}
-.res-job-date{font-size:11px;color:#777}
-.res-bullets{padding-left:0;list-style:none;margin-top:4px}
-.res-bullets li{font-size:11px;color:#333;margin-bottom:3px;padding-left:12px;position:relative;line-height:1.5}
-.res-bullets li::before{content:'•';position:absolute;left:0;color:#1A9E4F;font-weight:700}
-.res-keyword{background:rgba(26,158,79,0.12);color:#155D30;border-radius:3px;padding:0 3px;font-weight:600}
-.res-skill-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
-.res-skill-pill{font-size:10px;padding:2px 7px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;color:#155D30;font-weight:600}
-.empty-resume{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:300px;gap:10px;text-align:center;padding:24px}
-.empty-resume svg{width:32px;height:32px;color:rgba(99,122,110,0.4)}
+.jd-warning{display:none;align-items:center;gap:8px;padding:8px 12px;background:rgba(196,150,14,0.08);border:1px solid rgba(196,150,14,0.25);border-radius:8px;font-size:12px;color:#a07800;margin-top:-4px}
+.jd-warning svg{width:14px;height:14px;flex-shrink:0;color:#C4960E}
+
+/* RIGHT PANEL TABS */
+.ai-preview-panel{overflow-y:auto;display:flex;flex-direction:column;gap:0;padding-right:4px}
+.preview-tab-bar{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:0;background:var(--bg-card);border-radius:13px 13px 0 0;padding:0 16px;flex-shrink:0}
+.preview-tab{padding:11px 16px;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:color 0.15s,border-color 0.15s;user-select:none;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;margin-bottom:-1px}
+.preview-tab.active{color:var(--primary-lt);border-bottom-color:var(--primary)}
+.preview-tab:hover:not(.active){color:var(--text)}
+.preview-tab-content{display:none;flex-direction:column;gap:12px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-top:none;border-radius:0 0 13px 13px;flex:1;overflow-y:auto}
+.preview-tab-content.active{display:flex}
+
+/* BEFORE/AFTER TOGGLE */
+.ba-toggle{display:flex;gap:3px;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;padding:3px;width:fit-content}
+.ba-btn{padding:5px 13px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;color:var(--muted);transition:all 0.15s;border:none;background:transparent;font-family:inherit}
+.ba-btn.active{background:var(--primary);color:#fff}
+
+/* DOCUMENT / PAPER PREVIEW */
+.doc-wrap{background:#f0f0f0;border-radius:8px;padding:16px;display:flex;justify-content:center}
+.resume-preview-wrap{background:#fff;width:100%;max-width:660px;padding:32px 36px;color:#1a1a1a;font-size:11.5px;line-height:1.55;box-shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.10),0 0 0 1px rgba(0,0,0,0.04);border-radius:2px;font-family:'Plus Jakarta Sans',sans-serif}
+.res-name{font-size:20px;font-weight:800;color:#111;margin-bottom:1px;letter-spacing:-0.3px}
+.res-contact{color:#555;font-size:10.5px;margin-bottom:14px;padding-bottom:10px;border-bottom:1.5px solid #ddd;line-height:1.6}
+.res-section{margin-bottom:13px}
+.res-section-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#1A9E4F;margin-bottom:6px;padding-bottom:3px;border-bottom:1px solid #d8f0e3}
+.res-job-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px}
+.res-job-title{font-weight:700;font-size:11.5px;color:#111}
+.res-job-company{font-size:10.5px;color:#444;font-weight:600}
+.res-job-date{font-size:10.5px;color:#777;white-space:nowrap;margin-left:8px}
+.res-bullets{padding-left:0;list-style:none;margin-top:3px}
+.res-bullets li{font-size:10.5px;color:#2a2a2a;margin-bottom:2px;padding-left:11px;position:relative;line-height:1.55}
+.res-bullets li::before{content:'•';position:absolute;left:0;color:#1A9E4F}
+.res-skills-text{font-size:10.5px;color:#2a2a2a;line-height:1.9}
+.empty-resume{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:320px;gap:10px;text-align:center;padding:24px}
+.empty-resume svg{width:32px;height:32px;color:rgba(99,122,110,0.35)}
 .empty-resume p{font-size:13px;color:var(--muted)}
+
+/* DOWNLOAD CTA — prominent after generation */
+.dl-cta{width:100%;padding:13px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:inherit;align-items:center;justify-content:center;gap:8px}
+.dl-cta:hover{background:#178a44;transform:translateY(-1px);box-shadow:0 6px 18px rgba(26,158,79,0.28)}
+.dl-cta:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* INSIGHTS PANEL */
+.insights-kw-wrap{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.kw-match{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(26,158,79,0.1);color:#155D30;border:1px solid rgba(26,158,79,0.2)}
+.kw-miss{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(192,57,43,0.08);color:#C0392B;border:1px solid rgba(192,57,43,0.18)}
+.insights-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#888;margin-bottom:4px;margin-top:12px}
+.insights-label:first-child{margin-top:0}
+.insights-note{font-size:11px;color:#444;line-height:1.6;padding:9px 11px;background:#f8f8f8;border-radius:6px;border-left:3px solid #1A9E4F}
+.insights-warn{font-size:11px;color:#C0392B;line-height:1.6;padding:9px 11px;background:rgba(192,57,43,0.04);border-radius:6px;border-left:3px solid #C0392B}
+.score-explanation{font-size:11px;color:var(--muted);line-height:1.5;margin-top:8px;padding:8px 10px;background:var(--bg-card2);border-radius:7px;border-left:2px solid var(--border-lit)}
 
 /* CV BUILDER */
 .cv-layout{display:grid;grid-template-columns:50% 1fr;gap:18px;height:calc(100vh - 120px)}
@@ -560,32 +579,37 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <section class="view" id="view-ai-resume" aria-label="AI Resume Tailor">
   <div class="view-header">
     <h1>AI Resume Tailor</h1>
-    <p>Paste your resume or CV text, paste a job description, and get a Gemini-tailored version</p>
+    <p>Paste your resume and job description — get a tailored, ATS-optimized version in seconds</p>
   </div>
   <div class="ai-layout">
+    <!-- LEFT: Inputs -->
     <div class="ai-panel">
       <div class="card">
         <div class="section-title">
           <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
-          Step 1, Paste Your Current Resume or CV
+          Step 1 — Your Resume or CV
         </div>
         <div class="form-field">
-          <label class="form-label" for="resumeTextInput">Your resume or CV text</label>
-          <textarea class="form-textarea" id="resumeTextInput" rows="10" placeholder="Paste your full resume or CV here — include summary, experience, education, skills, and projects. The more detail you include, the better Gemini can tailor it."></textarea>
+          <label class="form-label" for="resumeTextInput">Paste your current resume text</label>
+          <textarea class="form-textarea" id="resumeTextInput" rows="9" placeholder="Paste your full resume — summary, experience, education, skills, and projects. The more detail, the better the output."></textarea>
         </div>
       </div>
       <div class="card">
         <div class="section-title">
           <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm3 1h6v4H7V5zm6 6H7v2h6v-2z" clip-rule="evenodd"/></svg>
-          Step 2, Paste the Job Description
+          Step 2 — Job Description
         </div>
         <div class="form-field">
-          <label class="form-label" for="jdInput">Job Description</label>
-          <textarea class="form-textarea" id="jdInput" rows="7" placeholder="Paste the full job description here. Include requirements, responsibilities, and any keywords you want the AI to focus on."></textarea>
+          <label class="form-label" for="jdInput">Paste the job description</label>
+          <textarea class="form-textarea" id="jdInput" rows="6" placeholder="Paste the full job description including requirements and responsibilities." oninput="checkJDLength()"></textarea>
         </div>
-        <div class="form-field">
+        <div class="jd-warning" id="jdWarning">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+          Job description may be incomplete — results may be less accurate.
+        </div>
+        <div class="form-field" style="margin-top:8px">
           <label class="form-label" for="targetRole">Target Role Title</label>
-          <input class="form-input" id="targetRole" type="text" placeholder="e.g. Software Engineer Intern at Google">
+          <input class="form-input" id="targetRole" type="text" placeholder="e.g. Embedded Systems Intern at SpaceX">
         </div>
         <div class="form-field">
           <label class="form-label">Tone</label>
@@ -601,57 +625,80 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         Tailor My Resume
       </button>
     </div>
+
+    <!-- RIGHT: Tabbed preview -->
     <div class="ai-preview-panel">
-      <div id="resumeScoreCard" style="display:none" class="card">
-        <div class="section-title">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-          Resume Score
-        </div>
-        <div class="score-card-inner">
-          <div class="ring-wrap">
-            <svg width="72" height="72" viewBox="0 0 72 72">
-              <circle cx="36" cy="36" r="28" fill="none" stroke="rgba(26,158,79,0.1)" stroke-width="6"/>
-              <circle id="scoreRingCircle" cx="36" cy="36" r="28" fill="none" stroke="#1A9E4F" stroke-width="6" stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="175.9" transform="rotate(-90 36 36)" style="transition:stroke-dashoffset 0.8s ease"/>
-            </svg>
-            <div class="ring-center"><div class="ring-val" id="scoreRingVal">0</div><div class="ring-label">/ 100</div></div>
-          </div>
-          <div class="score-detail">
-            <h3 id="scoreRingLabel">Calculating...</h3>
-            <p id="scoreRingRole" style="font-size:11px;color:var(--muted)"></p>
-            <div class="score-badges" id="scoreBadges"></div>
-          </div>
-        </div>
-        <div class="score-metrics">
-          <div class="metric-row"><span class="metric-label">Keywords</span><div class="metric-bar-wrap"><div class="metric-bar" id="metricKeywords" style="width:0%"></div></div><span class="metric-val" id="metricKeywordsVal">0%</span></div>
-          <div class="metric-row"><span class="metric-label">Impact</span><div class="metric-bar-wrap"><div class="metric-bar" id="metricImpact" style="width:0%"></div></div><span class="metric-val" id="metricImpactVal">0%</span></div>
-          <div class="metric-row"><span class="metric-label">ATS Friendly</span><div class="metric-bar-wrap"><div class="metric-bar" id="metricAts" style="width:0%"></div></div><span class="metric-val" id="metricAtsVal">0%</span></div>
-        </div>
-      </div>
-      <!-- ATS Insights — separate from the resume preview -->
-      <div id="atsInsightsPanel" style="display:none" class="card">
-        <div class="section-title" style="margin-bottom:10px">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-          Resume Insights
-        </div>
-        <div id="insightsContent"></div>
+      <!-- Tab bar -->
+      <div class="preview-tab-bar" id="previewTabBar">
+        <button class="preview-tab active" onclick="switchPreviewTab('resume',this)" id="tabBtnResume">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" style="display:inline;vertical-align:-2px;margin-right:5px"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+          Resume
+        </button>
+        <button class="preview-tab" onclick="switchPreviewTab('insights',this)" id="tabBtnInsights">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" style="display:inline;vertical-align:-2px;margin-right:5px"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          Insights
+        </button>
       </div>
 
-      <div class="card" style="flex:1;display:flex;flex-direction:column">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <div class="section-title" style="margin-bottom:0">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
-            Tailored Resume
+      <!-- RESUME TAB -->
+      <div class="preview-tab-content active" id="tabResume">
+        <!-- Download CTA — primary, prominent -->
+        <button class="dl-cta" id="downloadResumeBtn" onclick="downloadResumePDF()" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          Download PDF
+        </button>
+        <!-- Before/After toggle -->
+        <div id="baToggleWrap" style="display:none">
+          <div class="ba-toggle">
+            <button class="ba-btn" onclick="showBAView('original',this)">Original</button>
+            <button class="ba-btn active" onclick="showBAView('tailored',this)">Tailored</button>
           </div>
-          <button class="btn btn-primary" id="downloadResumeBtn" style="display:none" onclick="downloadResumePDF()">
-            <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-            Download PDF
-          </button>
         </div>
+        <!-- Document preview -->
         <div id="resumePreviewOutput">
           <div class="empty-resume">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
-            <p>Upload your resume and paste a job description, then click "Tailor My Resume" to generate a customized version you can download.</p>
+            <p>Paste your resume and a job description, then click <strong style="color:var(--primary)">Tailor My Resume</strong> to generate your polished, ATS-ready version.</p>
           </div>
+        </div>
+      </div>
+
+      <!-- INSIGHTS TAB -->
+      <div class="preview-tab-content" id="tabInsights">
+        <!-- Score card lives here -->
+        <div id="resumeScoreCard" style="display:none">
+          <div class="section-title" style="margin-bottom:10px">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            Resume Score
+          </div>
+          <div class="score-card-inner">
+            <div class="ring-wrap">
+              <svg width="72" height="72" viewBox="0 0 72 72">
+                <circle cx="36" cy="36" r="28" fill="none" stroke="rgba(26,158,79,0.1)" stroke-width="6"/>
+                <circle id="scoreRingCircle" cx="36" cy="36" r="28" fill="none" stroke="#1A9E4F" stroke-width="6" stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="175.9" transform="rotate(-90 36 36)" style="transition:stroke-dashoffset 0.8s ease"/>
+              </svg>
+              <div class="ring-center"><div class="ring-val" id="scoreRingVal">0</div><div class="ring-label">/ 100</div></div>
+            </div>
+            <div class="score-detail">
+              <h3 id="scoreRingLabel">Calculating...</h3>
+              <p id="scoreRingRole" style="font-size:11px;color:var(--muted)"></p>
+              <div class="score-badges" id="scoreBadges"></div>
+            </div>
+          </div>
+          <div class="score-metrics" style="margin-top:10px">
+            <div class="metric-row"><span class="metric-label">Keywords</span><div class="metric-bar-wrap"><div class="metric-bar" id="metricKeywords" style="width:0%"></div></div><span class="metric-val" id="metricKeywordsVal">0%</span></div>
+            <div class="metric-row"><span class="metric-label">ATS Friendly</span><div class="metric-bar-wrap"><div class="metric-bar" id="metricAts" style="width:0%"></div></div><span class="metric-val" id="metricAtsVal">0%</span></div>
+          </div>
+          <div class="score-explanation" id="scoreExplanation"></div>
+        </div>
+        <!-- Keyword + analysis breakdown -->
+        <div id="atsInsightsPanel" style="display:none">
+          <div id="insightsContent"></div>
+        </div>
+        <!-- Empty insights state -->
+        <div id="insightsEmpty" class="empty-resume">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <p>Run the tailor to see your score and keyword analysis.</p>
         </div>
       </div>
     </div>
@@ -1257,6 +1304,35 @@ function getProfileInfo() {
   };
 }
 
+// ── Tab switching ──────────────────────────────────────────────
+function switchPreviewTab(name, btn) {
+  document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.preview-tab-content').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+}
+
+// ── JD length check ────────────────────────────────────────────
+function checkJDLength() {
+  const jd = document.getElementById('jdInput').value.trim();
+  const warn = document.getElementById('jdWarning');
+  warn.style.display = (jd.length > 0 && jd.length < 150) ? 'flex' : 'none';
+}
+
+// ── Before / After toggle ──────────────────────────────────────
+let _originalResumeText = '';
+function showBAView(mode, btn) {
+  document.querySelectorAll('.ba-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const out = document.getElementById('resumePreviewOutput');
+  if (mode === 'original' && _originalResumeText) {
+    const lines = _originalResumeText.split('\n').filter(Boolean);
+    out.innerHTML = `<div class="doc-wrap"><div class="resume-preview-wrap" style="white-space:pre-wrap;font-size:10.5px;color:#333;line-height:1.7">${esc(_originalResumeText)}</div></div>`;
+  } else if (mode === 'tailored' && tailoredResumeData) {
+    renderResumePreviewFromGemini(tailoredResumeData, document.getElementById('targetRole').value.trim());
+  }
+}
+
 async function tailorResume() {
   const resumeText = document.getElementById('resumeTextInput').value.trim();
   const jd = document.getElementById('jdInput').value.trim();
@@ -1267,14 +1343,24 @@ async function tailorResume() {
     return;
   }
   if (!jd) { document.getElementById('jdInput').focus(); showToast('Please paste the job description first'); return; }
+
+  _originalResumeText = resumeText;
+
   const btn = document.getElementById('tailorBtn');
   const btnOriginal = '<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> Tailor My Resume';
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner"></div> Gemini is tailoring...';
+
   document.getElementById('resumeScoreCard').style.display = 'none';
   document.getElementById('atsInsightsPanel').style.display = 'none';
+  document.getElementById('insightsEmpty').style.display = 'flex';
   document.getElementById('downloadResumeBtn').style.display = 'none';
-  document.getElementById('resumePreviewOutput').innerHTML = '<div class="empty-resume"><div class="spinner" style="width:28px;height:28px;border-width:3px;margin:0 auto 14px"></div><p>Gemini is reading your resume and the job description...</p></div>';
+  document.getElementById('baToggleWrap').style.display = 'none';
+  document.getElementById('resumePreviewOutput').innerHTML = '<div class="empty-resume"><div class="spinner" style="width:28px;height:28px;border-width:3px;margin:0 auto 14px"></div><p>Gemini is reading your resume and the job description…</p></div>';
+
+  // Switch to Resume tab while loading
+  switchPreviewTab('resume', document.getElementById('tabBtnResume'));
+
   try {
     const res = await fetch('/api/tailor', {
       method: 'POST',
@@ -1289,9 +1375,13 @@ async function tailorResume() {
     renderInsightsPanel(json.data);
     document.getElementById('resumeScoreCard').style.display = '';
     document.getElementById('atsInsightsPanel').style.display = '';
+    document.getElementById('insightsEmpty').style.display = 'none';
     document.getElementById('downloadResumeBtn').style.display = '';
+    document.getElementById('baToggleWrap').style.display = '';
+    // Reset BA toggle to Tailored
+    document.querySelectorAll('.ba-btn').forEach((b,i) => b.classList.toggle('active', i === 1));
   } catch (err) {
-    document.getElementById('resumePreviewOutput').innerHTML = `<div class="empty-resume"><p style="color:#C0392B;font-weight:600">Error: ${esc(err.message)}</p><p style="font-size:11px;margin-top:6px;color:var(--muted)">Make sure GEMINI_API_KEY is set and try again.</p></div>`;
+    document.getElementById('resumePreviewOutput').innerHTML = `<div class="empty-resume"><p style="color:#C0392B;font-weight:600">Error: ${esc(err.message)}</p><p style="font-size:11px;margin-top:6px;color:var(--muted)">Make sure your inputs are complete and try again.</p></div>`;
     showToast('Error: ' + err.message);
   } finally {
     btn.disabled = false;
@@ -1306,7 +1396,7 @@ function renderResumePreviewFromGemini(d, role) {
 
   const expHtml = (d.tailoredExperience || []).map(e => {
     const bullets = Array.isArray(e.bullets) ? e.bullets : [];
-    return `<div class="res-section">
+    return `<div style="margin-bottom:10px">
       <div class="res-job-header">
         <div><div class="res-job-title">${esc(e.role||'')}</div><div class="res-job-company">${esc(e.company||'')}</div></div>
         <div class="res-job-date">${esc(e.start||'')}${e.end ? ' \u2013 ' + esc(e.end) : ''}</div>
@@ -1317,7 +1407,7 @@ function renderResumePreviewFromGemini(d, role) {
 
   const projHtml = (d.tailoredProjects || []).map(proj => {
     const bullets = Array.isArray(proj.bullets) ? proj.bullets : [];
-    return `<div class="res-section">
+    return `<div style="margin-bottom:10px">
       <div class="res-job-header">
         <div><div class="res-job-title">${esc(proj.name||'')}</div>${proj.description ? `<div class="res-job-company">${esc(proj.description)}</div>` : ''}</div>
       </div>
@@ -1325,18 +1415,33 @@ function renderResumePreviewFromGemini(d, role) {
     </div>`;
   }).join('');
 
-  // Skills: clean comma-separated text — no chips, ATS-friendly
-  const skillText = (d.tailoredSkills || []).join(', ');
+  // Skills: grouped text format — no chips.
+  // If skills contain category prefixes like "Python, C++" we render as-is.
+  // Group every 4 into a line for readability.
+  const skills = (d.tailoredSkills || []);
+  let skillText = '';
+  if (skills.length > 0) {
+    // Detect if any skill already has a colon (e.g. "Languages: Python, C++")
+    const hasGroups = skills.some(s => String(s).includes(':'));
+    if (hasGroups) {
+      skillText = skills.map(s => esc(String(s))).join('<br>');
+    } else {
+      skillText = esc(skills.join(', '));
+    }
+  }
 
-  document.getElementById('resumePreviewOutput').innerHTML = `<div class="resume-preview-wrap" id="tailoredResumeEl">
-    <div class="res-name">${esc(p.name || 'Your Name')}</div>
-    ${contact ? `<div class="res-contact">${esc(contact)}</div>` : ''}
-    ${d.tailoredSummary ? `<div class="res-section"><div class="res-section-title">Summary</div><p style="font-size:11px;color:#333;line-height:1.6">${esc(d.tailoredSummary)}</p></div>` : ''}
-    ${expHtml ? `<div class="res-section"><div class="res-section-title">Experience</div>${expHtml}</div>` : ''}
-    ${projHtml ? `<div class="res-section"><div class="res-section-title">Projects</div>${projHtml}</div>` : ''}
-    ${p.uni ? `<div class="res-section"><div class="res-section-title">Education</div><div class="res-job-header"><div><div class="res-job-title">${esc(p.major||'')}</div><div class="res-job-company">${esc(p.uni)}</div></div><div class="res-job-date">${esc(p.gradyear||'')}</div></div>${p.gpa ? `<div style="font-size:11px;color:#555;margin-top:3px">GPA: ${esc(p.gpa)}</div>` : ''}</div>` : ''}
-    ${skillText ? `<div class="res-section"><div class="res-section-title">Skills</div><p class="res-skills-text">${esc(skillText)}</p></div>` : ''}
-  </div>`;
+  document.getElementById('resumePreviewOutput').innerHTML = `
+    <div class="doc-wrap">
+      <div class="resume-preview-wrap" id="tailoredResumeEl">
+        <div class="res-name">${esc(p.name || 'Your Name')}</div>
+        ${contact ? `<div class="res-contact">${esc(contact)}</div>` : ''}
+        ${d.tailoredSummary ? `<div class="res-section"><div class="res-section-title">Summary</div><p style="font-size:10.5px;color:#2a2a2a;line-height:1.65;margin-top:3px">${esc(d.tailoredSummary)}</p></div>` : ''}
+        ${expHtml ? `<div class="res-section"><div class="res-section-title">Experience</div>${expHtml}</div>` : ''}
+        ${projHtml ? `<div class="res-section"><div class="res-section-title">Projects</div>${projHtml}</div>` : ''}
+        ${p.uni ? `<div class="res-section"><div class="res-section-title">Education</div><div class="res-job-header"><div><div class="res-job-title">${esc(p.major||'')}</div><div class="res-job-company">${esc(p.uni)}</div></div><div class="res-job-date">${esc(p.gradyear||'')}</div></div>${p.gpa ? `<div style="font-size:10.5px;color:#555;margin-top:2px">GPA: ${esc(p.gpa)}</div>` : ''}</div>` : ''}
+        ${skillText ? `<div class="res-section"><div class="res-section-title">Skills</div><p class="res-skills-text">${skillText}</p></div>` : ''}
+      </div>
+    </div>`;
 }
 
 function computeATSScore(d) {
@@ -1369,7 +1474,7 @@ function computeATSScore(d) {
 }
 
 function renderScoreCard(d) {
-  const { score, kwPct, bulletPct, atsFriendly } = computeATSScore(d);
+  const { score, kwPct, atsFriendly } = computeATSScore(d);
   const circumference = 175.9;
   const scoreEl = document.getElementById('scoreRingVal');
   const circle  = document.getElementById('scoreRingCircle');
@@ -1380,11 +1485,12 @@ function renderScoreCard(d) {
     circle.style.strokeDashoffset = circumference - (circumference * cur / 100);
     if (cur >= score) clearInterval(timer);
   }, 18);
-  document.getElementById('scoreRingLabel').textContent =
-    score >= 92 ? 'Excellent' : score >= 82 ? 'Strong' : score >= 75 ? 'Good' : 'Fair';
+  const label = score >= 92 ? 'Excellent' : score >= 82 ? 'Strong' : score >= 75 ? 'Good' : 'Fair';
+  document.getElementById('scoreRingLabel').textContent = label;
   document.getElementById('scoreRingRole').textContent =
     document.getElementById('targetRole').value.trim() || 'Tailored resume';
   const matched = (d.matchedKeywords || []).length;
+  const missing = (d.missingKeywords || []).slice(0, 3);
   const badges = ['ATS Optimized'];
   if (matched > 0) badges.push(matched + ' Keywords Matched');
   document.getElementById('scoreBadges').innerHTML =
@@ -1392,11 +1498,20 @@ function renderScoreCard(d) {
   setTimeout(() => {
     document.getElementById('metricKeywords').style.width = kwPct + '%';
     document.getElementById('metricKeywordsVal').textContent = kwPct + '%';
-    document.getElementById('metricImpact').style.width = bulletPct + '%';
-    document.getElementById('metricImpactVal').textContent = bulletPct + '%';
     document.getElementById('metricAts').style.width = atsFriendly + '%';
     document.getElementById('metricAtsVal').textContent = atsFriendly + '%';
   }, 300);
+  // 1-line score explanation
+  const role = document.getElementById('targetRole').value.trim();
+  let explanation = '';
+  if (score >= 88) {
+    explanation = `Strong alignment${role ? ' with ' + role + ' roles' : ''}. Resume is well-targeted and ATS-ready.`;
+  } else if (kwPct >= 65) {
+    explanation = `Good keyword coverage${missing.length ? ', but missing: ' + missing.map(k => String(k)).join(', ') + '.' : '.'}`;
+  } else {
+    explanation = `Moderate alignment${missing.length ? '. Key gaps: ' + missing.map(k => String(k)).join(', ') + '.' : ' — consider adding more role-specific language.'}`;
+  }
+  document.getElementById('scoreExplanation').textContent = explanation;
 }
 
 function renderInsightsPanel(d) {
@@ -1422,12 +1537,12 @@ function renderInsightsPanel(d) {
       <div class="insights-note">${esc(atsNotes)}</div>`;
   }
   if (ranked.length) {
-    html += `<div class="insights-label">Content Ranked by Relevance</div>
-      <ol style="font-size:11px;color:#555;padding-left:16px;line-height:1.8">${ranked.map(r => `<li>${esc(String(r))}</li>`).join('')}</ol>`;
+    html += `<div class="insights-label">Why This Resume Works</div>
+      <ol style="font-size:11px;color:#444;padding-left:16px;line-height:1.9">${ranked.map(r => `<li>${esc(String(r))}</li>`).join('')}</ol>`;
   }
   if (removed.length) {
-    html += `<div class="insights-label">Downplayed / Removed</div>
-      <ul style="font-size:11px;color:#555;padding-left:16px;line-height:1.8">${removed.map(r => `<li>${esc(String(r))}</li>`).join('')}</ul>`;
+    html += `<div class="insights-label">Less Relevant Experience</div>
+      <ul style="font-size:11px;color:#555;padding-left:16px;line-height:1.9">${removed.map(r => `<li>${esc(String(r))}</li>`).join('')}</ul>`;
   }
   if (warnings.length) {
     html += `<div class="insights-label">Honesty Flags</div>
@@ -1448,17 +1563,41 @@ function downloadResumePDF() {
   const btn = document.getElementById('downloadResumeBtn');
   const originalHTML = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Generating...';
+  btn.innerHTML = '<div class="spinner" style="border-color:rgba(255,255,255,0.3);border-top-color:#fff"></div> Generating PDF…';
 
-  // Clone element so we can inject print-optimized inline styles without touching the preview
+  // Clone only the paper element — no app chrome, no doc-wrap background
   const clone = el.cloneNode(true);
-  clone.style.cssText = 'font-family:\'Plus Jakarta Sans\',sans-serif;font-size:12px;color:#1a1a1a;padding:28px 36px;max-width:760px;background:#fff';
+  clone.style.cssText = [
+    'font-family:\'Plus Jakarta Sans\',Arial,sans-serif',
+    'font-size:11.5px',
+    'color:#1a1a1a',
+    'padding:32px 40px',
+    'max-width:800px',
+    'background:#fff',
+    'box-shadow:none',
+    'border-radius:0',
+  ].join(';');
+
+  // Inline the bullet and section styles html2pdf can't pick up from external classes
+  clone.querySelectorAll('.res-section-title').forEach(el => {
+    el.style.cssText = 'font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#1A9E4F;margin-bottom:6px;padding-bottom:3px;border-bottom:1px solid #d8f0e3;display:block';
+  });
+  clone.querySelectorAll('.res-bullets li').forEach(li => {
+    li.style.cssText = 'font-size:10.5px;color:#2a2a2a;margin-bottom:2px;padding-left:11px;position:relative;line-height:1.55;list-style:none';
+    const bullet = li.querySelector('::before'); // can't directly, add via content
+    li.setAttribute('data-bullet','•');
+  });
+  clone.querySelectorAll('.res-job-title').forEach(el => { el.style.cssText = 'font-weight:700;font-size:11.5px;color:#111'; });
+  clone.querySelectorAll('.res-job-company').forEach(el => { el.style.cssText = 'font-size:10.5px;color:#444;font-weight:600'; });
+  clone.querySelectorAll('.res-job-date').forEach(el => { el.style.cssText = 'font-size:10.5px;color:#777;white-space:nowrap;margin-left:8px'; });
+  clone.querySelectorAll('.res-name').forEach(el => { el.style.cssText = 'font-size:20px;font-weight:800;color:#111;margin-bottom:1px;letter-spacing:-0.3px'; });
+  clone.querySelectorAll('.res-contact').forEach(el => { el.style.cssText = 'color:#555;font-size:10.5px;margin-bottom:14px;padding-bottom:10px;border-bottom:1.5px solid #ddd'; });
 
   const opt = {
-    margin:     [8, 8, 8, 8],
+    margin:     [10, 10, 10, 10],
     filename:   filename,
-    image:      { type: 'jpeg', quality: 0.97 },
-    html2canvas:{ scale: 2, useCORS: true, logging: false },
+    image:      { type: 'jpeg', quality: 0.98 },
+    html2canvas:{ scale: 2.5, useCORS: true, logging: false, letterRendering: true },
     jsPDF:      { unit: 'mm', format: 'a4', orientation: 'portrait' },
   };
 
@@ -1468,10 +1607,11 @@ function downloadResumePDF() {
       btn.innerHTML = originalHTML;
       showToast('PDF downloaded!');
     })
-    .catch(() => {
+    .catch(err => {
       btn.disabled = false;
       btn.innerHTML = originalHTML;
       showToast('PDF generation failed — try again.');
+      console.error('[PDF]', err);
     });
 }
 
