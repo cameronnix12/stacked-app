@@ -93,6 +93,7 @@ export async function onRequestPost(context) {
           responseMimeType: 'application/json',
           temperature: 0.3,
           maxOutputTokens: 16384,
+          thinkingConfig: { thinkingBudget: 0 },
           responseSchema: {
             type: 'OBJECT',
             properties: {
