@@ -107,43 +107,76 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .empty-title{font-size:14px;font-weight:700;color:var(--text)}
 .empty-sub{font-size:13px;color:var(--muted);max-width:260px;line-height:1.6}
 
-/* DASHBOARD */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:box-shadow 0.2s,transform 0.2s;position:relative;overflow:hidden;box-shadow:var(--shadow-sm)}
-.stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
-.stat-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px}
-.stat-value{font-size:30px;font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1}
-.stat-delta{font-size:11px;color:var(--primary);font-weight:600;margin-top:6px;display:flex;align-items:center;gap:3px}
-.dash-grid{display:grid;grid-template-columns:60% 1fr;gap:14px}
-.dash-left{display:flex;flex-direction:column;gap:14px}
-.dash-right{display:flex;flex-direction:column;gap:14px}
-.pipeline-bars{display:flex;flex-direction:column;gap:10px}
-.pipeline-row{display:flex;align-items:center;gap:10px}
-.pipeline-label{font-size:12px;color:var(--muted);font-weight:500;width:130px;flex-shrink:0}
-.pipeline-bar-wrap{flex:1;height:6px;background:#E2E8F0;border-radius:99px;overflow:hidden}
+/* ─── DARK DASHBOARD ────────────────────────────────────────── */
+#view-dashboard{background:#0A1209;margin:-28px -32px;padding:28px 32px;min-height:100vh;color:#fff}
+/* Header row */
+.dash-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:20px;flex-wrap:wrap}
+.dash-title-block h1{font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;line-height:1.2}
+.dash-title-block p{font-size:13px;color:rgba(255,255,255,0.4);margin-top:4px}
+.dash-kpi-row{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
+.dash-kpi{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 20px;min-width:108px;text-align:center;transition:border-color 0.2s,background 0.2s}
+.dash-kpi:hover{background:rgba(255,255,255,0.06);border-color:rgba(74,222,128,0.2)}
+.dash-kpi-val{font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;line-height:1}
+.dash-kpi-label{font-size:10px;color:rgba(255,255,255,0.38);font-weight:600;margin-top:4px;text-transform:uppercase;letter-spacing:0.5px}
+.dash-kpi-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;margin-top:7px;display:inline-block}
+.kpi-badge-lime{background:rgba(74,222,128,0.15);color:#4ADE80}
+.kpi-badge-yellow{background:rgba(251,191,36,0.15);color:#FBB924}
+.kpi-badge-blue{background:rgba(96,165,250,0.15);color:#60A5FA}
+.kpi-badge-muted{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.4)}
+/* Main grid */
+.dash-main-grid{display:grid;grid-template-columns:1fr 300px;gap:14px;margin-bottom:14px}
+.dash-pipeline-card{background:linear-gradient(135deg,#0D2318 0%,#071524 100%);border:1px solid rgba(74,222,128,0.12);border-radius:16px;padding:24px;position:relative;overflow:hidden}
+.dash-pipeline-card::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:radial-gradient(circle,rgba(74,222,128,0.08) 0%,transparent 70%);pointer-events:none}
+.dash-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.dash-card-header-title{font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.dash-card-header-title svg{width:16px;height:16px;color:#4ADE80}
+.dash-card-add-btn{font-size:12px;font-weight:600;color:#4ADE80;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);border-radius:8px;padding:5px 12px;cursor:pointer;font-family:inherit;transition:all 0.15s}
+.dash-card-add-btn:hover{background:rgba(74,222,128,0.18)}
+/* Pipeline bars dark */
+.pipeline-bars{display:flex;flex-direction:column;gap:13px}
+.pipeline-row{display:flex;align-items:center;gap:12px}
+.pipeline-label{font-size:12px;color:rgba(255,255,255,0.45);font-weight:500;width:120px;flex-shrink:0}
+.pipeline-bar-wrap{flex:1;height:6px;background:rgba(255,255,255,0.07);border-radius:99px;overflow:hidden}
 .pipeline-bar{height:100%;border-radius:99px;transition:width 0.7s cubic-bezier(0.34,1.2,0.64,1)}
-.pipeline-count{font-size:12px;font-weight:700;color:var(--text);width:18px;text-align:right}
+.pipeline-count{font-size:13px;font-weight:700;color:#fff;width:20px;text-align:right}
+/* Toolkit / actions card */
+.dash-toolkit-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:22px}
+.quick-actions{display:flex;flex-direction:column;gap:7px}
+.quick-btn{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);transition:all 0.15s;font-family:inherit;text-align:left}
+.quick-btn:hover{border-color:rgba(74,222,128,0.3);background:rgba(74,222,128,0.07);color:#4ADE80}
+.quick-btn.quick-btn-primary{background:rgba(74,222,128,0.1);border-color:rgba(74,222,128,0.22);color:#4ADE80}
+.quick-btn.quick-btn-primary:hover{background:rgba(74,222,128,0.18)}
+.quick-btn svg{width:15px;height:15px;color:#4ADE80;flex-shrink:0}
+/* Bottom grid */
+.dash-bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.dash-dark-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:22px}
+/* Recent apps table dark */
 .app-table{width:100%;border-collapse:collapse}
-.app-table th{text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;padding:0 10px 10px;border-bottom:1px solid var(--border)}
-.app-table td{padding:10px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+.app-table th{text-align:left;font-size:11px;font-weight:600;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.5px;padding:0 10px 10px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.app-table td{padding:10px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.05);vertical-align:middle;color:rgba(255,255,255,0.65)}
 .app-table tbody tr{transition:background 0.15s;cursor:pointer}
-.app-table tbody tr:hover{background:#F8FAFC}
+.app-table tbody tr:hover{background:rgba(255,255,255,0.03)}
 .app-table tbody tr:last-child td{border-bottom:none}
 .company-cell{display:flex;align-items:center;gap:9px}
 .company-logo{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
-.company-name-text{font-weight:600;color:var(--text)}
-.deadline-item{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+.company-name-text{font-weight:600;color:#fff}
+/* Deadlines dark */
+.deadline-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
 .deadline-item:last-child{border-bottom:none}
-.deadline-company{font-size:13px;font-weight:600;color:var(--text)}
-.deadline-role{font-size:11px;color:var(--muted);margin-top:1px}
-.deadline-date{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px}
-.deadline-red{background:#FEF2F2;color:#DC2626}
-.deadline-yellow{background:#FFFBEB;color:#D97706}
-.deadline-green{background:#F0FDF4;color:#16A34A}
-.quick-actions{display:flex;flex-direction:column;gap:6px}
-.quick-btn{display:flex;align-items:center;gap:9px;padding:10px 13px;background:#fff;border:1px solid var(--border);border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text);transition:all 0.15s;font-family:inherit;text-align:left;box-shadow:var(--shadow-sm)}
-.quick-btn:hover{border-color:#BFDBFE;background:#EFF6FF;color:var(--primary);transform:translateX(2px)}
-.quick-btn svg{width:15px;height:15px;color:var(--primary);flex-shrink:0}
+.deadline-company{font-size:13px;font-weight:600;color:#fff}
+.deadline-role{font-size:11px;color:rgba(255,255,255,0.38);margin-top:2px}
+.deadline-date{font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px}
+.deadline-red{background:rgba(239,68,68,0.15);color:#F87171}
+.deadline-yellow{background:rgba(251,191,36,0.15);color:#FBB924}
+.deadline-green{background:rgba(74,222,128,0.15);color:#4ADE80}
+/* AI Insights strip */
+.dash-insights-strip{background:linear-gradient(135deg,rgba(74,222,128,0.06) 0%,rgba(74,222,128,0.02) 100%);border:1px solid rgba(74,222,128,0.14);border-radius:16px;padding:18px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.insights-icon{width:38px;height:38px;background:rgba(74,222,128,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.insights-icon svg{width:18px;height:18px;color:#4ADE80}
+.insights-label-text{font-size:11px;font-weight:700;color:#4ADE80;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px}
+.insights-chips{display:flex;gap:7px;flex-wrap:wrap}
+.insight-chip{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px 12px;font-size:12px;color:rgba(255,255,255,0.65);display:flex;align-items:center;gap:6px}
+.insight-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .ring-wrap{position:relative;flex-shrink:0}
 .ring-wrap svg{display:block}
 .ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
@@ -380,8 +413,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   #mobile-nav{display:block}
   #main{margin-left:0;padding-bottom:70px}
   .view{padding:14px}
-  .stats-row{grid-template-columns:repeat(2,1fr)}
-  .dash-grid,.ai-layout,.cv-layout,.analytics-grid-2,.profile-grid{grid-template-columns:1fr}
+  .dash-kpi-row{gap:6px}
+  .dash-kpi{min-width:80px;padding:10px 12px}
+  .dash-kpi-val{font-size:20px}
+  .dash-main-grid,.dash-bottom-grid,.ai-layout,.cv-layout,.analytics-grid-2,.profile-grid{grid-template-columns:1fr}
+  #view-dashboard{margin:-14px;padding:14px}
   .profile-section.full{grid-column:span 1}
   .analytics-grid-3,.insights-grid{grid-template-columns:1fr}
   .view-header-row{flex-direction:column;align-items:flex-start}
@@ -482,83 +518,114 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <!-- ══ DASHBOARD ══ -->
 <section class="view active" id="view-dashboard" aria-label="Dashboard">
-  <div class="view-header">
-    <h1 id="dashGreeting">Good morning</h1>
-    <p id="dashSubtitle">Here is your internship search overview</p>
+
+  <!-- Header: title + inline KPI stats -->
+  <div class="dash-header">
+    <div class="dash-title-block">
+      <h1 id="dashGreeting">Good morning</h1>
+      <p id="dashSubtitle">Here is your internship search overview</p>
+    </div>
+    <div class="dash-kpi-row" role="region" aria-label="Key statistics">
+      <div class="dash-kpi">
+        <div class="dash-kpi-val" id="stat-applied">0</div>
+        <div class="dash-kpi-label">Applied</div>
+        <div class="dash-kpi-badge kpi-badge-muted" id="stat-applied-delta">No apps yet</div>
+      </div>
+      <div class="dash-kpi">
+        <div class="dash-kpi-val" id="stat-interviews">0</div>
+        <div class="dash-kpi-label">Interviews</div>
+        <div class="dash-kpi-badge kpi-badge-muted" id="stat-int-delta">No interviews</div>
+      </div>
+      <div class="dash-kpi">
+        <div class="dash-kpi-val" id="stat-offers">0</div>
+        <div class="dash-kpi-label">Offers</div>
+        <div class="dash-kpi-badge kpi-badge-muted" id="stat-offer-delta">Keep applying</div>
+      </div>
+      <div class="dash-kpi">
+        <div class="dash-kpi-val" id="stat-rate">0%</div>
+        <div class="dash-kpi-label">Response Rate</div>
+        <div class="dash-kpi-badge kpi-badge-muted" id="stat-rate-delta">Needs data</div>
+      </div>
+    </div>
   </div>
-  <div class="stats-row" role="region" aria-label="Key statistics">
-    <div class="stat-card">
-      <div class="stat-label">Applied</div>
-      <div class="stat-value" id="stat-applied">0</div>
-      <div class="stat-delta" id="stat-applied-delta" style="color:var(--muted)">No applications yet</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Interviews</div>
-      <div class="stat-value" id="stat-interviews">0</div>
-      <div class="stat-delta" id="stat-int-delta" style="color:var(--muted)">No interviews yet</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Offers</div>
-      <div class="stat-value" id="stat-offers">0</div>
-      <div class="stat-delta" id="stat-offer-delta" style="color:var(--muted)">Keep applying</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Response Rate</div>
-      <div class="stat-value" id="stat-rate">0%</div>
-      <div class="stat-delta" id="stat-rate-delta" style="color:var(--muted)">Needs more data</div>
-    </div>
-  </div>
-  <div class="dash-grid">
-    <div class="dash-left">
-      <div class="card">
-        <div class="section-title">
+
+  <!-- Main grid: pipeline card + toolkit -->
+  <div class="dash-main-grid">
+    <div class="dash-pipeline-card">
+      <div class="dash-card-header">
+        <div class="dash-card-header-title">
           <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
           Application Pipeline
         </div>
-        <div class="pipeline-bars" id="pipelineBars" role="list" aria-label="Pipeline stages"></div>
+        <button class="dash-card-add-btn" onclick="openAddModal()">+ Add</button>
       </div>
-      <div class="card">
-        <div class="section-title">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
-          Recent Applications
-        </div>
-        <div id="recentAppsContainer"></div>
-      </div>
+      <div class="pipeline-bars" id="pipelineBars" role="list" aria-label="Pipeline stages"></div>
     </div>
-    <div class="dash-right">
-      <div class="card">
-        <div class="section-title">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
-          Upcoming Deadlines
-        </div>
-        <div id="deadlinesContainer"></div>
-      </div>
-      <div class="card">
-        <div class="section-title">
+    <div class="dash-toolkit-card">
+      <div class="dash-card-header">
+        <div class="dash-card-header-title">
           <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
           Quick Actions
         </div>
-        <div class="quick-actions">
-          <button class="quick-btn" onclick="openAddModal()">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
-            Add Application
-          </button>
-          <button class="quick-btn" onclick="switchView('ai-resume')">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-            Tailor Resume with AI
-          </button>
-          <button class="quick-btn" onclick="switchView('analytics')">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
-            View Analytics
-          </button>
-          <button class="quick-btn" onclick="switchView('cv-builder')">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
-            Build CV
-          </button>
-        </div>
+      </div>
+      <div class="quick-actions">
+        <button class="quick-btn quick-btn-primary" onclick="openAddModal()">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+          Add Application
+        </button>
+        <button class="quick-btn" onclick="switchView('ai-resume')">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          Tailor Resume with AI
+        </button>
+        <button class="quick-btn" onclick="switchView('analytics')">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+          View Analytics
+        </button>
+        <button class="quick-btn" onclick="switchView('cv-builder')">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+          Build CV
+        </button>
       </div>
     </div>
   </div>
+
+  <!-- Bottom grid: recent apps + deadlines -->
+  <div class="dash-bottom-grid">
+    <div class="dash-dark-card">
+      <div class="dash-card-header" style="margin-bottom:14px">
+        <div class="dash-card-header-title">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+          Recent Applications
+        </div>
+      </div>
+      <div id="recentAppsContainer"></div>
+    </div>
+    <div class="dash-dark-card">
+      <div class="dash-card-header" style="margin-bottom:14px">
+        <div class="dash-card-header-title">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+          Upcoming Deadlines
+        </div>
+      </div>
+      <div id="deadlinesContainer"></div>
+    </div>
+  </div>
+
+  <!-- AI Insights strip -->
+  <div class="dash-insights-strip" id="dashInsightsStrip">
+    <div class="insights-icon">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+    </div>
+    <div style="flex:1">
+      <div class="insights-label-text">AI Insights</div>
+      <div class="insights-chips" id="dashInsightsChips">
+        <div class="insight-chip"><span class="insight-dot" style="background:#4ADE80"></span>Track deadlines to stay ahead of the competition</div>
+        <div class="insight-chip"><span class="insight-dot" style="background:#60A5FA"></span>Tailor each resume to the job description for better ATS scores</div>
+        <div class="insight-chip"><span class="insight-dot" style="background:#FBB924"></span>Follow up 5–7 days after applying to boost response rates</div>
+      </div>
+    </div>
+  </div>
+
 </section>
 
 <!-- ══ APPLICATIONS ══ -->
@@ -1186,21 +1253,22 @@ function renderDashboard() {
   document.getElementById('stat-interviews').textContent = interviews;
   document.getElementById('stat-offers').textContent = offers;
   document.getElementById('stat-rate').textContent = rateNum + '%';
-  document.getElementById('stat-applied-delta').textContent = total === 0 ? 'No applications yet' : total + ' total tracked';
-  document.getElementById('stat-applied-delta').style.color = total === 0 ? 'var(--muted)' : 'var(--primary)';
-  document.getElementById('stat-int-delta').textContent = interviews === 0 ? 'No interviews yet' : interviews + ' active';
-  document.getElementById('stat-int-delta').style.color = interviews === 0 ? 'var(--muted)' : 'var(--teal)';
-  document.getElementById('stat-offer-delta').textContent = offers === 0 ? 'Keep applying' : offers + (offers===1?' offer':' offers');
-  document.getElementById('stat-offer-delta').style.color = offers === 0 ? 'var(--muted)' : 'var(--emerald)';
-  document.getElementById('stat-rate-delta').textContent = total < 3 ? 'Needs more data' : (rateNum >= 30 ? 'Above average' : 'Keep applying');
-  document.getElementById('stat-rate-delta').style.color = 'var(--muted)';
+  const setKpiBadge = (id, text, cls) => {
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className = 'dash-kpi-badge ' + cls;
+  };
+  setKpiBadge('stat-applied-delta', total === 0 ? 'No apps yet' : total + ' tracked', total === 0 ? 'kpi-badge-muted' : 'kpi-badge-blue');
+  setKpiBadge('stat-int-delta', interviews === 0 ? 'No interviews' : interviews + ' active', interviews === 0 ? 'kpi-badge-muted' : 'kpi-badge-lime');
+  setKpiBadge('stat-offer-delta', offers === 0 ? 'Keep applying' : offers + (offers===1?' offer':' offers'), offers === 0 ? 'kpi-badge-muted' : 'kpi-badge-lime');
+  setKpiBadge('stat-rate-delta', total < 3 ? 'Needs data' : (rateNum >= 30 ? 'Above avg' : 'Keep going'), total < 3 ? 'kpi-badge-muted' : (rateNum >= 30 ? 'kpi-badge-lime' : 'kpi-badge-yellow'));
 
   // Pipeline bars
   const stages = STATUSES.map(s => ({ s, count: applications.filter(a => a.status === s).length }));
   const maxCount = Math.max(...stages.map(x => x.count), 1);
   const pb = document.getElementById('pipelineBars');
   if (applications.length === 0) {
-    pb.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 20 20" fill="currentColor" width="24" height="24"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5z"/></svg></div><div class="empty-title">No applications yet</div><div class="empty-sub">Add your first application to see pipeline data</div></div>';
+    pb.innerHTML = '<div style="padding:20px 0;text-align:center;font-size:13px;color:rgba(255,255,255,0.3)">No applications yet — add one to see pipeline data</div>';
   } else {
     pb.innerHTML = stages.map(({ s, count }) =>
       `<div class="pipeline-row" role="listitem">
@@ -1215,10 +1283,10 @@ function renderDashboard() {
   const recent = [...applications].sort((a,b) => (b.appliedDate||'').localeCompare(a.appliedDate||'')).slice(0,5);
   const rac = document.getElementById('recentAppsContainer');
   if (recent.length === 0) {
-    rac.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 20 20" fill="currentColor" width="24" height="24"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg></div><div class="empty-title">No applications yet</div><div class="empty-sub">Track your first internship application to get started</div><button class="btn btn-primary" onclick="openAddModal()" style="margin-top:4px">Add Application</button></div>';
+    rac.innerHTML = '<div style="padding:20px 0;text-align:center;font-size:13px;color:rgba(255,255,255,0.3)">No applications yet</div>';
   } else {
     rac.innerHTML = `<table class="app-table" aria-label="Recent applications"><thead><tr><th>Company</th><th>Role</th><th>Date</th><th>Status</th></tr></thead><tbody>${
-      recent.map(a => `<tr onclick="openAddModal('${a.id}')"><td><div class="company-cell"><div class="company-logo" style="background:${a.color||'#4285F4'}">${(a.company[0]||'?').toUpperCase()}</div><span class="company-name-text">${esc(a.company)}</span></div></td><td style="color:var(--muted)">${esc(a.role)}</td><td style="color:var(--muted)">${a.appliedDate ? fmtDate(a.appliedDate) : ''}</td><td><span class="badge badge-${a.status}">${STATUS_LABELS[a.status]}</span></td></tr>`).join('')
+      recent.map(a => `<tr onclick="openAddModal('${a.id}')"><td><div class="company-cell"><div class="company-logo" style="background:${a.color||'#4285F4'}">${(a.company[0]||'?').toUpperCase()}</div><span class="company-name-text">${esc(a.company)}</span></div></td><td>${esc(a.role)}</td><td>${a.appliedDate ? fmtDate(a.appliedDate) : ''}</td><td><span class="badge badge-${a.status}">${STATUS_LABELS[a.status]}</span></td></tr>`).join('')
     }</tbody></table>`;
   }
 
@@ -1226,7 +1294,7 @@ function renderDashboard() {
   const dc = document.getElementById('deadlinesContainer');
   const withDeadlines = applications.filter(a => a.deadline && a.status !== 'offer' && a.status !== 'rejected').sort((a,b) => a.deadline.localeCompare(b.deadline)).slice(0,4);
   if (withDeadlines.length === 0) {
-    dc.innerHTML = '<div class="empty-state" style="padding:24px"><div class="empty-title" style="font-size:13px">No deadlines tracked</div><div class="empty-sub">Add deadline dates when creating applications</div></div>';
+    dc.innerHTML = '<div style="padding:20px 0;text-align:center;font-size:13px;color:rgba(255,255,255,0.3)">No deadlines tracked — add dates when creating applications</div>';
   } else {
     const today = new Date(); today.setHours(0,0,0,0);
     dc.innerHTML = withDeadlines.map(a => {
