@@ -212,20 +212,23 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .ba-btn.active{background:var(--primary);color:#fff}
 
 /* DOCUMENT / PAPER PREVIEW */
-.doc-wrap{background:#f0f0f0;border-radius:8px;padding:16px;display:flex;justify-content:center}
-.resume-preview-wrap{background:#fff;width:100%;max-width:660px;padding:32px 36px;color:#1a1a1a;font-size:11.5px;line-height:1.55;box-shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.10),0 0 0 1px rgba(0,0,0,0.04);border-radius:2px;font-family:'Plus Jakarta Sans',sans-serif}
-.res-name{font-size:20px;font-weight:800;color:#111;margin-bottom:1px;letter-spacing:-0.3px}
-.res-contact{color:#555;font-size:10.5px;margin-bottom:14px;padding-bottom:10px;border-bottom:1.5px solid #ddd;line-height:1.6}
-.res-section{margin-bottom:13px}
-.res-section-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#1A9E4F;margin-bottom:6px;padding-bottom:3px;border-bottom:1px solid #d8f0e3}
-.res-job-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px}
-.res-job-title{font-weight:700;font-size:11.5px;color:#111}
-.res-job-company{font-size:10.5px;color:#444;font-weight:600}
-.res-job-date{font-size:10.5px;color:#777;white-space:nowrap;margin-left:8px}
-.res-bullets{padding-left:0;list-style:none;margin-top:3px}
-.res-bullets li{font-size:10.5px;color:#2a2a2a;margin-bottom:2px;padding-left:11px;position:relative;line-height:1.55}
-.res-bullets li::before{content:'•';position:absolute;left:0;color:#1A9E4F}
-.res-skills-text{font-size:10.5px;color:#2a2a2a;line-height:1.9}
+.doc-wrap{background:#e8e8e8;border-radius:8px;padding:20px;display:flex;justify-content:center}
+.resume-preview-wrap{background:#fff;width:100%;max-width:680px;padding:36px 44px;color:#1a1a1a;font-size:11px;line-height:1.5;box-shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.10),0 0 0 1px rgba(0,0,0,0.04);border-radius:0;font-family:'Plus Jakarta Sans',sans-serif}
+.res-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px}
+.res-name{font-size:22px;font-weight:800;color:#0d0d0d;letter-spacing:-0.5px;line-height:1.1}
+.res-desired-role{font-size:11px;font-weight:600;color:#444;text-align:right;padding-top:4px}
+.res-contact{color:#555;font-size:10px;margin-bottom:14px;margin-top:5px;line-height:1.5}
+.res-section{margin-bottom:12px}
+.res-section-title{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:#111;margin-bottom:4px;padding-bottom:3px;border-bottom:1.5px solid #111;display:block}
+.res-job-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px;margin-top:7px}
+.res-job-title{font-weight:700;font-size:11px;color:#111}
+.res-job-company{font-size:10.5px;color:#444;font-style:italic}
+.res-job-date{font-size:10px;color:#555;white-space:nowrap;margin-left:8px}
+.res-bullets{padding-left:0;list-style:none;margin-top:3px;margin-bottom:0}
+.res-bullets li{font-size:10.5px;color:#222;margin-bottom:2px;padding-left:13px;position:relative;line-height:1.5}
+.res-bullets li::before{content:'•';position:absolute;left:0;color:#222}
+.res-skills-category{font-size:10.5px;color:#222;margin-bottom:3px;line-height:1.5}
+.res-skills-category strong{font-weight:700;color:#111}
 .empty-resume{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:320px;gap:10px;text-align:center;padding:24px}
 .empty-resume svg{width:32px;height:32px;color:rgba(99,122,110,0.35)}
 .empty-resume p{font-size:13px;color:var(--muted)}
@@ -397,8 +400,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .insights-label:first-child{margin-top:0}
 .insights-note{font-size:11px;color:#555;line-height:1.5;padding:8px 10px;background:#f9f9f9;border-radius:6px;border-left:3px solid #1A9E4F}
 .insights-warn{font-size:11px;color:#C0392B;line-height:1.5;padding:8px 10px;background:rgba(192,57,43,0.05);border-radius:6px;border-left:3px solid #C0392B}
-/* clean resume skills text */
-.res-skills-text{font-size:11px;color:#333;line-height:1.8}
+/* resume-preview-wrap print styles */
+.resume-preview-wrap,.cv-preview-wrap{font-family:'Plus Jakarta Sans',Arial,sans-serif!important}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
 </head>
@@ -1395,54 +1398,68 @@ async function tailorResume() {
 function renderResumePreviewFromGemini(d, role) {
   if (!d) return;
   const p = getProfileInfo();
-  const contact = [p.email, p.phone, p.linkedin, p.portfolio].filter(Boolean).join(' \u00b7 ');
 
+  // Contact line: phone · email · city · LinkedIn (pipe-separated)
+  const contactParts = [p.phone, p.email, p.linkedin, p.portfolio].filter(Boolean);
+  const contactLine = contactParts.map(s => esc(s)).join(' &nbsp;|&nbsp; ');
+
+  // Experience entries
   const expHtml = (d.tailoredExperience || []).map(e => {
     const bullets = Array.isArray(e.bullets) ? e.bullets : [];
-    return `<div style="margin-bottom:10px">
+    const dateStr = [e.start, e.end].filter(Boolean).join(' \u2013 ');
+    return `<div style="margin-bottom:9px">
       <div class="res-job-header">
-        <div><div class="res-job-title">${esc(e.role||'')}</div><div class="res-job-company">${esc(e.company||'')}</div></div>
-        <div class="res-job-date">${esc(e.start||'')}${e.end ? ' \u2013 ' + esc(e.end) : ''}</div>
+        <div><span class="res-job-title">${esc(e.role||'')}</span>${e.company ? `<span style="font-size:10.5px;color:#444;font-weight:400"> &mdash; <em>${esc(e.company)}</em></span>` : ''}</div>
+        ${dateStr ? `<div class="res-job-date">${esc(dateStr)}</div>` : ''}
       </div>
       ${bullets.length ? `<ul class="res-bullets">${bullets.map(b => `<li>${esc(String(b).replace(/^[•\-]\s*/,''))}</li>`).join('')}</ul>` : ''}
     </div>`;
   }).join('');
 
+  // Projects entries
   const projHtml = (d.tailoredProjects || []).map(proj => {
     const bullets = Array.isArray(proj.bullets) ? proj.bullets : [];
-    return `<div style="margin-bottom:10px">
+    return `<div style="margin-bottom:9px">
       <div class="res-job-header">
-        <div><div class="res-job-title">${esc(proj.name||'')}</div>${proj.description ? `<div class="res-job-company">${esc(proj.description)}</div>` : ''}</div>
+        <div><span class="res-job-title">${esc(proj.name||'')}</span>${proj.description ? `<span style="font-size:10.5px;color:#555;font-weight:400"> &mdash; ${esc(proj.description)}</span>` : ''}</div>
       </div>
       ${bullets.length ? `<ul class="res-bullets">${bullets.map(b => `<li>${esc(String(b).replace(/^[•\-]\s*/,''))}</li>`).join('')}</ul>` : ''}
     </div>`;
   }).join('');
 
-  // Skills: grouped text format — no chips.
-  // If skills contain category prefixes like "Python, C++" we render as-is.
-  // Group every 4 into a line for readability.
+  // Skills: if any item contains a colon treat each as a "Category: items" line,
+  // otherwise group all into a single "Technical Skills: ..." line.
   const skills = (d.tailoredSkills || []);
-  let skillText = '';
+  let skillsHtml = '';
   if (skills.length > 0) {
-    // Detect if any skill already has a colon (e.g. "Languages: Python, C++")
-    const hasGroups = skills.some(s => String(s).includes(':'));
-    if (hasGroups) {
-      skillText = skills.map(s => esc(String(s))).join('<br>');
+    const hasCategories = skills.some(s => String(s).includes(':'));
+    if (hasCategories) {
+      skillsHtml = skills.map(s => {
+        const raw = String(s);
+        const colonIdx = raw.indexOf(':');
+        if (colonIdx === -1) return `<div class="res-skills-category">${esc(raw)}</div>`;
+        const cat = raw.slice(0, colonIdx).trim();
+        const items = raw.slice(colonIdx + 1).trim();
+        return `<div class="res-skills-category"><strong>${esc(cat)}:</strong> ${esc(items)}</div>`;
+      }).join('');
     } else {
-      skillText = esc(skills.join(', '));
+      skillsHtml = `<div class="res-skills-category"><strong>Technical Skills:</strong> ${esc(skills.join(', '))}</div>`;
     }
   }
 
   document.getElementById('resumePreviewOutput').innerHTML = `
     <div class="doc-wrap">
       <div class="resume-preview-wrap" id="tailoredResumeEl">
-        <div class="res-name">${esc(p.name || 'Your Name')}</div>
-        ${contact ? `<div class="res-contact">${esc(contact)}</div>` : ''}
-        ${d.tailoredSummary ? `<div class="res-section"><div class="res-section-title">Summary</div><p style="font-size:10.5px;color:#2a2a2a;line-height:1.65;margin-top:3px">${esc(d.tailoredSummary)}</p></div>` : ''}
+        <div class="res-header">
+          <div class="res-name">${esc(p.name || 'Your Name')}</div>
+          ${role ? `<div class="res-desired-role">${esc(role)}</div>` : ''}
+        </div>
+        ${contactLine ? `<div class="res-contact">${contactLine}</div>` : ''}
+        ${d.tailoredSummary ? `<div class="res-section"><div class="res-section-title">Summary</div><p style="font-size:10.5px;color:#222;line-height:1.6;margin-top:5px">${esc(d.tailoredSummary)}</p></div>` : ''}
         ${expHtml ? `<div class="res-section"><div class="res-section-title">Experience</div>${expHtml}</div>` : ''}
         ${projHtml ? `<div class="res-section"><div class="res-section-title">Projects</div>${projHtml}</div>` : ''}
-        ${p.uni ? `<div class="res-section"><div class="res-section-title">Education</div><div class="res-job-header"><div><div class="res-job-title">${esc(p.major||'')}</div><div class="res-job-company">${esc(p.uni)}</div></div><div class="res-job-date">${esc(p.gradyear||'')}</div></div>${p.gpa ? `<div style="font-size:10.5px;color:#555;margin-top:2px">GPA: ${esc(p.gpa)}</div>` : ''}</div>` : ''}
-        ${skillText ? `<div class="res-section"><div class="res-section-title">Skills</div><p class="res-skills-text">${skillText}</p></div>` : ''}
+        ${p.uni ? `<div class="res-section"><div class="res-section-title">Education</div><div class="res-job-header"><div><span class="res-job-title">${esc(p.major||p.uni)}</span>${p.major ? `<span style="font-size:10.5px;color:#444;font-weight:400"> &mdash; <em>${esc(p.uni)}</em></span>` : ''}</div><div class="res-job-date">${esc(p.gradyear||'')}</div></div>${p.gpa ? `<div style="font-size:10px;color:#555;margin-top:2px">GPA: ${esc(p.gpa)}</div>` : ''}</div>` : ''}
+        ${skillsHtml ? `<div class="res-section"><div class="res-section-title">Skills</div><div style="margin-top:5px">${skillsHtml}</div></div>` : ''}
       </div>
     </div>`;
 }
@@ -1572,29 +1589,37 @@ function downloadResumePDF() {
   const clone = el.cloneNode(true);
   clone.style.cssText = [
     'font-family:\'Plus Jakarta Sans\',Arial,sans-serif',
-    'font-size:11.5px',
+    'font-size:11px',
     'color:#1a1a1a',
-    'padding:32px 40px',
+    'padding:36px 44px',
     'max-width:800px',
     'background:#fff',
     'box-shadow:none',
     'border-radius:0',
   ].join(';');
 
-  // Inline the bullet and section styles html2pdf can't pick up from external classes
-  clone.querySelectorAll('.res-section-title').forEach(el => {
-    el.style.cssText = 'font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#1A9E4F;margin-bottom:6px;padding-bottom:3px;border-bottom:1px solid #d8f0e3;display:block';
-  });
+  // Inline styles for html2pdf (pseudo-elements and borders don't transfer via class)
+  clone.querySelectorAll('.res-name').forEach(el => { el.style.cssText = 'font-size:22px;font-weight:800;color:#0d0d0d;letter-spacing:-0.5px;line-height:1.1'; });
+  clone.querySelectorAll('.res-desired-role').forEach(el => { el.style.cssText = 'font-size:11px;font-weight:600;color:#444;text-align:right;padding-top:4px'; });
+  clone.querySelectorAll('.res-header').forEach(el => { el.style.cssText = 'display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px'; });
+  clone.querySelectorAll('.res-contact').forEach(el => { el.style.cssText = 'color:#555;font-size:10px;margin-bottom:14px;margin-top:5px;line-height:1.5'; });
+  clone.querySelectorAll('.res-section-title').forEach(el => { el.style.cssText = 'font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:#111;margin-bottom:4px;padding-bottom:3px;border-bottom:1.5px solid #111;display:block'; });
+  clone.querySelectorAll('.res-job-header').forEach(el => { el.style.cssText = 'display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px;margin-top:7px'; });
+  clone.querySelectorAll('.res-job-title').forEach(el => { el.style.cssText = 'font-weight:700;font-size:11px;color:#111'; });
+  clone.querySelectorAll('.res-job-date').forEach(el => { el.style.cssText = 'font-size:10px;color:#555;white-space:nowrap;margin-left:8px'; });
+  clone.querySelectorAll('.res-bullets').forEach(el => { el.style.cssText = 'padding-left:0;list-style:none;margin-top:3px;margin-bottom:0'; });
   clone.querySelectorAll('.res-bullets li').forEach(li => {
-    li.style.cssText = 'font-size:10.5px;color:#2a2a2a;margin-bottom:2px;padding-left:11px;position:relative;line-height:1.55;list-style:none';
-    const bullet = li.querySelector('::before'); // can't directly, add via content
-    li.setAttribute('data-bullet','•');
+    li.style.cssText = 'font-size:10.5px;color:#222;margin-bottom:2px;padding-left:13px;position:relative;line-height:1.5;list-style:none';
+    // Inject bullet as a text node span since ::before won't render in html2pdf
+    if (!li.querySelector('.pdf-bullet')) {
+      const dot = document.createElement('span');
+      dot.className = 'pdf-bullet';
+      dot.style.cssText = 'position:absolute;left:0;color:#222';
+      dot.textContent = '•';
+      li.insertBefore(dot, li.firstChild);
+    }
   });
-  clone.querySelectorAll('.res-job-title').forEach(el => { el.style.cssText = 'font-weight:700;font-size:11.5px;color:#111'; });
-  clone.querySelectorAll('.res-job-company').forEach(el => { el.style.cssText = 'font-size:10.5px;color:#444;font-weight:600'; });
-  clone.querySelectorAll('.res-job-date').forEach(el => { el.style.cssText = 'font-size:10.5px;color:#777;white-space:nowrap;margin-left:8px'; });
-  clone.querySelectorAll('.res-name').forEach(el => { el.style.cssText = 'font-size:20px;font-weight:800;color:#111;margin-bottom:1px;letter-spacing:-0.3px'; });
-  clone.querySelectorAll('.res-contact').forEach(el => { el.style.cssText = 'color:#555;font-size:10.5px;margin-bottom:14px;padding-bottom:10px;border-bottom:1.5px solid #ddd'; });
+  clone.querySelectorAll('.res-skills-category').forEach(el => { el.style.cssText = 'font-size:10.5px;color:#222;margin-bottom:3px;line-height:1.5'; });
 
   const opt = {
     margin:     [10, 10, 10, 10],
