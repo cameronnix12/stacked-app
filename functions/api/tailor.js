@@ -93,7 +93,6 @@ export async function onRequestPost(context) {
           responseMimeType: 'application/json',
           temperature: 0.3,
           maxOutputTokens: 16384,
-          thinkingConfig: { thinkingBudget: 0 },
           responseSchema: {
             type: 'OBJECT',
             properties: {
@@ -125,16 +124,13 @@ export async function onRequestPost(context) {
               tailoredSkills:   { type: 'ARRAY', items: { type: 'STRING' } },
               matchedKeywords:  { type: 'ARRAY', items: { type: 'STRING' } },
               missingKeywords:  { type: 'ARRAY', items: { type: 'STRING' } },
-              atsNotes:                    { type: 'STRING' },
-              honestyWarnings:             { type: 'ARRAY', items: { type: 'STRING' } },
-              contentRanking:              { type: 'ARRAY', items: { type: 'STRING' } },
-              removedOrDeemphasizedContent:{ type: 'ARRAY', items: { type: 'STRING' } },
+              atsNotes:        { type: 'STRING' },
+              honestyWarnings: { type: 'ARRAY', items: { type: 'STRING' } },
             },
             required: [
               'tailoredSummary', 'tailoredExperience', 'tailoredProjects',
               'tailoredSkills', 'matchedKeywords', 'missingKeywords',
-              'atsNotes', 'honestyWarnings', 'contentRanking',
-              'removedOrDeemphasizedContent',
+              'atsNotes', 'honestyWarnings',
             ],
           },
         },
@@ -211,9 +207,7 @@ export async function onRequestPost(context) {
     matchedKeywords:    Array.isArray(tailoredData.matchedKeywords)    ? tailoredData.matchedKeywords    : [],
     missingKeywords:    Array.isArray(tailoredData.missingKeywords)    ? tailoredData.missingKeywords    : [],
     atsNotes:           tailoredData.atsNotes           || '',
-    honestyWarnings:              Array.isArray(tailoredData.honestyWarnings)              ? tailoredData.honestyWarnings              : [],
-    contentRanking:               Array.isArray(tailoredData.contentRanking)               ? tailoredData.contentRanking               : [],
-    removedOrDeemphasizedContent: Array.isArray(tailoredData.removedOrDeemphasizedContent) ? tailoredData.removedOrDeemphasizedContent : [],
+    honestyWarnings: Array.isArray(tailoredData.honestyWarnings) ? tailoredData.honestyWarnings : [],
   };
 
   return new Response(
@@ -299,9 +293,7 @@ Return a single JSON object with EXACTLY these fields — no markdown, no code f
   "matchedKeywords": ["exact keyword from JD that clearly appears in the tailored resume", "..."],
   "missingKeywords": ["important JD keyword that is NOT supported by the resume", "..."],
   "atsNotes": "1-2 sentence ATS feedback: what is strong and what gaps remain",
-  "honestyWarnings": ["specific content that was flagged as unverifiable or potentially embellished", "..."],
-  "contentRanking": ["most relevant role/project first", "second most relevant", "..."],
-  "removedOrDeemphasizedContent": ["brief description of what was cut or reduced and why", "..."]
+  "honestyWarnings": ["specific content that was flagged as unverifiable or potentially embellished", "..."]
 }`);
 
   return lines.join('\n');
