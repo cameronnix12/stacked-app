@@ -1,34 +1,44 @@
 // Cloudflare Pages Function — POST /api/tailor
-// Calls Anthropic Claude API server-side so the API key never touches the browser.
+// Accepts a PDF (base64) or plain text resume, calls Anthropic Claude via document API.
 
-const SYSTEM_INSTRUCTION = `You are an expert ATS-optimized resume and CV tailoring assistant.
+const SYSTEM_INSTRUCTION = `You are an expert ATS-optimized resume tailoring assistant.
 
-Your job is to transform a user's existing resume or CV into the strongest possible version for a specific job description, without adding false information.
+You will receive a candidate's resume PDF and a job description. Your job:
+1. Read the PDF to extract ALL content exactly as it appears — every role, date, company, project, education, skill, and bullet.
+2. Identify the original section order from the resume (e.g. Education before Experience, or Skills before Projects).
+3. Rewrite the resume content to be ATS-optimized for the provided job description, WITHOUT changing any facts.
 
 STRICT RULES:
-- Do NOT fabricate, invent, infer, or assume any experience, skill, certification, metric, title, employer, date, tool, responsibility, or achievement.
-- Do NOT add keywords unless they are clearly supported by the provided resume, CV, or user profile.
-- Do NOT change job titles, companies, dates, degree names, or timelines unless the source input explicitly shows a correction.
-- Do NOT inflate impact or seniority.
-- Do NOT copy the user's text mechanically if it can be improved.
-- Rewrite aggressively for clarity, keyword alignment, ATS readability, and relevance, while preserving truth.
+- Do NOT fabricate, invent, or assume any experience, skill, certification, metric, title, employer, date, tool, or achievement.
+- Do NOT change job titles, companies, dates, or degree names.
+- Do NOT inflate seniority or impact beyond what the source material supports.
+- Preserve every real role, project, and education entry — do not omit them.
 
-ATS GOALS:
-- Prioritize exact alignment with the job description.
-- Use strong action verbs.
-- Make bullets concise, specific, and scannable.
-- Front-load the most relevant words.
-- Prefer standard ATS-friendly phrasing over creative wording.
-- Do not keyword-stuff. Keep wording natural.
+REWRITING RULES:
+- Rewrite bullets with strong action verbs that mirror the job description language.
+- Be specific: each bullet must describe the action + context + result. No vague phrases like "helped with", "assisted team", "participated in", "worked on", or "demonstrated strong work ethic".
+- If two bullets say the same thing, combine them into one stronger bullet.
+- Front-load the most relevant keyword in each bullet.
 
-RESUME RULES:
-- Optimize for brevity, scannability, and job relevance.
-- Prefer 1 page for early-career candidates when possible.
+SUMMARY RULES:
+- If the resume already has a summary: rewrite it to target this specific role, 2-3 sentences.
+- If the resume has NO summary: write one from scratch using the resume content, 2-3 sentences targeting this role.
+- Never fabricate skills or experience not present in the resume.
+
+ONE PAGE RULE:
+- The output must fill one full page. To achieve this:
+  - Write 3 strong bullets for each relevant experience role (2 minimum for less-relevant roles).
+  - Write 3 bullets for each relevant project (2 minimum).
+  - Include ALL experience and project entries from the original resume — do not skip any.
+  - Summary must be 3 full sentences.
+
+SKILLS RULES:
+- Group skills into 3–5 categories. Each category: "CategoryName: skill1, skill2, skill3" (max 5 per group).
+- Only include skills explicitly present in the resume.
 
 OUTPUT RULES:
-- Return valid JSON only — no markdown, no code fences, no explanation text.
-- If a keyword is important but unsupported by the source material, place it in missingKeywords instead of inserting it.
-- If something seems useful but unsupported, mention it in honestyWarnings.`;
+- Return valid JSON only — no markdown, no code fences, no explanation.
+- originalSectionOrder must list sections in the order they appear in the uploaded PDF resume.`;
 
 const ANTHROPIC_MODEL = 'claude-haiku-4-5-20251001';
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
@@ -40,12 +50,10 @@ const CORS_HEADERS = {
   'Content-Type': 'application/json',
 };
 
-// Handle preflight
 export async function onRequestOptions() {
   return new Response(null, { status: 204, headers: CORS_HEADERS });
 }
 
-// Handle POST /api/tailor
 export async function onRequestPost(context) {
   const { request, env } = context;
 
@@ -63,17 +71,34 @@ export async function onRequestPost(context) {
     return jsonError('Request body must be valid JSON.', 400);
   }
 
-  const { resumeText, jobDescription, targetRole, profileInfo } = body;
+  const { resumePdfBase64, jobDescription, targetRole, profileInfo } = body;
 
-  if (!resumeText || typeof resumeText !== 'string' || resumeText.trim().length < 50) {
-    return jsonError('resumeText is required and must be at least 50 characters.', 400);
+  if (!resumePdfBase64 || typeof resumePdfBase64 !== 'string' || resumePdfBase64.length < 100) {
+    return jsonError('resumePdfBase64 is required — please upload a PDF resume.', 400);
   }
   if (!jobDescription || typeof jobDescription !== 'string' || jobDescription.trim().length < 20) {
     return jsonError('jobDescription is required and must be at least 20 characters.', 400);
   }
 
-  // ── 3. Build prompt ───────────────────────────────────────────
-  const userPrompt = buildPrompt({ resumeText, jobDescription, targetRole, profileInfo });
+  // ── 3. Build message content (PDF document + text prompt) ─────
+  const textPrompt = buildPrompt({ jobDescription, targetRole, profileInfo });
+
+  const messageContent = [
+    {
+      type: 'document',
+      source: {
+        type: 'base64',
+        media_type: 'application/pdf',
+        data: resumePdfBase64,
+      },
+      title: 'Candidate Resume',
+      context: 'This is the candidate\'s current resume PDF. Extract all content from it exactly as written.',
+    },
+    {
+      type: 'text',
+      text: textPrompt,
+    },
+  ];
 
   // ── 4. Call Anthropic ─────────────────────────────────────────
   let anthropicRes;
@@ -84,12 +109,13 @@ export async function onRequestPost(context) {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'pdfs-2024-09-25',
       },
       body: JSON.stringify({
         model: ANTHROPIC_MODEL,
         max_tokens: 4096,
         system: SYSTEM_INSTRUCTION,
-        messages: [{ role: 'user', content: userPrompt }],
+        messages: [{ role: 'user', content: messageContent }],
       }),
     });
   } catch (err) {
@@ -116,7 +142,6 @@ export async function onRequestPost(context) {
   }
 
   console.log('[tailor] raw Anthropic text (first 1000 chars):', rawText.slice(0, 1000));
-  console.log('[tailor] rawText length:', rawText.length);
 
   // ── 6. Parse JSON from response ───────────────────────────────
   let tailoredData;
@@ -127,30 +152,30 @@ export async function onRequestPost(context) {
       .replace(/```(?:json)?\s*/gi, '')
       .replace(/\s*```/g, '')
       .trim();
-
     const jsonStart = cleanedText.indexOf('{');
     const jsonEnd = cleanedText.lastIndexOf('}');
     if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
       cleanedText = cleanedText.substring(jsonStart, jsonEnd + 1);
     }
-
     try {
       tailoredData = JSON.parse(cleanedText);
     } catch {
-      return jsonError(`Failed to parse response as JSON. Raw response: ${rawText.slice(0, 500)}`, 502);
+      return jsonError(`Failed to parse response as JSON. Raw: ${rawText.slice(0, 500)}`, 502);
     }
   }
 
   // ── 7. Normalize fields ───────────────────────────────────────
   const safeData = {
-    tailoredSummary:    tailoredData.tailoredSummary    || '',
-    tailoredExperience: Array.isArray(tailoredData.tailoredExperience) ? tailoredData.tailoredExperience : [],
-    tailoredProjects:   Array.isArray(tailoredData.tailoredProjects)   ? tailoredData.tailoredProjects   : [],
-    tailoredSkills:     Array.isArray(tailoredData.tailoredSkills)     ? tailoredData.tailoredSkills     : [],
-    matchedKeywords:    Array.isArray(tailoredData.matchedKeywords)    ? tailoredData.matchedKeywords    : [],
-    missingKeywords:    Array.isArray(tailoredData.missingKeywords)    ? tailoredData.missingKeywords    : [],
-    atsNotes:           tailoredData.atsNotes           || '',
-    honestyWarnings:    Array.isArray(tailoredData.honestyWarnings)    ? tailoredData.honestyWarnings    : [],
+    tailoredSummary:      tailoredData.tailoredSummary      || '',
+    tailoredExperience:   Array.isArray(tailoredData.tailoredExperience)   ? tailoredData.tailoredExperience   : [],
+    tailoredProjects:     Array.isArray(tailoredData.tailoredProjects)     ? tailoredData.tailoredProjects     : [],
+    education:            Array.isArray(tailoredData.education)            ? tailoredData.education            : [],
+    tailoredSkills:       Array.isArray(tailoredData.tailoredSkills)       ? tailoredData.tailoredSkills       : [],
+    originalSectionOrder: Array.isArray(tailoredData.originalSectionOrder) ? tailoredData.originalSectionOrder : [],
+    matchedKeywords:      Array.isArray(tailoredData.matchedKeywords)      ? tailoredData.matchedKeywords      : [],
+    missingKeywords:      Array.isArray(tailoredData.missingKeywords)      ? tailoredData.missingKeywords      : [],
+    atsNotes:             tailoredData.atsNotes             || '',
+    honestyWarnings:      Array.isArray(tailoredData.honestyWarnings)      ? tailoredData.honestyWarnings      : [],
   };
 
   return new Response(
@@ -168,14 +193,10 @@ function jsonError(message, status) {
   });
 }
 
-function buildPrompt({ resumeText, jobDescription, targetRole, profileInfo }) {
-  const lines = ['Tailor the following resume or CV for the job description below.\n'];
+function buildPrompt({ jobDescription, targetRole, profileInfo }) {
+  const lines = [];
 
   if (targetRole) lines.push(`TARGET ROLE: ${targetRole}\n`);
-
-  lines.push('=== RESUME / CV TEXT ===');
-  lines.push(resumeText.trim());
-  lines.push('');
 
   lines.push('=== JOB DESCRIPTION ===');
   lines.push(jobDescription.trim());
@@ -183,48 +204,35 @@ function buildPrompt({ resumeText, jobDescription, targetRole, profileInfo }) {
 
   if (profileInfo && typeof profileInfo === 'object') {
     const p = profileInfo;
-    const profileLines = [];
-    if (p.name)     profileLines.push(`Name: ${p.name}`);
-    if (p.email)    profileLines.push(`Email: ${p.email}`);
-    if (p.phone)    profileLines.push(`Phone: ${p.phone}`);
-    if (p.linkedin) profileLines.push(`LinkedIn: ${p.linkedin}`);
-    if (p.portfolio)profileLines.push(`Portfolio: ${p.portfolio}`);
-    if (p.uni)      profileLines.push(`University: ${p.uni}`);
-    if (p.major)    profileLines.push(`Major: ${p.major}`);
-    if (p.gradyear) profileLines.push(`Graduation Year: ${p.gradyear}`);
-    if (p.gpa)      profileLines.push(`GPA: ${p.gpa}`);
-    if (p.summary)  profileLines.push(`Profile Summary: ${p.summary}`);
-    if (Array.isArray(p.skills) && p.skills.length > 0) {
-      profileLines.push(`Skills: ${p.skills.join(', ')}`);
-    }
-    if (profileLines.length > 0) {
-      lines.push('=== USER PROFILE (supplementary context only — do not invent details) ===');
-      lines.push(profileLines.join('\n'));
+    const pl = [];
+    if (p.name)     pl.push(`Name: ${p.name}`);
+    if (p.email)    pl.push(`Email: ${p.email}`);
+    if (p.phone)    pl.push(`Phone: ${p.phone}`);
+    if (p.city)     pl.push(`Location: ${p.city}`);
+    if (p.linkedin) pl.push(`LinkedIn: ${p.linkedin}`);
+    if (p.portfolio)pl.push(`Portfolio: ${p.portfolio}`);
+    if (pl.length) {
+      lines.push('=== CANDIDATE PROFILE (contact info only — do not invent content) ===');
+      lines.push(pl.join('\n'));
       lines.push('');
     }
   }
 
-  lines.push(`CONTENT RULES:
-1. tailoredSummary: 2-3 sentences max. Name the target role and 2 concrete strengths. No fluff.
-2. Bullets: Start with a strong action verb. Be specific — describe the action, its context, and result. Never write vague phrases like "demonstrated strong work ethic", "assisted team", "participated in meetings", "helped with", or "worked on". If two bullets say similar things, combine them into one stronger bullet.
-3. MAX 3 bullets per experience role. Irrelevant roles get 1-2 bullets max.
-4. MAX 3 bullets per project. Skip projects with zero relevance to the JD.
-5. Each project must include a short one-line description (description field) — what it is and what tech it used.
-6. Never fabricate titles, companies, dates, metrics, or tools.
-7. tailoredSkills: Group skills into categories using this format — each array item is one category string: "Languages: Python, C++" or "Tools: Git, VS Code". Use 3–5 category groups, MAX 5 items per group. Only include skills from the source resume.
-8. matchedKeywords: MAX 15 items. missingKeywords: MAX 8 items.
-
-Return ONLY a raw JSON object — no markdown, no code fences, no explanation text before or after:
+  lines.push(`Return ONLY a raw JSON object — no markdown, no code fences, no explanation:
 {
-  "tailoredSummary": "2-3 sentence summary targeting this specific role",
-  "tailoredExperience": [{"role":"","company":"","start":"","end":"","bullets":["bullet 1","bullet 2"]}],
-  "tailoredProjects": [{"name":"","description":"one-line description of what it is and what tech","bullets":["bullet 1","bullet 2"]}],
+  "originalSectionOrder": ["summary","education","experience","projects","skills"],
+  "tailoredSummary": "3-sentence summary targeting this specific role",
+  "tailoredExperience": [{"role":"","company":"","start":"","end":"","bullets":["bullet 1","bullet 2","bullet 3"]}],
+  "tailoredProjects": [{"name":"","description":"one-line: what it is + tech used","bullets":["bullet 1","bullet 2","bullet 3"]}],
+  "education": [{"institution":"","location":"","degree":"","end":"Expected YYYY","gpa":""}],
   "tailoredSkills": ["Languages: Python, C++","Embedded Systems: Arduino, ESP32","Tools: Git, Multimeter"],
   "matchedKeywords": ["kw1","kw2"],
   "missingKeywords": ["kw1","kw2"],
   "atsNotes": "one sentence",
   "honestyWarnings": []
-}`);
+}
+
+The originalSectionOrder array must exactly match the order sections appear in the uploaded PDF resume.`);
 
   return lines.join('\n');
 }
