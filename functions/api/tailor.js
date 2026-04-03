@@ -25,12 +25,13 @@ SUMMARY RULES:
 - If the resume has NO summary: write one from scratch using the resume content, 2-3 sentences targeting this role.
 - Never fabricate skills or experience not present in the resume.
 
-ONE PAGE RULE:
-- The output must fill one full page. To achieve this:
-  - Write 3 strong bullets for each relevant experience role (2 minimum for less-relevant roles).
-  - Write 3 bullets for each relevant project (2 minimum).
-  - Include ALL experience and project entries from the original resume — do not skip any.
-  - Summary must be 3 full sentences.
+ONE PAGE RULE — CRITICAL:
+- The output must fill one full page but NEVER exceed it. Every line counts.
+- Summary: exactly 2 sentences.
+- Experience bullets: 2 per role. No more.
+- Project bullets: 2 per project. No more.
+- Include ALL experience and project entries from the original resume — do not skip any.
+- Keep each bullet to one line where possible — no run-on sentences.
 
 SKILLS RULES:
 - Group skills into 3–5 categories. Each category: "CategoryName: skill1, skill2, skill3" (max 5 per group).
@@ -222,8 +223,8 @@ function buildPrompt({ jobDescription, targetRole, profileInfo }) {
 {
   "originalSectionOrder": ["summary","education","experience","projects","skills"],
   "tailoredSummary": "3-sentence summary targeting this specific role",
-  "tailoredExperience": [{"role":"","company":"","start":"","end":"","bullets":["bullet 1","bullet 2","bullet 3"]}],
-  "tailoredProjects": [{"name":"","description":"one-line: what it is + tech used","bullets":["bullet 1","bullet 2","bullet 3"]}],
+  "tailoredExperience": [{"role":"","company":"","start":"","end":"","bullets":["bullet 1","bullet 2"]}],
+  "tailoredProjects": [{"name":"","description":"one-line: what it is + tech used","bullets":["bullet 1","bullet 2"]}],
   "education": [{"institution":"","location":"","degree":"","end":"Expected YYYY","gpa":""}],
   "tailoredSkills": ["Languages: Python, C++","Embedded Systems: Arduino, ESP32","Tools: Git, Multimeter"],
   "matchedKeywords": ["kw1","kw2"],
