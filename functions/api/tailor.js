@@ -92,7 +92,7 @@ export async function onRequestPost(context) {
         generationConfig: {
           responseMimeType: 'application/json',
           temperature: 0.3,
-          maxOutputTokens: 65536,
+          maxOutputTokens: 16384,
           thinkingConfig: { thinkingBudget: 0 },
           responseSchema: {
             type: 'OBJECT',
