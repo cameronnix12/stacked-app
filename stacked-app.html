@@ -226,8 +226,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .pdf-file-clear:hover{color:var(--red)}
 .doc-wrap{background:#e8e8e8;border-radius:8px;padding:20px;display:flex;justify-content:center}
 /* A4 proportions at 680px wide: 680 × 1.4142 ≈ 961px — hard single-page boundary */
-.resume-preview-wrap{background:#fff;width:680px;flex-shrink:0;height:961px;overflow:hidden;padding:32px 42px;color:#1a1a1a;font-size:11px;line-height:1.5;box-shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.10),0 0 0 1px rgba(0,0,0,0.04);border-radius:0;font-family:'Plus Jakarta Sans',sans-serif;position:relative}
-.resume-preview-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:32px;background:linear-gradient(transparent,#fff);pointer-events:none}
+.resume-preview-wrap{background:#fff;width:100%;max-width:660px;padding:32px 42px;color:#1a1a1a;font-size:11px;line-height:1.5;box-shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.10),0 0 0 1px rgba(0,0,0,0.04);border-radius:0;font-family:'Plus Jakarta Sans',sans-serif}
 /* Header */
 .res-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
 .res-name{font-size:23px;font-weight:800;color:#0d0d0d;letter-spacing:-0.5px;line-height:1.1}
@@ -1553,11 +1552,13 @@ function renderResumePreviewFromGemini(d, role) {
     skills:     { label: 'SKILLS',     build: buildSkills },
   };
 
-  // Use AI-detected original section order; default for student resumes
+  // Use AI-detected original section order; summary is always forced first
   const DEFAULT_ORDER = ['summary','education','projects','skills','experience'];
   const rawOrder = Array.isArray(d.originalSectionOrder) ? d.originalSectionOrder : DEFAULT_ORDER;
-  const sectionOrder = rawOrder.map(s => s.toLowerCase().trim()).filter(s => SECTIONS[s]);
-  // Ensure all known sections appear (append any missing)
+  let sectionOrder = rawOrder.map(s => s.toLowerCase().trim()).filter(s => SECTIONS[s]);
+  // Remove summary from wherever it is, then prepend it
+  sectionOrder = ['summary', ...sectionOrder.filter(s => s !== 'summary')];
+  // Append any missing sections
   Object.keys(SECTIONS).forEach(k => { if (!sectionOrder.includes(k)) sectionOrder.push(k); });
 
   const sectionsHtml = sectionOrder.map(key => {
@@ -1706,8 +1707,6 @@ function downloadResumePDF() {
     'color:#1a1a1a',
     'padding:32px 42px',
     'width:680px',
-    'height:961px',
-    'overflow:hidden',
     'background:#fff',
     'box-shadow:none',
     'border-radius:0',
