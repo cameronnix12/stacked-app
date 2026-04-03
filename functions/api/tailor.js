@@ -262,39 +262,33 @@ function buildPrompt({ resumeText, jobDescription, targetRole, profileInfo }) {
     }
   }
 
-  lines.push(`CONTENT STRATEGY (do this mentally before writing):
-1. Rank all experience entries and projects by relevance to THIS specific job description. Most relevant first.
-2. Within each role, reorder bullets so the most job-aligned achievement comes first.
-3. If a role or project is largely irrelevant, reduce its bullets to 1-2 and keep them brief.
-4. Cut or minimize generic filler bullets (e.g. "assisted team", "participated in meetings").
-5. Strengthen every kept bullet: add specificity, quantify if numbers exist in the source, use strong action verbs that echo the JD.
-6. The summary must name the specific role/domain from the JD and reference 2-3 of the candidate's most relevant strengths.
-7. Skills list: include only skills clearly supported by the resume that are also relevant to the JD.
+  lines.push(`STRICT OUTPUT LIMITS (follow exactly — response must be concise to avoid truncation):
+- tailoredSummary: 2-3 sentences max. Name the role and 2 key strengths. No fluff.
+- tailoredExperience: include ALL roles from the resume. MAX 3 bullets per role. Irrelevant roles get 1-2 bullets only.
+- tailoredProjects: MAX 2 bullets per project. Skip projects with zero relevance.
+- tailoredSkills: flat list, MAX 15 skills, comma-separated values only — no category labels.
+- matchedKeywords: MAX 15 items.
+- missingKeywords: MAX 8 items.
+- atsNotes: 1 sentence only.
+- honestyWarnings: only flag genuine fabrications. Empty array if none.
 
-Return a single JSON object with EXACTLY these fields — no markdown, no code fences, no extra text, ONLY the raw JSON object:
+CONTENT RULES:
+1. Order experience by relevance to the JD — most relevant role first.
+2. Rewrite bullets with strong action verbs that echo JD language. Quantify where source data supports it.
+3. Cut filler bullets ("assisted team", "participated in meetings"). Every bullet must add value.
+4. Only include skills explicitly present in the resume AND relevant to the JD.
+5. Never fabricate titles, companies, dates, metrics, or tools.
+
+Return ONLY a raw JSON object — no markdown, no code fences, no explanation:
 {
-  "tailoredSummary": "2-4 sentence professional summary specifically targeting this role, referencing key JD requirements",
-  "tailoredExperience": [
-    {
-      "role": "exact job title from resume",
-      "company": "exact company name from resume",
-      "start": "start date from resume",
-      "end": "end date or Present",
-      "bullets": ["strongest most-relevant bullet first", "second bullet", "..."]
-    }
-  ],
-  "tailoredProjects": [
-    {
-      "name": "project name from resume",
-      "description": "one-line description",
-      "bullets": ["most relevant bullet first", "..."]
-    }
-  ],
-  "tailoredSkills": ["only skills present in resume that are relevant to this JD", "..."],
-  "matchedKeywords": ["exact keyword from JD that clearly appears in the tailored resume", "..."],
-  "missingKeywords": ["important JD keyword that is NOT supported by the resume", "..."],
-  "atsNotes": "1-2 sentence ATS feedback: what is strong and what gaps remain",
-  "honestyWarnings": ["specific content that was flagged as unverifiable or potentially embellished", "..."]
+  "tailoredSummary": "2-3 sentence summary targeting this specific role",
+  "tailoredExperience": [{"role":"","company":"","start":"","end":"","bullets":["bullet 1","bullet 2","bullet 3"]}],
+  "tailoredProjects": [{"name":"","description":"","bullets":["bullet 1","bullet 2"]}],
+  "tailoredSkills": ["skill1","skill2"],
+  "matchedKeywords": ["kw1","kw2"],
+  "missingKeywords": ["kw1","kw2"],
+  "atsNotes": "one sentence",
+  "honestyWarnings": []
 }`);
 
   return lines.join('\n');
