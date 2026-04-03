@@ -37,13 +37,13 @@ html{scroll-behavior:smooth}
 ::-webkit-scrollbar-thumb{background:rgba(74,222,128,0.2);border-radius:99px}
 ::-webkit-scrollbar-thumb:hover{background:rgba(74,222,128,0.4)}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow-x:hidden;font-size:14px;position:relative}
-body::before{content:'';position:fixed;bottom:-120px;left:-60px;width:500px;height:500px;background:radial-gradient(circle,rgba(74,222,128,0.12) 0%,transparent 65%);pointer-events:none;z-index:0}
-body::after{content:'';position:fixed;top:-100px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(74,222,128,0.06) 0%,transparent 65%);pointer-events:none;z-index:0}
+body::before{content:'';position:fixed;bottom:-120px;left:-60px;width:500px;height:500px;background:radial-gradient(circle,rgba(74,222,128,0.10) 0%,transparent 65%);pointer-events:none;z-index:-1}
+body::after{content:'';position:fixed;top:-100px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(74,222,128,0.05) 0%,transparent 65%);pointer-events:none;z-index:-1}
 
 /* SIDEBAR */
 #sidebar{width:var(--sidebar-w);min-height:100vh;background:rgba(5,10,5,0.85);backdrop-filter:blur(24px);border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100}
 .sidebar-logo{padding:22px 16px 18px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px}
-.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#4ADE80,#22C55E);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 12px rgba(74,222,128,0.35)}
+.logo-icon{width:34px;height:34px;background:#0D0D0D;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 12px rgba(0,0,0,0.5)}
 .logo-text{font-size:17px;font-weight:800;color:#F0FDF4;letter-spacing:-0.4px}
 .sidebar-nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px;list-style:none}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:background 0.15s,color 0.15s;color:rgba(255,255,255,0.38);font-size:13px;font-weight:500;user-select:none}
@@ -439,7 +439,11 @@ body::after{content:'';position:fixed;top:-100px;right:-100px;width:600px;height
 <aside id="sidebar" role="navigation" aria-label="Main navigation">
   <div class="sidebar-logo">
     <div class="logo-icon" aria-hidden="true">
-      <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><rect x="2" y="10" width="14" height="3" rx="1.5" fill="white" opacity="0.9"/><rect x="2" y="5" width="14" height="3" rx="1.5" fill="white"/><rect x="2" y="15" width="8" height="2" rx="1" fill="white" opacity="0.6"/></svg>
+      <svg width="22" height="22" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22 28 C22 16, 38 10, 54 16 C70 22, 80 32, 78 46 C76 58, 62 64, 48 64 C34 64, 22 70, 22 82 C22 91, 36 96, 52 91" stroke="#3DBE4F" stroke-width="13" stroke-linecap="round" fill="none"/>
+        <circle cx="23" cy="22" r="5" fill="white"/>
+        <circle cx="53" cy="91" r="5" fill="white"/>
+      </svg>
     </div>
     <span class="logo-text">Stacked</span>
   </div>
@@ -463,6 +467,17 @@ body::after{content:'';position:fixed;top:-100px;right:-100px;width:600px;height
     <li class="nav-item" data-view="analytics" role="listitem" tabindex="0" aria-label="Analytics">
       <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
       Analytics
+    </li>
+  </ul>
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 8px"></div>
+  <ul class="sidebar-nav" role="list" style="flex:none;padding:6px 8px">
+    <li class="nav-item" onclick="showToast('Billing coming soon')" role="listitem" tabindex="0" aria-label="Billing">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+      Billing
+    </li>
+    <li class="nav-item" onclick="showToast('Help Center coming soon')" role="listitem" tabindex="0" aria-label="Help Center">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+      Help Center
     </li>
   </ul>
   <div class="sidebar-bottom">
@@ -1135,13 +1150,12 @@ function updateSidebarUser() {
   const initials = ((fname[0]||'') + (lname[0]||'')).toUpperCase() || '?';
   document.getElementById('sidebarAvatar').textContent = initials;
   document.getElementById('sidebarName').textContent = fullName || 'Set up profile';
-  document.getElementById('sidebarRole').textContent = profile.major && profile.uni ? profile.major + ', ' + profile.uni : 'Click to get started';
+  document.getElementById('sidebarRole').textContent = profile.major || 'Click to get started';
   document.getElementById('profileAvatarLg').textContent = initials;
   const name = fullName || 'Your Name';
   document.getElementById('profileHeaderName').textContent = name;
   document.getElementById('profileHeaderSub').textContent = profile.uni ? profile.major + ' at ' + profile.uni : 'Add your details below to get started';
-  const greeting = getGreeting();
-  document.getElementById('dashGreeting').textContent = fname ? greeting + ', ' + fname : greeting;
+  document.getElementById('dashGreeting').textContent = fname ? 'Welcome, ' + fname : 'Welcome';
 }
 
 // ── VIEW SWITCHING ────────────────────────────────────────────
