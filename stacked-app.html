@@ -214,21 +214,32 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 /* DOCUMENT / PAPER PREVIEW */
 .doc-wrap{background:#e8e8e8;border-radius:8px;padding:20px;display:flex;justify-content:center}
 .resume-preview-wrap{background:#fff;width:100%;max-width:680px;padding:36px 44px;color:#1a1a1a;font-size:11px;line-height:1.5;box-shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.10),0 0 0 1px rgba(0,0,0,0.04);border-radius:0;font-family:'Plus Jakarta Sans',sans-serif}
-.res-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px}
-.res-name{font-size:22px;font-weight:800;color:#0d0d0d;letter-spacing:-0.5px;line-height:1.1}
-.res-desired-role{font-size:11px;font-weight:600;color:#444;text-align:right;padding-top:4px}
-.res-contact{color:#555;font-size:10px;margin-bottom:14px;margin-top:5px;line-height:1.5}
-.res-section{margin-bottom:12px}
-.res-section-title{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:#111;margin-bottom:4px;padding-bottom:3px;border-bottom:1.5px solid #111;display:block}
-.res-job-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px;margin-top:7px}
+/* Header */
+.res-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.res-name{font-size:23px;font-weight:800;color:#0d0d0d;letter-spacing:-0.5px;line-height:1.1}
+.res-desired-role{font-size:10.5px;font-weight:600;color:#555;text-align:right;padding-top:6px;max-width:180px}
+.res-contact{color:#555;font-size:10px;margin-bottom:16px;margin-top:4px;line-height:1.5;border-bottom:1px solid #ddd;padding-bottom:10px}
+/* Sections */
+.res-section{margin-bottom:13px}
+.res-section-title{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#111;margin-bottom:0;padding-bottom:3px;border-bottom:1.5px solid #222;display:block}
+/* Entries */
+.res-entry{margin-top:8px;margin-bottom:4px}
+.res-job-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px}
 .res-job-title{font-weight:700;font-size:11px;color:#111}
-.res-job-company{font-size:10.5px;color:#444;font-style:italic}
-.res-job-date{font-size:10px;color:#555;white-space:nowrap;margin-left:8px}
+.res-job-company{font-size:10.5px;color:#555;font-style:italic}
+.res-job-date{font-size:10px;color:#555;white-space:nowrap;margin-left:10px;flex-shrink:0}
+.res-proj-desc{font-size:10px;color:#555;margin-bottom:2px;margin-top:1px;font-style:italic}
+.res-edu-degree{font-size:10.5px;color:#333;margin-top:2px}
+.res-summary-text{font-size:10.5px;color:#222;line-height:1.65;margin-top:5px}
+/* Bullets */
 .res-bullets{padding-left:0;list-style:none;margin-top:3px;margin-bottom:0}
-.res-bullets li{font-size:10.5px;color:#222;margin-bottom:2px;padding-left:13px;position:relative;line-height:1.5}
-.res-bullets li::before{content:'•';position:absolute;left:0;color:#222}
-.res-skills-category{font-size:10.5px;color:#222;margin-bottom:3px;line-height:1.5}
-.res-skills-category strong{font-weight:700;color:#111}
+.res-bullets li{font-size:10.5px;color:#222;margin-bottom:2px;padding-left:12px;position:relative;line-height:1.55}
+.res-bullets li::before{content:'•';position:absolute;left:0;color:#333;font-size:11px}
+/* Skills grid */
+.res-skills-grid{margin-top:5px}
+.res-skills-row{font-size:10.5px;color:#222;margin-bottom:4px;line-height:1.5;display:flex;align-items:baseline;gap:4px}
+.res-skills-cat{font-weight:700;color:#111;white-space:nowrap;flex-shrink:0}
+.res-skills-val{color:#333}
 .empty-resume{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:320px;gap:10px;text-align:center;padding:24px}
 .empty-resume svg{width:32px;height:32px;color:rgba(99,122,110,0.35)}
 .empty-resume p{font-size:13px;color:var(--muted)}
@@ -918,6 +929,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <div class="form-field"><label class="form-label" for="p-phone">Phone</label><input class="form-input" id="p-phone" type="tel" placeholder="+1 (555) 000-0000"></div>
         <div class="form-field"><label class="form-label" for="p-linkedin">LinkedIn</label><input class="form-input" id="p-linkedin" type="text" placeholder="linkedin.com/in/yourname"></div>
         <div class="form-field"><label class="form-label" for="p-portfolio">Portfolio / GitHub</label><input class="form-input" id="p-portfolio" type="text" placeholder="github.com/yourname"></div>
+        <div class="form-field"><label class="form-label" for="p-city">City, State</label><input class="form-input" id="p-city" type="text" placeholder="e.g. Portland, OR"></div>
       </div>
     </div>
     <!-- Academic -->
@@ -1301,6 +1313,7 @@ function getProfileInfo() {
     name: ((profile.fname||'') + ' ' + (profile.lname||'')).trim(),
     email: profile.email||'', phone: profile.phone||'',
     linkedin: profile.linkedin||'', portfolio: profile.portfolio||'',
+    city: profile.city||'',
     uni: profile.uni||'', major: profile.major||'',
     gradyear: profile.gradyear||'', gpa: profile.gpa||'',
     summary: profile.summary||'', skills: profile.skills||[]
@@ -1399,54 +1412,81 @@ function renderResumePreviewFromGemini(d, role) {
   if (!d) return;
   const p = getProfileInfo();
 
-  // Contact line: phone · email · city · LinkedIn (pipe-separated)
-  const contactParts = [p.phone, p.email, p.linkedin, p.portfolio].filter(Boolean);
+  // ── Header contact line: City | Email | Phone | LinkedIn ──────
+  const contactParts = [p.city, p.email, p.phone, p.linkedin].filter(Boolean);
   const contactLine = contactParts.map(s => esc(s)).join(' &nbsp;|&nbsp; ');
 
-  // Experience entries
+  // ── Section builder helper ─────────────────────────────────────
+  function section(title, bodyHtml) {
+    if (!bodyHtml) return '';
+    return `<div class="res-section">
+      <div class="res-section-title">${title}</div>
+      ${bodyHtml}
+    </div>`;
+  }
+
+  // ── Experience ─────────────────────────────────────────────────
   const expHtml = (d.tailoredExperience || []).map(e => {
     const bullets = Array.isArray(e.bullets) ? e.bullets : [];
     const dateStr = [e.start, e.end].filter(Boolean).join(' \u2013 ');
-    return `<div style="margin-bottom:9px">
+    return `<div class="res-entry">
       <div class="res-job-header">
-        <div><span class="res-job-title">${esc(e.role||'')}</span>${e.company ? `<span style="font-size:10.5px;color:#444;font-weight:400"> &mdash; <em>${esc(e.company)}</em></span>` : ''}</div>
+        <div><span class="res-job-title">${esc(e.role||'')}</span>${e.company ? `<span class="res-job-company"> &mdash; ${esc(e.company)}</span>` : ''}</div>
         ${dateStr ? `<div class="res-job-date">${esc(dateStr)}</div>` : ''}
       </div>
-      ${bullets.length ? `<ul class="res-bullets">${bullets.map(b => `<li>${esc(String(b).replace(/^[•\-]\s*/,''))}</li>`).join('')}</ul>` : ''}
+      ${bullets.length ? `<ul class="res-bullets">${bullets.map(b=>`<li>${esc(String(b).replace(/^[•\-]\s*/,''))}</li>`).join('')}</ul>` : ''}
     </div>`;
   }).join('');
 
-  // Projects entries
+  // ── Projects ───────────────────────────────────────────────────
   const projHtml = (d.tailoredProjects || []).map(proj => {
     const bullets = Array.isArray(proj.bullets) ? proj.bullets : [];
-    return `<div style="margin-bottom:9px">
+    return `<div class="res-entry">
       <div class="res-job-header">
-        <div><span class="res-job-title">${esc(proj.name||'')}</span>${proj.description ? `<span style="font-size:10.5px;color:#555;font-weight:400"> &mdash; ${esc(proj.description)}</span>` : ''}</div>
+        <div><span class="res-job-title">${esc(proj.name||'')}</span></div>
       </div>
-      ${bullets.length ? `<ul class="res-bullets">${bullets.map(b => `<li>${esc(String(b).replace(/^[•\-]\s*/,''))}</li>`).join('')}</ul>` : ''}
+      ${proj.description ? `<div class="res-proj-desc">${esc(proj.description)}</div>` : ''}
+      ${bullets.length ? `<ul class="res-bullets">${bullets.map(b=>`<li>${esc(String(b).replace(/^[•\-]\s*/,''))}</li>`).join('')}</ul>` : ''}
     </div>`;
   }).join('');
 
-  // Skills: if any item contains a colon treat each as a "Category: items" line,
-  // otherwise group all into a single "Technical Skills: ..." line.
+  // ── Education ──────────────────────────────────────────────────
+  let eduHtml = '';
+  if (p.uni) {
+    const degreeLabel = p.major ? esc(p.major) : '';
+    const gradLabel = p.gradyear ? `Expected ${esc(p.gradyear)}` : '';
+    eduHtml = `<div class="res-entry">
+      <div class="res-job-header">
+        <div>
+          <span class="res-job-title">${esc(p.uni)}</span>
+          ${p.city ? `<span class="res-job-company"> &mdash; ${esc(p.city)}</span>` : ''}
+        </div>
+        ${gradLabel ? `<div class="res-job-date">${gradLabel}</div>` : ''}
+      </div>
+      ${degreeLabel ? `<div class="res-edu-degree">${degreeLabel}${p.gpa ? ` &nbsp;&middot;&nbsp; GPA: ${esc(p.gpa)}` : ''}</div>` : ''}
+    </div>`;
+  }
+
+  // ── Skills (grouped categories) ────────────────────────────────
   const skills = (d.tailoredSkills || []);
   let skillsHtml = '';
   if (skills.length > 0) {
     const hasCategories = skills.some(s => String(s).includes(':'));
     if (hasCategories) {
-      skillsHtml = skills.map(s => {
+      skillsHtml = `<div class="res-skills-grid">${skills.map(s => {
         const raw = String(s);
-        const colonIdx = raw.indexOf(':');
-        if (colonIdx === -1) return `<div class="res-skills-category">${esc(raw)}</div>`;
-        const cat = raw.slice(0, colonIdx).trim();
-        const items = raw.slice(colonIdx + 1).trim();
-        return `<div class="res-skills-category"><strong>${esc(cat)}:</strong> ${esc(items)}</div>`;
-      }).join('');
+        const ci = raw.indexOf(':');
+        if (ci === -1) return `<div class="res-skills-row"><span class="res-skills-val">${esc(raw)}</span></div>`;
+        const cat = raw.slice(0, ci).trim();
+        const items = raw.slice(ci + 1).trim();
+        return `<div class="res-skills-row"><span class="res-skills-cat">${esc(cat)}:</span> <span class="res-skills-val">${esc(items)}</span></div>`;
+      }).join('')}</div>`;
     } else {
-      skillsHtml = `<div class="res-skills-category"><strong>Technical Skills:</strong> ${esc(skills.join(', '))}</div>`;
+      skillsHtml = `<div class="res-skills-grid"><div class="res-skills-row"><span class="res-skills-cat">Technical Skills:</span> <span class="res-skills-val">${esc(skills.join(', '))}</span></div></div>`;
     }
   }
 
+  // ── Section order: Summary → Education → Projects → Skills → Experience
   document.getElementById('resumePreviewOutput').innerHTML = `
     <div class="doc-wrap">
       <div class="resume-preview-wrap" id="tailoredResumeEl">
@@ -1455,11 +1495,11 @@ function renderResumePreviewFromGemini(d, role) {
           ${role ? `<div class="res-desired-role">${esc(role)}</div>` : ''}
         </div>
         ${contactLine ? `<div class="res-contact">${contactLine}</div>` : ''}
-        ${d.tailoredSummary ? `<div class="res-section"><div class="res-section-title">Summary</div><p style="font-size:10.5px;color:#222;line-height:1.6;margin-top:5px">${esc(d.tailoredSummary)}</p></div>` : ''}
-        ${expHtml ? `<div class="res-section"><div class="res-section-title">Experience</div>${expHtml}</div>` : ''}
-        ${projHtml ? `<div class="res-section"><div class="res-section-title">Projects</div>${projHtml}</div>` : ''}
-        ${p.uni ? `<div class="res-section"><div class="res-section-title">Education</div><div class="res-job-header"><div><span class="res-job-title">${esc(p.major||p.uni)}</span>${p.major ? `<span style="font-size:10.5px;color:#444;font-weight:400"> &mdash; <em>${esc(p.uni)}</em></span>` : ''}</div><div class="res-job-date">${esc(p.gradyear||'')}</div></div>${p.gpa ? `<div style="font-size:10px;color:#555;margin-top:2px">GPA: ${esc(p.gpa)}</div>` : ''}</div>` : ''}
-        ${skillsHtml ? `<div class="res-section"><div class="res-section-title">Skills</div><div style="margin-top:5px">${skillsHtml}</div></div>` : ''}
+        ${section('SUMMARY', d.tailoredSummary ? `<p class="res-summary-text">${esc(d.tailoredSummary)}</p>` : '')}
+        ${section('EDUCATION', eduHtml)}
+        ${section('PROJECTS', projHtml)}
+        ${section('SKILLS', skillsHtml)}
+        ${section('EXPERIENCE', expHtml)}
       </div>
     </div>`;
 }
@@ -1599,27 +1639,35 @@ function downloadResumePDF() {
   ].join(';');
 
   // Inline styles for html2pdf (pseudo-elements and borders don't transfer via class)
-  clone.querySelectorAll('.res-name').forEach(el => { el.style.cssText = 'font-size:22px;font-weight:800;color:#0d0d0d;letter-spacing:-0.5px;line-height:1.1'; });
-  clone.querySelectorAll('.res-desired-role').forEach(el => { el.style.cssText = 'font-size:11px;font-weight:600;color:#444;text-align:right;padding-top:4px'; });
-  clone.querySelectorAll('.res-header').forEach(el => { el.style.cssText = 'display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px'; });
-  clone.querySelectorAll('.res-contact').forEach(el => { el.style.cssText = 'color:#555;font-size:10px;margin-bottom:14px;margin-top:5px;line-height:1.5'; });
-  clone.querySelectorAll('.res-section-title').forEach(el => { el.style.cssText = 'font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:#111;margin-bottom:4px;padding-bottom:3px;border-bottom:1.5px solid #111;display:block'; });
-  clone.querySelectorAll('.res-job-header').forEach(el => { el.style.cssText = 'display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px;margin-top:7px'; });
+  clone.querySelectorAll('.res-header').forEach(el => { el.style.cssText = 'display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px'; });
+  clone.querySelectorAll('.res-name').forEach(el => { el.style.cssText = 'font-size:23px;font-weight:800;color:#0d0d0d;letter-spacing:-0.5px;line-height:1.1'; });
+  clone.querySelectorAll('.res-desired-role').forEach(el => { el.style.cssText = 'font-size:10.5px;font-weight:600;color:#555;text-align:right;padding-top:6px;max-width:180px'; });
+  clone.querySelectorAll('.res-contact').forEach(el => { el.style.cssText = 'color:#555;font-size:10px;margin-bottom:16px;margin-top:4px;line-height:1.5;border-bottom:1px solid #ddd;padding-bottom:10px'; });
+  clone.querySelectorAll('.res-section').forEach(el => { el.style.cssText = 'margin-bottom:13px'; });
+  clone.querySelectorAll('.res-section-title').forEach(el => { el.style.cssText = 'font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#111;padding-bottom:3px;border-bottom:1.5px solid #222;display:block'; });
+  clone.querySelectorAll('.res-entry').forEach(el => { el.style.cssText = 'margin-top:8px;margin-bottom:4px'; });
+  clone.querySelectorAll('.res-job-header').forEach(el => { el.style.cssText = 'display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px'; });
   clone.querySelectorAll('.res-job-title').forEach(el => { el.style.cssText = 'font-weight:700;font-size:11px;color:#111'; });
-  clone.querySelectorAll('.res-job-date').forEach(el => { el.style.cssText = 'font-size:10px;color:#555;white-space:nowrap;margin-left:8px'; });
+  clone.querySelectorAll('.res-job-company').forEach(el => { el.style.cssText = 'font-size:10.5px;color:#555;font-style:italic'; });
+  clone.querySelectorAll('.res-job-date').forEach(el => { el.style.cssText = 'font-size:10px;color:#555;white-space:nowrap;margin-left:10px;flex-shrink:0'; });
+  clone.querySelectorAll('.res-proj-desc').forEach(el => { el.style.cssText = 'font-size:10px;color:#555;margin-bottom:2px;margin-top:1px;font-style:italic'; });
+  clone.querySelectorAll('.res-edu-degree').forEach(el => { el.style.cssText = 'font-size:10.5px;color:#333;margin-top:2px'; });
+  clone.querySelectorAll('.res-summary-text').forEach(el => { el.style.cssText = 'font-size:10.5px;color:#222;line-height:1.65;margin-top:5px'; });
   clone.querySelectorAll('.res-bullets').forEach(el => { el.style.cssText = 'padding-left:0;list-style:none;margin-top:3px;margin-bottom:0'; });
   clone.querySelectorAll('.res-bullets li').forEach(li => {
-    li.style.cssText = 'font-size:10.5px;color:#222;margin-bottom:2px;padding-left:13px;position:relative;line-height:1.5;list-style:none';
-    // Inject bullet as a text node span since ::before won't render in html2pdf
+    li.style.cssText = 'font-size:10.5px;color:#222;margin-bottom:2px;padding-left:12px;position:relative;line-height:1.55;list-style:none';
     if (!li.querySelector('.pdf-bullet')) {
       const dot = document.createElement('span');
       dot.className = 'pdf-bullet';
-      dot.style.cssText = 'position:absolute;left:0;color:#222';
+      dot.style.cssText = 'position:absolute;left:0;color:#333';
       dot.textContent = '•';
       li.insertBefore(dot, li.firstChild);
     }
   });
-  clone.querySelectorAll('.res-skills-category').forEach(el => { el.style.cssText = 'font-size:10.5px;color:#222;margin-bottom:3px;line-height:1.5'; });
+  clone.querySelectorAll('.res-skills-grid').forEach(el => { el.style.cssText = 'margin-top:5px'; });
+  clone.querySelectorAll('.res-skills-row').forEach(el => { el.style.cssText = 'font-size:10.5px;color:#222;margin-bottom:4px;line-height:1.5;display:flex;align-items:baseline;gap:4px'; });
+  clone.querySelectorAll('.res-skills-cat').forEach(el => { el.style.cssText = 'font-weight:700;color:#111;white-space:nowrap;flex-shrink:0'; });
+  clone.querySelectorAll('.res-skills-val').forEach(el => { el.style.cssText = 'color:#333'; });
 
   const opt = {
     margin:     [10, 10, 10, 10],
@@ -1885,7 +1933,7 @@ function renderAnalytics() {
 // ── PROFILE ───────────────────────────────────────────────────
 function loadProfileForm() {
   const p = profile;
-  const fields = { fname:'p-fname', lname:'p-lname', email:'p-email', phone:'p-phone', linkedin:'p-linkedin', portfolio:'p-portfolio', uni:'p-uni', major:'p-major', gradyear:'p-gradyear', gpa:'p-gpa', summary:'p-summary' };
+  const fields = { fname:'p-fname', lname:'p-lname', email:'p-email', phone:'p-phone', linkedin:'p-linkedin', portfolio:'p-portfolio', city:'p-city', uni:'p-uni', major:'p-major', gradyear:'p-gradyear', gpa:'p-gpa', summary:'p-summary' };
   Object.entries(fields).forEach(([k,id]) => { const el = document.getElementById(id); if (el) el.value = p[k]||''; });
   // Skills
   const st = document.getElementById('profileSkillTags'); st.innerHTML = '';
@@ -1904,7 +1952,7 @@ function loadProfileForm() {
 }
 
 function saveProfile() {
-  const fields = { fname:'p-fname', lname:'p-lname', email:'p-email', phone:'p-phone', linkedin:'p-linkedin', portfolio:'p-portfolio', uni:'p-uni', major:'p-major', gradyear:'p-gradyear', gpa:'p-gpa', summary:'p-summary' };
+  const fields = { fname:'p-fname', lname:'p-lname', email:'p-email', phone:'p-phone', linkedin:'p-linkedin', portfolio:'p-portfolio', city:'p-city', uni:'p-uni', major:'p-major', gradyear:'p-gradyear', gpa:'p-gpa', summary:'p-summary' };
   Object.entries(fields).forEach(([k,id]) => { const el = document.getElementById(id); if (el) profile[k] = el.value.trim(); });
   profile.skills = Array.from(document.querySelectorAll('#profileSkillTags .skill-tag')).map(t => { const sp = t.querySelector('span'); return sp ? sp.textContent.trim() : t.textContent.replace('×','').trim(); }).filter(Boolean);
   const exps = [];

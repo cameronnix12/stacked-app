@@ -205,23 +205,21 @@ function buildPrompt({ resumeText, jobDescription, targetRole, profileInfo }) {
   }
 
   lines.push(`CONTENT RULES:
-1. Order experience by relevance to the JD — most relevant role first.
-2. Rewrite bullets with strong action verbs that echo JD language. Quantify where source data supports it.
-3. Cut filler bullets ("assisted team", "participated in meetings"). Every bullet must add value.
-4. Only include skills explicitly present in the resume AND relevant to the JD.
-5. Never fabricate titles, companies, dates, metrics, or tools.
-6. tailoredSummary: 2-3 sentences max. Name the role and 2 key strengths.
-7. MAX 3 bullets per experience role. Irrelevant roles get 1-2 bullets only.
-8. MAX 2 bullets per project. Skip projects with zero relevance.
-9. tailoredSkills: flat list, MAX 15 skills.
-10. matchedKeywords: MAX 15 items. missingKeywords: MAX 8 items.
+1. tailoredSummary: 2-3 sentences max. Name the target role and 2 concrete strengths. No fluff.
+2. Bullets: Start with a strong action verb. Be specific — describe the action, its context, and result. Never write vague phrases like "demonstrated strong work ethic", "assisted team", "participated in meetings", "helped with", or "worked on". If two bullets say similar things, combine them into one stronger bullet.
+3. MAX 3 bullets per experience role. Irrelevant roles get 1-2 bullets max.
+4. MAX 3 bullets per project. Skip projects with zero relevance to the JD.
+5. Each project must include a short one-line description (description field) — what it is and what tech it used.
+6. Never fabricate titles, companies, dates, metrics, or tools.
+7. tailoredSkills: Group skills into categories using this format — each array item is one category string: "Languages: Python, C++" or "Tools: Git, VS Code". Use 3–5 category groups, MAX 5 items per group. Only include skills from the source resume.
+8. matchedKeywords: MAX 15 items. missingKeywords: MAX 8 items.
 
 Return ONLY a raw JSON object — no markdown, no code fences, no explanation text before or after:
 {
   "tailoredSummary": "2-3 sentence summary targeting this specific role",
   "tailoredExperience": [{"role":"","company":"","start":"","end":"","bullets":["bullet 1","bullet 2"]}],
-  "tailoredProjects": [{"name":"","description":"","bullets":["bullet 1"]}],
-  "tailoredSkills": ["skill1","skill2"],
+  "tailoredProjects": [{"name":"","description":"one-line description of what it is and what tech","bullets":["bullet 1","bullet 2"]}],
+  "tailoredSkills": ["Languages: Python, C++","Embedded Systems: Arduino, ESP32","Tools: Git, Multimeter"],
   "matchedKeywords": ["kw1","kw2"],
   "missingKeywords": ["kw1","kw2"],
   "atsNotes": "one sentence",
