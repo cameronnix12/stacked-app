@@ -1,7 +1,7 @@
 // Cloudflare Pages Function — POST /api/tailor
-// Calls Gemini API server-side so the API key never touches the browser.
+// Calls Anthropic Claude API server-side so the API key never touches the browser.
 
-const SYSTEM_INSTRUCTION = `[You are an expert ATS-optimized resume and CV tailoring assistant.
+const SYSTEM_INSTRUCTION = `You are an expert ATS-optimized resume and CV tailoring assistant.
 
 Your job is to transform a user's existing resume or CV into the strongest possible version for a specific job description, without adding false information.
 
@@ -19,24 +19,19 @@ ATS GOALS:
 - Make bullets concise, specific, and scannable.
 - Front-load the most relevant words.
 - Prefer standard ATS-friendly phrasing over creative wording.
-- Avoid graphics, columns, tables, icons, or decorative formatting.
 - Do not keyword-stuff. Keep wording natural.
 
 RESUME RULES:
 - Optimize for brevity, scannability, and job relevance.
 - Prefer 1 page for early-career candidates when possible.
 
-CV RULES:
-- Use the job description plus the user's profile information to strengthen and organize the CV.
-- CVs may be more detailed than resumes, but must still remain truthful and relevant.
-
 OUTPUT RULES:
-- Return valid JSON only.
+- Return valid JSON only — no markdown, no code fences, no explanation text.
 - If a keyword is important but unsupported by the source material, place it in missingKeywords instead of inserting it.
-- If something seems useful but unsupported, mention it in honestyWarnings.]`;
+- If something seems useful but unsupported, mention it in honestyWarnings.`;
 
-const GEMINI_MODEL = 'gemini-3-flash-preview';
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+const ANTHROPIC_MODEL = 'claude-haiku-4-5-20251001';
+const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -55,9 +50,9 @@ export async function onRequestPost(context) {
   const { request, env } = context;
 
   // ── 1. Check API key ──────────────────────────────────────────
-  const apiKey = env.GEMINI_API_KEY;
+  const apiKey = env.ANTHROPHIC_KEY;
   if (!apiKey) {
-    return jsonError('GEMINI_API_KEY environment variable is not configured.', 500);
+    return jsonError('ANTHROPHIC_KEY environment variable is not configured.', 500);
   }
 
   // ── 2. Parse + validate request body ─────────────────────────
@@ -80,111 +75,59 @@ export async function onRequestPost(context) {
   // ── 3. Build prompt ───────────────────────────────────────────
   const userPrompt = buildPrompt({ resumeText, jobDescription, targetRole, profileInfo });
 
-  // ── 4. Call Gemini ────────────────────────────────────────────
-  let geminiRes;
+  // ── 4. Call Anthropic ─────────────────────────────────────────
+  let anthropicRes;
   try {
-    geminiRes = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
+    anthropicRes = await fetch(ANTHROPIC_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
       body: JSON.stringify({
-        system_instruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
-        contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
-        generationConfig: {
-          responseMimeType: 'application/json',
-          temperature: 0.3,
-          maxOutputTokens: 16384,
-          thinkingConfig: { thinkingBudget: 0 },
-          responseSchema: {
-            type: 'OBJECT',
-            properties: {
-              tailoredSummary:    { type: 'STRING' },
-              tailoredExperience: {
-                type: 'ARRAY',
-                items: {
-                  type: 'OBJECT',
-                  properties: {
-                    role:    { type: 'STRING' },
-                    company: { type: 'STRING' },
-                    start:   { type: 'STRING' },
-                    end:     { type: 'STRING' },
-                    bullets: { type: 'ARRAY', items: { type: 'STRING' } },
-                  },
-                },
-              },
-              tailoredProjects: {
-                type: 'ARRAY',
-                items: {
-                  type: 'OBJECT',
-                  properties: {
-                    name:        { type: 'STRING' },
-                    description: { type: 'STRING' },
-                    bullets:     { type: 'ARRAY', items: { type: 'STRING' } },
-                  },
-                },
-              },
-              tailoredSkills:   { type: 'ARRAY', items: { type: 'STRING' } },
-              matchedKeywords:  { type: 'ARRAY', items: { type: 'STRING' } },
-              missingKeywords:  { type: 'ARRAY', items: { type: 'STRING' } },
-              atsNotes:        { type: 'STRING' },
-              honestyWarnings: { type: 'ARRAY', items: { type: 'STRING' } },
-            },
-            required: [
-              'tailoredSummary', 'tailoredExperience', 'tailoredProjects',
-              'tailoredSkills', 'matchedKeywords', 'missingKeywords',
-              'atsNotes', 'honestyWarnings',
-            ],
-          },
-        },
+        model: ANTHROPIC_MODEL,
+        max_tokens: 4096,
+        system: SYSTEM_INSTRUCTION,
+        messages: [{ role: 'user', content: userPrompt }],
       }),
     });
   } catch (err) {
-    return jsonError(`Failed to reach Gemini API: ${err.message}`, 502);
+    return jsonError(`Failed to reach Anthropic API: ${err.message}`, 502);
   }
 
-  if (!geminiRes.ok) {
-    const errText = await geminiRes.text().catch(() => '');
-    return jsonError(`Gemini API returned status ${geminiRes.status}: ${errText.slice(0, 300)}`, 502);
+  if (!anthropicRes.ok) {
+    const errText = await anthropicRes.text().catch(() => '');
+    return jsonError(`Anthropic API returned status ${anthropicRes.status}: ${errText.slice(0, 300)}`, 502);
   }
 
-  // ── 5. Extract Gemini response ────────────────────────────────
-  let geminiData;
+  // ── 5. Extract response ───────────────────────────────────────
+  let anthropicData;
   try {
-    geminiData = await geminiRes.json();
+    anthropicData = await anthropicRes.json();
   } catch {
-    return jsonError('Failed to parse Gemini response as JSON.', 502);
+    return jsonError('Failed to parse Anthropic response as JSON.', 502);
   }
 
-  const rawText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+  const rawText = anthropicData?.content?.[0]?.text;
   if (!rawText) {
-    // Check for safety blocks
-    const finishReason = geminiData?.candidates?.[0]?.finishReason;
-    if (finishReason === 'SAFETY') {
-      return jsonError('Gemini blocked the response for safety reasons. Try rephrasing your input.', 422);
-    }
-    return jsonError('Gemini returned an empty response.', 502);
+    const stopReason = anthropicData?.stop_reason;
+    return jsonError(`Anthropic returned an empty response. Stop reason: ${stopReason || 'unknown'}`, 502);
   }
 
-  // Temporary logging for debugging — remove once JSON parsing is stable
-  console.log('[tailor] raw Gemini text (first 1000 chars):', rawText.slice(0, 1000));
+  console.log('[tailor] raw Anthropic text (first 1000 chars):', rawText.slice(0, 1000));
   console.log('[tailor] rawText length:', rawText.length);
 
-  // ── 6. Parse structured JSON from Gemini ─────────────────────
+  // ── 6. Parse JSON from response ───────────────────────────────
   let tailoredData;
   try {
-    // First, try to parse directly
     tailoredData = JSON.parse(rawText.trim());
   } catch {
-    // If direct parse fails, try to clean up the text
-    let cleanedText = rawText.trim();
-
-    // Strip markdown code fences — works even when extra text precedes/follows
-    // e.g. "Here you go:\n```json\n{...}\n```\nDone."
-    cleanedText = cleanedText
+    let cleanedText = rawText.trim()
       .replace(/```(?:json)?\s*/gi, '')
       .replace(/\s*```/g, '')
       .trim();
 
-    // Try to extract JSON object from text (find first { to last })
     const jsonStart = cleanedText.indexOf('{');
     const jsonEnd = cleanedText.lastIndexOf('}');
     if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
@@ -193,13 +136,12 @@ export async function onRequestPost(context) {
 
     try {
       tailoredData = JSON.parse(cleanedText);
-    } catch (parseError) {
-      // If all parsing attempts fail, return error with raw text for debugging
-      return jsonError(`Gemini returned malformed JSON. Raw response: ${rawText.slice(0, 500)}`, 502);
+    } catch {
+      return jsonError(`Failed to parse response as JSON. Raw response: ${rawText.slice(0, 500)}`, 502);
     }
   }
 
-  // ── 7. Ensure all expected fields exist (never crash frontend) ─
+  // ── 7. Normalize fields ───────────────────────────────────────
   const safeData = {
     tailoredSummary:    tailoredData.tailoredSummary    || '',
     tailoredExperience: Array.isArray(tailoredData.tailoredExperience) ? tailoredData.tailoredExperience : [],
@@ -208,7 +150,7 @@ export async function onRequestPost(context) {
     matchedKeywords:    Array.isArray(tailoredData.matchedKeywords)    ? tailoredData.matchedKeywords    : [],
     missingKeywords:    Array.isArray(tailoredData.missingKeywords)    ? tailoredData.missingKeywords    : [],
     atsNotes:           tailoredData.atsNotes           || '',
-    honestyWarnings: Array.isArray(tailoredData.honestyWarnings) ? tailoredData.honestyWarnings : [],
+    honestyWarnings:    Array.isArray(tailoredData.honestyWarnings)    ? tailoredData.honestyWarnings    : [],
   };
 
   return new Response(
@@ -262,28 +204,23 @@ function buildPrompt({ resumeText, jobDescription, targetRole, profileInfo }) {
     }
   }
 
-  lines.push(`STRICT OUTPUT LIMITS (follow exactly — response must be concise to avoid truncation):
-- tailoredSummary: 2-3 sentences max. Name the role and 2 key strengths. No fluff.
-- tailoredExperience: include ALL roles from the resume. MAX 3 bullets per role. Irrelevant roles get 1-2 bullets only.
-- tailoredProjects: MAX 2 bullets per project. Skip projects with zero relevance.
-- tailoredSkills: flat list, MAX 15 skills, comma-separated values only — no category labels.
-- matchedKeywords: MAX 15 items.
-- missingKeywords: MAX 8 items.
-- atsNotes: 1 sentence only.
-- honestyWarnings: only flag genuine fabrications. Empty array if none.
-
-CONTENT RULES:
+  lines.push(`CONTENT RULES:
 1. Order experience by relevance to the JD — most relevant role first.
 2. Rewrite bullets with strong action verbs that echo JD language. Quantify where source data supports it.
 3. Cut filler bullets ("assisted team", "participated in meetings"). Every bullet must add value.
 4. Only include skills explicitly present in the resume AND relevant to the JD.
 5. Never fabricate titles, companies, dates, metrics, or tools.
+6. tailoredSummary: 2-3 sentences max. Name the role and 2 key strengths.
+7. MAX 3 bullets per experience role. Irrelevant roles get 1-2 bullets only.
+8. MAX 2 bullets per project. Skip projects with zero relevance.
+9. tailoredSkills: flat list, MAX 15 skills.
+10. matchedKeywords: MAX 15 items. missingKeywords: MAX 8 items.
 
-Return ONLY a raw JSON object — no markdown, no code fences, no explanation:
+Return ONLY a raw JSON object — no markdown, no code fences, no explanation text before or after:
 {
   "tailoredSummary": "2-3 sentence summary targeting this specific role",
-  "tailoredExperience": [{"role":"","company":"","start":"","end":"","bullets":["bullet 1","bullet 2","bullet 3"]}],
-  "tailoredProjects": [{"name":"","description":"","bullets":["bullet 1","bullet 2"]}],
+  "tailoredExperience": [{"role":"","company":"","start":"","end":"","bullets":["bullet 1","bullet 2"]}],
+  "tailoredProjects": [{"name":"","description":"","bullets":["bullet 1"]}],
   "tailoredSkills": ["skill1","skill2"],
   "matchedKeywords": ["kw1","kw2"],
   "missingKeywords": ["kw1","kw2"],
