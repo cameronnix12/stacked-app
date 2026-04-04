@@ -1093,47 +1093,97 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <!-- ══ HELP ══ -->
 <section class="view" id="view-help" aria-label="Help Center">
-  <div class="view-header"><h1>Help Center</h1><p>Everything you need to get the most out of Stacked</p></div>
-  <div style="max-width:700px;display:flex;flex-direction:column;gap:14px">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="card" style="padding:16px;cursor:pointer" onclick="switchView('ai-resume')" onmouseover="this.style.borderColor='rgba(74,222,128,0.25)'" onmouseout="this.style.borderColor=''">
-        <div style="width:32px;height:32px;background:rgba(74,222,128,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px"><svg width="15" height="15" viewBox="0 0 20 20" fill="#4ADE80"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg></div>
-        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px">AI Resume Tailor</div>
-        <div style="font-size:11px;color:var(--muted);line-height:1.5">Upload your PDF, paste a job description, get a tailored ATS-ready resume in seconds</div>
+  <div style="display:flex;flex-direction:column;gap:16px">
+
+    <!-- Header -->
+    <div>
+      <h1 style="font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px">Help Center</h1>
+      <p style="font-size:13px;color:var(--muted);margin-top:4px">Everything you need to get the most out of Stacked</p>
+    </div>
+
+    <!-- Feature cards — 4 bigger cards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px">
+      <div class="card" style="padding:20px;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s" onclick="switchView('ai-resume')" onmouseover="this.style.borderColor='rgba(74,222,128,0.4)';this.style.boxShadow='0 0 20px rgba(74,222,128,0.08)'" onmouseout="this.style.borderColor='';this.style.boxShadow=''">
+        <div style="width:38px;height:38px;background:rgba(74,222,128,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:13px"><svg width="17" height="17" viewBox="0 0 20 20" fill="#4ADE80"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px">AI Resume Tailor</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.55;margin-bottom:10px">Upload your PDF and a job description. Claude rewrites your bullets to match the role without changing any facts.</div>
+        <div style="font-size:10px;font-weight:600;color:#4ADE80;background:rgba(74,222,128,0.08);border-radius:5px;padding:4px 8px;display:inline-block">Quick tip: Always upload your actual resume PDF for best results</div>
       </div>
-      <div class="card" style="padding:16px;cursor:pointer" onclick="switchView('cover-letter')" onmouseover="this.style.borderColor='rgba(74,222,128,0.25)'" onmouseout="this.style.borderColor=''">
-        <div style="width:32px;height:32px;background:rgba(74,222,128,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px"><svg width="15" height="15" viewBox="0 0 20 20" fill="#4ADE80"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg></div>
-        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px">Cover Letter Generator</div>
-        <div style="font-size:11px;color:var(--muted);line-height:1.5">Generate a personalized, honest cover letter from any job description</div>
+      <div class="card" style="padding:20px;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s" onclick="switchView('cover-letter')" onmouseover="this.style.borderColor='rgba(74,222,128,0.4)';this.style.boxShadow='0 0 20px rgba(74,222,128,0.08)'" onmouseout="this.style.borderColor='';this.style.boxShadow=''">
+        <div style="width:38px;height:38px;background:rgba(74,222,128,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:13px"><svg width="17" height="17" viewBox="0 0 20 20" fill="#4ADE80"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px">Cover Letter Generator</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.55;margin-bottom:10px">Paste any job description and get a 3-paragraph cover letter written in a real human voice — specific, honest, no fluff.</div>
+        <div style="font-size:10px;font-weight:600;color:#4ADE80;background:rgba(74,222,128,0.08);border-radius:5px;padding:4px 8px;display:inline-block">Quick tip: Add the hiring manager's name for a personal edge</div>
       </div>
-      <div class="card" style="padding:16px;cursor:pointer" onclick="switchView('applications')" onmouseover="this.style.borderColor='rgba(74,222,128,0.25)'" onmouseout="this.style.borderColor=''">
-        <div style="width:32px;height:32px;background:rgba(74,222,128,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px"><svg width="15" height="15" viewBox="0 0 20 20" fill="#4ADE80"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg></div>
-        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px">Application Tracker</div>
-        <div style="font-size:11px;color:var(--muted);line-height:1.5">Track every application with status, deadlines, follow-up reminders and smart indicators</div>
+      <div class="card" style="padding:20px;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s" onclick="switchView('applications')" onmouseover="this.style.borderColor='rgba(74,222,128,0.4)';this.style.boxShadow='0 0 20px rgba(74,222,128,0.08)'" onmouseout="this.style.borderColor='';this.style.boxShadow=''">
+        <div style="width:38px;height:38px;background:rgba(74,222,128,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:13px"><svg width="17" height="17" viewBox="0 0 20 20" fill="#4ADE80"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px">Application Tracker</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.55;margin-bottom:10px">Track every job with kanban stages, deadlines, follow-up reminders and smart alerts when applications go stale.</div>
+        <div style="font-size:10px;font-weight:600;color:#4ADE80;background:rgba(74,222,128,0.08);border-radius:5px;padding:4px 8px;display:inline-block">Quick tip: Set a follow-up date on every application you care about</div>
       </div>
-      <div class="card" style="padding:16px;cursor:pointer" onclick="switchView('analytics')" onmouseover="this.style.borderColor='rgba(74,222,128,0.25)'" onmouseout="this.style.borderColor=''">
-        <div style="width:32px;height:32px;background:rgba(74,222,128,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px"><svg width="15" height="15" viewBox="0 0 20 20" fill="#4ADE80"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg></div>
-        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px">Analytics</div>
-        <div style="font-size:11px;color:var(--muted);line-height:1.5">See your application funnel, response rates, weekly activity and job search insights</div>
+      <div class="card" style="padding:20px;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s" onclick="switchView('analytics')" onmouseover="this.style.borderColor='rgba(74,222,128,0.4)';this.style.boxShadow='0 0 20px rgba(74,222,128,0.08)'" onmouseout="this.style.borderColor='';this.style.boxShadow=''">
+        <div style="width:38px;height:38px;background:rgba(74,222,128,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:13px"><svg width="17" height="17" viewBox="0 0 20 20" fill="#4ADE80"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px">Analytics</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.55;margin-bottom:10px">See your full application funnel, interview rate, response rate by week, and insights on where you're losing momentum.</div>
+        <div style="font-size:10px;font-weight:600;color:#4ADE80;background:rgba(74,222,128,0.08);border-radius:5px;padding:4px 8px;display:inline-block">Quick tip: Add 5+ applications to unlock meaningful trend data</div>
       </div>
     </div>
+
+    <!-- Getting Started guide -->
     <div class="card" style="padding:22px">
-      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:7px">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="#4ADE80"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>
+        Getting Started — 5 steps to your first offer
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div style="width:26px;height:26px;background:#4ADE80;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#080C08;flex-shrink:0">1</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text)">Add your first application</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.5">Click Add Application and fill in company, role, and status to start tracking</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div style="width:26px;height:26px;background:#4ADE80;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#080C08;flex-shrink:0">2</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text)">Tailor your resume with AI</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.5">Upload your resume PDF and paste the job description into AI Resume Tailor</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div style="width:26px;height:26px;background:#4ADE80;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#080C08;flex-shrink:0">3</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text)">Generate your cover letter</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.5">Use Cover Letter Generator with the same JD to write a personalized, honest letter</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div style="width:26px;height:26px;background:#4ADE80;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#080C08;flex-shrink:0">4</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text)">Track your status</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.5">Move applications through stages as you hear back — set follow-up dates so nothing slips</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div style="width:26px;height:26px;background:#4ADE80;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#080C08;flex-shrink:0">5</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text)">Check your Analytics</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.5">Use Analytics to see your response rate and find where your funnel is breaking down</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="card" style="padding:22px">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px">
         <svg width="15" height="15" viewBox="0 0 20 20" fill="#4ADE80"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
         Frequently Asked Questions
       </div>
-      <div style="display:flex;flex-direction:column;gap:2px" id="faqList"></div>
+      <div style="display:flex;flex-direction:column;gap:3px" id="faqList"></div>
     </div>
-    <div class="card" style="padding:22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
-      <div>
-        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px">Still need help?</div>
-        <div style="font-size:12px;color:var(--muted)">Report a bug or send feedback directly to the Stacked team</div>
-      </div>
-      <a href="https://github.com/cameronnix12/stacked-app/issues" target="_blank" class="btn btn-secondary" style="text-decoration:none">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-        Open an Issue on GitHub
+
+    <!-- Contact section -->
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(74,222,128,0.2);border-radius:16px;padding:28px;text-align:center">
+      <div style="font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.4px;margin-bottom:6px">Still need help?</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px">We respond to every message within 24 hours</div>
+      <a href="mailto:stackedappco@gmail.com" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;border-radius:12px;background:rgba(74,222,128,0.06);border:1.5px solid rgba(74,222,128,0.35);color:#4ADE80;font-size:14px;font-weight:700;text-decoration:none;transition:background 0.15s,box-shadow 0.15s;letter-spacing:-0.2px" onmouseover="this.style.background='rgba(74,222,128,0.12)';this.style.boxShadow='0 0 20px rgba(74,222,128,0.12)'" onmouseout="this.style.background='rgba(74,222,128,0.06)';this.style.boxShadow=''">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+        Email us at stackedappco@gmail.com
       </a>
+      <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:12px">Founded by a college student, for college students. We actually care.</div>
     </div>
+
   </div>
 </section>
 
@@ -2368,14 +2418,16 @@ function toggleBilling() {
 
 // ── HELP CENTER ───────────────────────────────────────────────
 const FAQS = [
-  { q: 'How does the AI Resume Tailor work?', a: 'Upload your resume PDF and paste a job description. Claude reads both and rewrites your bullets to match the job\'s keywords and requirements — without changing any facts.' },
-  { q: 'Will the AI ever make things up on my resume?', a: 'No. The tailor is explicitly instructed never to fabricate skills, tools, titles, or experience. It only rewrites what is already there.' },
-  { q: 'How does the Cover Letter Generator work?', a: 'Paste the job description and optionally your resume PDF. Claude writes a 3-paragraph cover letter in a confident, natural voice — specific to that company, with no generic filler phrases.' },
-  { q: 'What is the difference between AI Resume and Cover Letter?', a: 'AI Resume rewrites your existing resume bullets to be ATS-optimized for a specific role. Cover Letter writes a brand new letter from scratch targeting the company and role.' },
-  { q: 'How does application tracking work?', a: 'Add applications manually with company, role, status, deadlines, and notes. Stacked automatically flags applications that need follow-up, have upcoming deadlines, or have gone stale.' },
-  { q: 'Is my data stored anywhere?', a: 'All application data is stored locally in your browser\'s localStorage. Nothing is sent to a server. Your resume PDF is only sent to Claude during tailoring and is not stored.' },
-  { q: 'What does "Move to next stage" do?', a: 'On each kanban card there is a button to advance the application to the next stage — from Wishlist to Applied, Applied to OA, OA to Interview, and Interview to Offer.' },
-  { q: 'How do I download my tailored resume or cover letter?', a: 'After generating, click the Download PDF button. It exports the white paper preview as a formatted PDF using your browser.' },
+  { q: 'How does the AI Resume Tailor work?', a: 'Upload your resume PDF and paste a job description. Claude reads your entire resume — every role, project, date, and bullet — then rewrites it to mirror the language and keywords in the job description. It never changes facts, titles, companies, or dates. Just stronger, more targeted phrasing.' },
+  { q: 'Will the AI ever make things up on my resume?', a: 'No. The tailor has strict rules: it cannot fabricate skills, tools, frameworks, certifications, metrics, titles, or experience that are not explicitly in your resume. If you only have coursework, it will say coursework. It will not invent internships or inflate your impact beyond what you actually did.' },
+  { q: 'How does the Cover Letter Generator work?', a: 'Paste the job description and optionally upload your resume PDF. You can also add the hiring manager\'s name. Claude writes a 3-paragraph cover letter in a confident, natural voice — opening with the company\'s specific challenge, middle with your most relevant real experience, and closing with a direct call to action. No corporate speak, no filler phrases.' },
+  { q: 'What is the difference between AI Resume and Cover Letter?', a: 'AI Resume takes your existing resume and rewrites the bullets to be ATS-optimized for one specific job — same facts, better language. Cover Letter generates a brand new letter from scratch that speaks directly to that company and role. They work best together: tailor your resume first, then generate the cover letter using the same job description.' },
+  { q: 'How does application tracking work?', a: 'Add applications with company, role, status, deadline, follow-up date, and notes. Stacked organizes them in a kanban board across six stages: Wishlist, Applied, OA, Interview, Offer, and Rejected. Smart indicators automatically flag cards that need follow-up, have a deadline coming up, or have gone stale with no activity.' },
+  { q: 'How do I add a deadline to an application?', a: 'Open the application card and click Edit (the pencil icon). There is a Deadline field where you can set the date. Once set, Stacked will show a deadline badge on the card when you are within 3 days. You can also set a Follow-up Date to remind yourself to check back in.' },
+  { q: 'What happens when I hit my free plan limits?', a: 'The free plan includes a limited number of AI resume tailoring runs and cover letter generations per month. Once you hit the limit, you will be prompted to upgrade to Pro. Your application tracking, kanban board, and all data remain fully accessible — the limits only apply to the AI generation features.' },
+  { q: 'How do I upgrade to Pro?', a: 'Click Billing in the left sidebar. Choose monthly ($12/mo) or yearly ($79/yr — saves you 45%). Click the Get Pro button and you will be taken through the checkout flow. Your Pro features activate immediately after payment.' },
+  { q: 'Can I cancel my subscription anytime?', a: 'Yes. There are no contracts, no cancellation fees, and no nonsense. You can cancel from your account settings at any time. You keep Pro access until the end of the billing period you already paid for.' },
+  { q: 'Is my data safe?', a: 'All your application data is stored locally in your browser\'s localStorage — it never leaves your device. Your resume PDF is only sent to Claude during a tailoring or cover letter session and is not stored on any server. We do not sell your data or share it with third parties.' },
 ];
 
 function renderFAQ() {
