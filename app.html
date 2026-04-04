@@ -506,6 +506,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .score-badge{background:rgba(74,222,128,0.1);color:#4ADE80;border-color:rgba(74,222,128,0.2)}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+<!-- Clerk -->
+<script
+  async
+  crossorigin="anonymous"
+  data-clerk-publishable-key="pk_test_Z29sZGVuLWxhZHlidWctMjYuY2xlcmsuYWNjb3VudHMuZGV2JA"
+  src="https://golden-ladybug-26.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+></script>
 </head>
 <body>
 
@@ -1415,6 +1422,69 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <script>
 'use strict';
+
+// ── CLERK AUTH GUARD ──────────────────────────────────────────
+// Runs before anything else. Redirects to landing if not signed in.
+let _clerkToken = null;
+let _clerkUser = null;
+let _userPlan = 'free';
+let _userUsage = { tailor: 0, coverLetter: 0, tailorLimit: 3, coverLetterLimit: 2 };
+
+async function initClerkAuth() {
+  if (typeof Clerk === 'undefined') return; // dev mode — skip auth
+  try {
+    await Clerk.load();
+    if (!Clerk.user) {
+      window.location.href = '/';
+      return;
+    }
+    _clerkUser = Clerk.user;
+    _clerkToken = await Clerk.session.getToken();
+
+    // Upsert user in D1 + fetch plan/usage
+    try {
+      const res = await fetch('/api/user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${_clerkToken}` },
+        body: JSON.stringify({
+          email: Clerk.user.primaryEmailAddress?.emailAddress || '',
+          name: Clerk.user.fullName || '',
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        _userPlan = data.plan || 'free';
+      }
+    } catch (e) { console.warn('User sync failed:', e); }
+
+    // Fetch usage counts
+    try {
+      const res = await fetch('/api/user', {
+        headers: { 'Authorization': `Bearer ${_clerkToken}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        _userPlan = data.plan || 'free';
+        _userUsage = data.usage || _userUsage;
+      }
+    } catch (e) { console.warn('Usage fetch failed:', e); }
+
+    // Show user name/email in sidebar if profile empty
+    if (!profile.name && Clerk.user.fullName) profile.name = Clerk.user.fullName;
+    if (!profile.email && Clerk.user.primaryEmailAddress) {
+      profile.email = Clerk.user.primaryEmailAddress.emailAddress;
+    }
+  } catch (e) {
+    console.warn('Clerk auth error:', e);
+  }
+}
+
+// Helper: refresh token before API calls (tokens expire after ~1hr)
+async function getToken() {
+  if (typeof Clerk === 'undefined') return null;
+  try { _clerkToken = await Clerk.session.getToken(); } catch(e){}
+  return _clerkToken;
+}
 
 // ── DATA ─────────────────────────────────────────────────────
 const STATUSES = ['wishlist','applied','oa','interview','offer','rejected'];
@@ -2722,11 +2792,24 @@ function fmtDate(s) { try { const d = new Date(s + 'T00:00:00'); return d.toLoca
 
 // ── INIT ──────────────────────────────────────────────────────
 loadData();
-updateSidebarUser();
-renderDashboard();
-switchView('dashboard');
-// Sync profile to CV on load
-if (Object.keys(profile).length > 0) syncProfileToCV();
+
+// Init Clerk then render — Clerk.load() is fast (~50ms)
+window.addEventListener('load', async () => {
+  await initClerkAuth();
+  updateSidebarUser();
+  renderDashboard();
+  switchView('dashboard');
+  if (Object.keys(profile).length > 0) syncProfileToCV();
+
+  // Add sign-out to sidebar bottom if Clerk loaded
+  if (typeof Clerk !== 'undefined' && Clerk.user) {
+    const signOutBtn = document.createElement('div');
+    signOutBtn.style.cssText = 'padding:8px 14px;margin-top:auto;cursor:pointer;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;border-top:1px solid rgba(255,255,255,0.06);';
+    signOutBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out';
+    signOutBtn.onclick = () => Clerk.signOut().then(() => window.location.href = '/');
+    document.getElementById('sidebar').appendChild(signOutBtn);
+  }
+});
 </script>
 </body>
 </html>

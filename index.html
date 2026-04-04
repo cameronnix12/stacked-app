@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stacked — Track Internships, Land Your Dream Job</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Clerk -->
+  <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_Z29sZGVuLWxhZHlidWctMjYuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://golden-ladybug-26.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+  ></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #080F0C;
+      --bg-card:    #0C1510;
+      --bg-card2:   #0F1A13;
+      --border:     rgba(255,255,255,0.07);
+      --border-lit: rgba(34,197,94,0.3);
+      --text:       #E2EDE6;
+      --muted:      #7A9E87;
+      --primary:    #22C55E;
+      --primary-lt: #4ADE80;
+      --primary-dk: #16A34A;
+      --teal:       #2DD4BF;
+      --lime:       #A3E635;
+      --emerald:    #10B981;
+      --cta:        #22C55E;
+      --cta-hover:  #16A34A;
+      --radius:     14px;
+      --radius-lg:  20px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 99px; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #4ADE80 0%, #2DD4BF 50%, #A3E635 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3);
+      color: var(--primary-lt); font-size: 12px; font-weight: 600;
+      padding: 5px 12px; border-radius: 99px; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 18px 0;
+      background: rgba(8,15,12,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+    }
+    .logo {
+      font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #4ADE80, #2DD4BF);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      text-decoration: none;
+    }
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500;
+      transition: color 0.2s; cursor: pointer;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { display: flex; align-items: center; gap: 12px; }
+    .btn-ghost {
+      background: none; border: none; color: var(--muted); font-size: 14px; font-weight: 500;
+      cursor: pointer; font-family: inherit; transition: color 0.2s; padding: 8px 16px;
+    }
+    .btn-ghost:hover { color: var(--text); }
+    .btn-primary {
+      background: var(--cta); color: #000; border: none; cursor: pointer;
+      font-family: inherit; font-size: 14px; font-weight: 700;
+      padding: 10px 22px; border-radius: 99px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 0 20px rgba(34,197,94,0.3);
+    }
+    .btn-primary:hover { background: var(--primary-lt); transform: translateY(-1px); box-shadow: 0 0 32px rgba(34,197,94,0.45); }
+    .btn-primary:active { transform: translateY(0); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: 0.3s; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 160px 0 0;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 500px; pointer-events: none;
+      background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(34,197,94,0.14) 0%, transparent 70%);
+    }
+    .hero-glow2 {
+      position: absolute; top: 200px; left: 10%; pointer-events: none;
+      width: 300px; height: 300px;
+      background: radial-gradient(ellipse, rgba(45,212,191,0.07), transparent 70%);
+    }
+    .hero-glow3 {
+      position: absolute; top: 200px; right: 10%; pointer-events: none;
+      width: 300px; height: 300px;
+      background: radial-gradient(ellipse, rgba(163,230,53,0.06), transparent 70%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(34,197,94,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,197,94,0.04) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 0%, transparent 80%);
+    }
+    .hero-inner { position: relative; z-index: 2; }
+    .hero-inner h1 {
+      font-size: clamp(40px, 6vw, 76px);
+      font-weight: 800; line-height: 1.05; letter-spacing: -2.5px;
+      margin: 20px 0 24px;
+      max-width: 900px; margin-left: auto; margin-right: auto;
+    }
+    .hero-inner p {
+      font-size: 18px; color: var(--muted); line-height: 1.7;
+      max-width: 520px; margin: 0 auto 36px;
+    }
+    .hero-actions {
+      display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+    .btn-hero {
+      background: linear-gradient(135deg, #22C55E, #2DD4BF);
+      color: #000; border: none; cursor: pointer; font-family: inherit;
+      font-size: 16px; font-weight: 800; padding: 16px 34px; border-radius: 99px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 40px rgba(34,197,94,0.35);
+    }
+    .btn-hero:hover { transform: translateY(-2px); box-shadow: 0 0 60px rgba(34,197,94,0.5); }
+    .btn-hero:active { transform: translateY(0); }
+    .btn-outline {
+      background: rgba(255,255,255,0.05); color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12);
+      cursor: pointer; font-family: inherit; font-size: 16px; font-weight: 600;
+      padding: 16px 34px; border-radius: 99px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-outline:hover { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.4); }
+
+    /* hero trust row */
+    .hero-trust {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-bottom: 64px; flex-wrap: wrap;
+    }
+    .hero-trust span { font-size: 13px; color: var(--muted); }
+    .avatars { display: flex; }
+    .av {
+      width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--bg);
+      margin-left: -8px; display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #000; flex-shrink: 0;
+    }
+    .av:first-child { margin-left: 0; }
+    .av1 { background: linear-gradient(135deg, #22C55E, #2DD4BF); }
+    .av2 { background: linear-gradient(135deg, #A3E635, #22C55E); }
+    .av3 { background: linear-gradient(135deg, #10B981, #2DD4BF); }
+    .av4 { background: linear-gradient(135deg, #22C55E, #A3E635); }
+
+    /* ── HERO PRODUCT SHOWCASE ── */
+    .hero-showcase {
+      position: relative; max-width: 960px; margin: 0 auto;
+      padding: 0 24px;
+    }
+    .showcase-frame {
+      background: var(--bg-card);
+      border: 1px solid rgba(34,197,94,0.15);
+      border-radius: 20px 20px 0 0;
+      padding: 20px 20px 0;
+      position: relative; overflow: hidden;
+      box-shadow: 0 -20px 80px rgba(34,197,94,0.08), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .showcase-frame::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(34,197,94,0.5), transparent);
+    }
+    .showcase-topbar {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .sf-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .sf-dot:nth-child(1) { background: #EF4444; }
+    .sf-dot:nth-child(2) { background: #F59E0B; }
+    .sf-dot:nth-child(3) { background: #22C55E; }
+    .sf-title { font-size: 12px; color: var(--muted); font-weight: 500; margin-left: 4px; }
+    .showcase-content {
+      display: grid; grid-template-columns: 220px 1fr 220px; gap: 14px; align-items: start;
+    }
+
+    /* left panel */
+    .sc-sidebar {
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .sc-nav-item {
+      display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px;
+      font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer;
+    }
+    .sc-nav-item.active { background: rgba(34,197,94,0.12); color: var(--primary-lt); }
+    .sc-nav-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .sc-mini-stats { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+    .sc-mini-stat {
+      background: rgba(255,255,255,0.03); border-radius: 8px; padding: 10px;
+      border: 1px solid var(--border);
+    }
+    .sc-mini-label { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+    .sc-mini-val { font-size: 18px; font-weight: 800; }
+    .sc-mini-val.g { color: var(--primary-lt); }
+    .sc-mini-val.t { color: var(--teal); }
+    .sc-mini-bar { height: 3px; border-radius: 99px; background: rgba(255,255,255,0.07); margin-top: 6px; overflow: hidden; }
+    .sc-mini-fill { height: 100%; border-radius: 99px; }
+
+    /* center main */
+    .sc-main { display: flex; flex-direction: column; gap: 10px; }
+    .sc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .sc-heading { font-size: 14px; font-weight: 700; }
+    .sc-filter { display: flex; gap: 6px; }
+    .sc-filter-btn {
+      font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 99px;
+      border: 1px solid var(--border); color: var(--muted); background: none; cursor: pointer;
+      font-family: inherit;
+    }
+    .sc-filter-btn.active { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.3); color: var(--primary-lt); }
+    .sc-app-row {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.025); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 12px;
+    }
+    .sc-logo {
+      width: 28px; height: 28px; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; color: #000; flex-shrink: 0;
+    }
+    .sc-app-info { flex: 1; min-width: 0; }
+    .sc-company { font-size: 12px; font-weight: 700; }
+    .sc-role { font-size: 10px; color: var(--muted); }
+    .sc-status { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 99px; flex-shrink: 0; }
+    .st-int { background: rgba(34,197,94,0.15); color: var(--primary-lt); }
+    .st-app { background: rgba(45,212,191,0.15); color: var(--teal); }
+    .st-rev { background: rgba(163,230,53,0.12); color: var(--lime); }
+    .st-oa  { background: rgba(16,185,129,0.15); color: var(--emerald); }
+
+    /* right panel */
+    .sc-right { display: flex; flex-direction: column; gap: 10px; }
+    .sc-ai-card {
+      background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(45,212,191,0.08));
+      border: 1px solid rgba(34,197,94,0.25); border-radius: 12px; padding: 14px;
+    }
+    .sc-ai-title { font-size: 11px; font-weight: 700; color: var(--primary-lt); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .sc-ai-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .sc-ai-label { font-size: 10px; color: var(--muted); }
+    .sc-ai-val { font-size: 18px; font-weight: 800; color: var(--primary-lt); }
+    .sc-progress { height: 5px; background: rgba(255,255,255,0.07); border-radius: 99px; overflow: hidden; margin-bottom: 8px; }
+    .sc-progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #22C55E, #2DD4BF); }
+    .sc-ai-chip { font-size: 10px; font-weight: 600; color: var(--muted); }
+    .sc-score-card {
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px; text-align: center;
+    }
+    .sc-score-ring {
+      width: 72px; height: 72px; margin: 0 auto 8px;
+      position: relative; display: flex; align-items: center; justify-content: center;
+    }
+    .sc-score-ring svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+    .sc-score-num { font-size: 20px; font-weight: 800; color: var(--primary-lt); position: relative; z-index: 1; }
+    .sc-score-label { font-size: 10px; color: var(--muted); }
+    .sc-badges { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+    .sc-badge-row {
+      display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 600;
+      color: var(--primary-lt); background: rgba(34,197,94,0.08); border-radius: 8px; padding: 6px 8px;
+    }
+    .sc-check { width: 14px; height: 14px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    /* floating chips */
+    .float-chip {
+      position: absolute; display: flex; align-items: center; gap: 7px;
+      background: var(--bg-card); border: 1px solid rgba(34,197,94,0.25);
+      border-radius: 12px; padding: 10px 14px;
+      font-size: 12px; font-weight: 700; color: var(--text);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      white-space: nowrap;
+    }
+    .float-chip .chip-icon {
+      width: 26px; height: 26px; border-radius: 8px;
+      background: linear-gradient(135deg, #22C55E, #2DD4BF);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #000;
+    }
+    .chip-sub { font-size: 10px; color: var(--muted); font-weight: 500; }
+    .chip-left { left: -40px; top: 80px; animation: floatL 4s ease-in-out infinite; }
+    .chip-right { right: -40px; top: 80px; animation: floatR 4.5s ease-in-out infinite; }
+    @keyframes floatL { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    @keyframes floatR { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+
+    /* ── LOGOS ── */
+    .logos-section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+    .logos-label { text-align: center; font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 28px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .logos-row { display: flex; align-items: center; justify-content: center; gap: 48px; flex-wrap: wrap; }
+    .logo-company { font-size: 15px; font-weight: 700; color: rgba(122,158,135,0.35); transition: color 0.2s; cursor: default; letter-spacing: -0.2px; }
+    .logo-company:hover { color: rgba(122,158,135,0.65); }
+
+    /* ── SECTION COMMONS ── */
+    .section { padding: 96px 0; }
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .section-header h2 { font-size: clamp(28px,4vw,44px); font-weight: 800; letter-spacing: -1px; line-height: 1.15; margin-top: 12px; }
+    .section-header p { font-size: 17px; color: var(--muted); max-width: 520px; margin: 14px auto 0; line-height: 1.7; }
+
+    /* ── FEATURES ── */
+    .features-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; }
+    .feature-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 32px;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      cursor: default; position: relative; overflow: hidden;
+    }
+    .feature-card::before {
+      content: ''; position: absolute; inset: 0; opacity: 0;
+      background: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(34,197,94,0.07), transparent);
+      transition: opacity 0.3s;
+    }
+    .feature-card:hover { border-color: rgba(34,197,94,0.3); transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-card.featured { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 12px; margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: center; position: relative; z-index: 1;
+    }
+    .icon-g { background: rgba(34,197,94,0.12); }
+    .icon-t { background: rgba(45,212,191,0.12); }
+    .icon-l { background: rgba(163,230,53,0.12); }
+    .icon-e { background: rgba(16,185,129,0.12); }
+    .feature-card h3 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 10px; position: relative; z-index: 1; }
+    .feature-card p { font-size: 15px; color: var(--muted); line-height: 1.7; position: relative; z-index: 1; }
+    .feature-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; position: relative; z-index: 1; }
+    .tag { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 6px; border: 1px solid; }
+    .tag-g { color: var(--primary-lt); border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.08); }
+    .tag-t { color: var(--teal); border-color: rgba(45,212,191,0.3); background: rgba(45,212,191,0.08); }
+    .tag-l { color: var(--lime); border-color: rgba(163,230,53,0.25); background: rgba(163,230,53,0.07); }
+    .tag-e { color: var(--emerald); border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.08); }
+
+    /* AI chat visual */
+    .ai-visual {
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px; position: relative; z-index: 1;
+    }
+    .ai-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+    .ai-av { width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+    .ai-av.user { background: rgba(34,197,94,0.15); }
+    .ai-av.bot  { background: linear-gradient(135deg, #22C55E, #2DD4BF); }
+    .ai-bubble { background: rgba(255,255,255,0.04); border-radius: 8px; padding: 9px 12px; font-size: 12px; color: var(--muted); line-height: 1.6; flex: 1; }
+    .ai-bubble.response { color: var(--text); }
+    .ai-hl { color: var(--primary-lt); font-weight: 700; }
+    .typing-dots { display: inline-flex; gap: 3px; align-items: center; }
+    .td { width: 4px; height: 4px; border-radius: 50%; background: var(--teal); animation: td 1.2s ease-in-out infinite; }
+    .td:nth-child(2) { animation-delay: 0.2s; }
+    .td:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes td { 0%,60%,100%{opacity:0.3;transform:translateY(0)} 30%{opacity:1;transform:translateY(-2px)} }
+
+    /* ── HOW IT WORKS ── */
+    .how-bg { background: linear-gradient(180deg, var(--bg) 0%, rgba(34,197,94,0.03) 50%, var(--bg) 100%); }
+    .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; position: relative; }
+    .steps::before {
+      content: ''; position: absolute; top: 40px; left: calc(16.66% + 20px); right: calc(16.66% + 20px);
+      height: 1px; background: linear-gradient(90deg, var(--primary), var(--teal)); opacity: 0.25;
+    }
+    .step { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; }
+    .step-number {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(45,212,191,0.12));
+      border: 1px solid rgba(34,197,94,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 800; color: var(--primary-lt); position: relative; z-index: 1;
+    }
+    .step h3 { font-size: 18px; font-weight: 700; }
+    .step p { font-size: 15px; color: var(--muted); line-height: 1.6; }
+
+    /* ── STATS ── */
+    .stats-section { padding: 80px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); }
+    .stat-block { background: var(--bg); padding: 40px 24px; text-align: center; transition: background 0.2s; }
+    .stat-block:hover { background: rgba(34,197,94,0.04); }
+    .stat-num { font-size: 44px; font-weight: 800; letter-spacing: -2px; line-height: 1; margin-bottom: 8px; }
+    .stat-label { font-size: 14px; color: var(--muted); font-weight: 500; }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .testimonial-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 28px;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .testimonial-card:hover { border-color: rgba(34,197,94,0.25); transform: translateY(-2px); }
+    .stars { display: flex; gap: 3px; margin-bottom: 14px; }
+    .star { color: #22C55E; font-size: 13px; }
+    .testimonial-card blockquote { font-size: 14px; color: var(--muted); line-height: 1.75; margin-bottom: 20px; }
+    .t-author { display: flex; align-items: center; gap: 10px; }
+    .t-av { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #000; flex-shrink: 0; }
+    .t-name { font-size: 13px; font-weight: 700; }
+    .t-role { font-size: 11px; color: var(--muted); }
+
+    /* ── PRICING ── */
+    .pricing-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; max-width: 780px; margin: 0 auto; }
+    .pricing-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 36px;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      position: relative; overflow: hidden;
+    }
+    .pricing-card.popular { border-color: rgba(34,197,94,0.35); box-shadow: 0 0 50px rgba(34,197,94,0.1); }
+    .pricing-card.popular::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #22C55E, #2DD4BF, #A3E635);
+    }
+    .popular-label {
+      position: absolute; top: 16px; right: 16px;
+      background: linear-gradient(135deg, #22C55E, #2DD4BF);
+      color: #000; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 99px;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .pricing-plan { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em; }
+    .pricing-price { display: flex; align-items: flex-end; gap: 4px; margin-bottom: 4px; }
+    .price-amount { font-size: 48px; font-weight: 800; letter-spacing: -2px; line-height: 1; }
+    .price-period { font-size: 14px; color: var(--muted); padding-bottom: 8px; }
+    .pricing-desc { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+    .pricing-features li { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+    .check-icon { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+    .ck-y { background: rgba(34,197,94,0.15); color: var(--primary-lt); }
+    .ck-n { background: rgba(122,158,135,0.1); color: var(--muted); }
+    .btn-pricing { width: 100%; padding: 14px; border-radius: 99px; border: none; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: transform 0.15s, box-shadow 0.2s, background 0.2s; }
+    .btn-pf { background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); }
+    .btn-pf:hover { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.3); }
+    .btn-pp { background: linear-gradient(135deg, #22C55E, #2DD4BF); color: #000; box-shadow: 0 0 30px rgba(34,197,94,0.3); }
+    .btn-pp:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(34,197,94,0.45); }
+
+    /* ── CTA ── */
+    .cta-section { padding: 96px 0; }
+    .cta-card {
+      background: var(--bg-card); border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 24px; padding: 80px 48px; text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-card::before { content:''; position:absolute; top:-50%; left:-20%; width:60%; height:200%; background:radial-gradient(ellipse, rgba(34,197,94,0.08), transparent 60%); }
+    .cta-card::after  { content:''; position:absolute; top:-50%; right:-20%; width:60%; height:200%; background:radial-gradient(ellipse, rgba(45,212,191,0.06), transparent 60%); }
+    .cta-card h2 { font-size: clamp(28px,4vw,44px); font-weight: 800; letter-spacing: -1px; line-height: 1.2; margin-bottom: 16px; position: relative; z-index: 1; }
+    .cta-card p { font-size: 17px; color: var(--muted); margin-bottom: 36px; position: relative; z-index: 1; }
+    .cta-actions { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; position: relative; z-index: 1; }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--border); padding: 64px 0 40px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 56px; }
+    .footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.7; margin-top: 12px; max-width: 280px; }
+    .footer-col h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 16px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a { color: var(--muted); text-decoration: none; font-size: 14px; transition: color 0.2s; cursor: pointer; }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 32px; border-top: 1px solid var(--border); }
+    .footer-bottom p { font-size: 13px; color: var(--muted); }
+    .social-links { display: flex; gap: 12px; }
+    .social-link { width: 36px; height: 36px; border-radius: 9px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--muted); text-decoration: none; font-size: 14px; transition: border-color 0.2s, color 0.2s, background 0.2s; cursor: pointer; }
+    .social-link:hover { border-color: var(--primary); color: var(--primary-lt); background: rgba(34,197,94,0.08); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    .animate-up { animation: fadeUp 0.65s ease forwards; }
+    .d1 { animation-delay: 0.1s; opacity: 0; }
+    .d2 { animation-delay: 0.2s; opacity: 0; }
+    .d3 { animation-delay: 0.3s; opacity: 0; }
+    .d4 { animation-delay: 0.45s; opacity: 0; }
+    .d5 { animation-delay: 0.6s; opacity: 0; }
+    .scroll-reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .scroll-reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation: none !important; transition: none !important; } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .showcase-content { grid-template-columns: 1fr; }
+      .sc-sidebar, .sc-right { display: none; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .float-chip { display: none; }
+    }
+    @media (max-width: 768px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .feature-card.featured { grid-column: span 1; grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .steps::before { display: none; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .cta-card { padding: 48px 24px; }
+    }
+    @media (max-width: 480px) {
+      .hero-inner h1 { font-size: 36px; }
+      .btn-hero, .btn-outline { padding: 14px 26px; font-size: 15px; }
+    }
+
+    /* ── MOBILE MENU ── */
+    .mobile-menu { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(8,15,12,0.97); backdrop-filter: blur(20px); flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a, .mobile-menu button { color: var(--text); text-decoration: none; font-size: 22px; font-weight: 700; background: none; border: none; font-family: inherit; cursor: pointer; transition: color 0.2s; }
+    .mobile-menu a:hover { color: var(--primary-lt); }
+    .mobile-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: var(--muted); font-size: 28px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav role="banner">
+  <div class="nav-inner">
+    <a href="#" class="logo" aria-label="Stacked home">Stacked</a>
+    <ul class="nav-links" role="list">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How it Works</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#testimonials">Reviews</a></li>
+    </ul>
+    <div class="nav-cta">
+      <button class="btn-ghost" id="navLoginBtn">Log in</button>
+      <button class="btn-primary" id="navSignupBtn">Get Started Free</button>
+    </div>
+    <div class="hamburger" role="button" aria-label="Open menu" tabindex="0" onclick="document.getElementById('mobileMenu').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div id="mobileMenu" class="mobile-menu" role="dialog" aria-modal="true">
+  <button class="mobile-close" onclick="document.getElementById('mobileMenu').classList.remove('open')" aria-label="Close menu">&#10005;</button>
+  <a href="#features" onclick="document.getElementById('mobileMenu').classList.remove('open')">Features</a>
+  <a href="#how-it-works" onclick="document.getElementById('mobileMenu').classList.remove('open')">How it Works</a>
+  <a href="#pricing" onclick="document.getElementById('mobileMenu').classList.remove('open')">Pricing</a>
+  <a href="#testimonials" onclick="document.getElementById('mobileMenu').classList.remove('open')">Reviews</a>
+  <button class="btn-hero" style="font-size:16px;padding:14px 32px;" id="mobileSignupBtn">Get Started Free</button>
+</div>
+
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-heading">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-glow2" aria-hidden="true"></div>
+  <div class="hero-glow3" aria-hidden="true"></div>
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <div class="badge animate-up d1">
+        <span class="badge-dot" aria-hidden="true"></span>
+        Claude AI Resume Engine
+      </div>
+      <h1 id="hero-heading" class="animate-up d2">
+        Track internships,<br/>land your <span class="gradient-text">dream job</span>
+      </h1>
+      <p class="animate-up d3">Apply smarter, tailor every resume with AI, and manage your entire internship search from one beautiful dashboard.</p>
+      <div class="hero-actions animate-up d4">
+        <button class="btn-hero" id="heroSignupBtn">Start Free Today</button>
+        <button class="btn-outline" id="heroLoginBtn">Log In</button>
+      </div>
+      <div class="hero-trust animate-up d5">
+        <div class="avatars" aria-label="Student users">
+          <div class="av av1">JK</div>
+          <div class="av av2">MS</div>
+          <div class="av av3">RP</div>
+          <div class="av av4">AL</div>
+        </div>
+        <span>Trusted by <strong>12,400+</strong> students at top universities</span>
+      </div>
+
+      <!-- PRODUCT SHOWCASE -->
+      <div class="hero-showcase animate-up d5" style="animation-delay:0.7s;opacity:0;" aria-label="Stacked product dashboard preview">
+        <div class="float-chip chip-left" aria-hidden="true">
+          <div class="chip-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div>Interview Scheduled</div>
+            <div class="chip-sub">Google SWE, Tomorrow 2pm</div>
+          </div>
+        </div>
+        <div class="float-chip chip-right" aria-hidden="true">
+          <div class="chip-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <div>AI Resume Score</div>
+            <div class="chip-sub">94/100, ATS Optimized</div>
+          </div>
+        </div>
+        <div class="showcase-frame" role="img">
+          <div class="showcase-topbar">
+            <div class="sf-dot"></div><div class="sf-dot"></div><div class="sf-dot"></div>
+            <span class="sf-title">Stacked — My Applications</span>
+          </div>
+          <div class="showcase-content">
+            <div class="sc-sidebar" aria-hidden="true">
+              <div class="sc-nav-item active"><span class="sc-nav-dot"></span>All Applications</div>
+              <div class="sc-nav-item"><span class="sc-nav-dot"></span>Interviews</div>
+              <div class="sc-nav-item"><span class="sc-nav-dot"></span>AI Resume</div>
+              <div class="sc-nav-item"><span class="sc-nav-dot"></span>Analytics</div>
+              <div class="sc-mini-stats">
+                <div class="sc-mini-stat">
+                  <div class="sc-mini-label">Applied</div>
+                  <div class="sc-mini-val g">24</div>
+                  <div class="sc-mini-bar"><div class="sc-mini-fill" style="width:80%;background:linear-gradient(90deg,#22C55E,#2DD4BF)"></div></div>
+                </div>
+                <div class="sc-mini-stat">
+                  <div class="sc-mini-label">Interviews</div>
+                  <div class="sc-mini-val t">8</div>
+                  <div class="sc-mini-bar"><div class="sc-mini-fill" style="width:33%;background:linear-gradient(90deg,#2DD4BF,#A3E635)"></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="sc-main" aria-hidden="true">
+              <div class="sc-header">
+                <span class="sc-heading">Recent Applications</span>
+                <div class="sc-filter">
+                  <button class="sc-filter-btn active">All</button>
+                  <button class="sc-filter-btn">Active</button>
+                  <button class="sc-filter-btn">Offers</button>
+                </div>
+              </div>
+              <div class="sc-app-row"><div class="sc-logo" style="background:linear-gradient(135deg,#4ADE80,#2DD4BF)">G</div><div class="sc-app-info"><div class="sc-company">Google</div><div class="sc-role">SWE Intern, Summer 2025</div></div><span class="sc-status st-int">Interview</span></div>
+              <div class="sc-app-row"><div class="sc-logo" style="background:linear-gradient(135deg,#22C55E,#A3E635)">M</div><div class="sc-app-info"><div class="sc-company">Meta</div><div class="sc-role">PM Intern, Fall 2025</div></div><span class="sc-status st-oa">Online Test</span></div>
+              <div class="sc-app-row"><div class="sc-logo" style="background:linear-gradient(135deg,#2DD4BF,#22C55E)">A</div><div class="sc-app-info"><div class="sc-company">Airbnb</div><div class="sc-role">Design Intern, Summer 2025</div></div><span class="sc-status st-rev">Under Review</span></div>
+              <div class="sc-app-row"><div class="sc-logo" style="background:linear-gradient(135deg,#10B981,#2DD4BF)">S</div><div class="sc-app-info"><div class="sc-company">Stripe</div><div class="sc-role">Backend Intern, Summer 2025</div></div><span class="sc-status st-app">Applied</span></div>
+              <div class="sc-app-row"><div class="sc-logo" style="background:linear-gradient(135deg,#A3E635,#22C55E)">N</div><div class="sc-app-info"><div class="sc-company">Netflix</div><div class="sc-role">Data Intern, Summer 2025</div></div><span class="sc-status st-int">Interview</span></div>
+            </div>
+            <div class="sc-right" aria-hidden="true">
+              <div class="sc-ai-card">
+                <div class="sc-ai-title">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  AI Resume Score
+                </div>
+                <div class="sc-ai-row"><span class="sc-ai-label">Google SWE tailored</span><span class="sc-ai-val">94</span></div>
+                <div class="sc-progress"><div class="sc-progress-fill" style="width:94%"></div></div>
+                <div class="sc-ai-chip">&#8593; from 61 before AI boost</div>
+              </div>
+              <div class="sc-score-card">
+                <div class="sc-score-ring">
+                  <svg width="72" height="72" viewBox="0 0 72 72">
+                    <circle cx="36" cy="36" r="28" fill="none" stroke="rgba(34,197,94,0.1)" stroke-width="6"/>
+                    <circle cx="36" cy="36" r="28" fill="none" stroke="url(#scoreGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="10.6"/>
+                    <defs><linearGradient id="scoreGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#22C55E"/><stop offset="100%" stop-color="#2DD4BF"/></linearGradient></defs>
+                  </svg>
+                  <span class="sc-score-num">94</span>
+                </div>
+                <div class="sc-score-label" style="color:var(--primary-lt);font-weight:700;">Excellent</div>
+                <div class="sc-badges">
+                  <div class="sc-badge-row"><div class="sc-check"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>ATS Optimized</div>
+                  <div class="sc-badge-row"><div class="sc-check"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Keyword Match</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGOS -->
+<section class="logos-section" aria-label="Students from top universities">
+  <div class="container">
+    <p class="logos-label">Students from leading universities</p>
+    <div class="logos-row" aria-hidden="true">
+      <span class="logo-company">MIT</span>
+      <span class="logo-company">Stanford</span>
+      <span class="logo-company">Harvard</span>
+      <span class="logo-company">UC Berkeley</span>
+      <span class="logo-company">Carnegie Mellon</span>
+      <span class="logo-company">Georgia Tech</span>
+      <span class="logo-company">NYU</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="section" aria-labelledby="features-heading">
+  <div class="container">
+    <div class="section-header scroll-reveal">
+      <span class="badge">Features</span>
+      <h2 id="features-heading">Everything you need to <span class="gradient-text">land the role</span></h2>
+      <p>From tracking your first application to having AI rewrite your resume for every job, Stacked has your back.</p>
+    </div>
+    <div class="features-grid" role="list">
+      <div class="feature-card featured scroll-reveal" role="listitem">
+        <div>
+          <div class="feature-icon icon-g" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4ADE80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <h3>AI Resume Tailoring</h3>
+          <p>Paste any job description and our AI instantly rewrites your resume to match the exact language, keywords, and skills recruiters are screening for. Beat the ATS and stand out on every application.</p>
+          <div class="feature-tags">
+            <span class="tag tag-g">Claude AI Powered</span>
+            <span class="tag tag-t">ATS Optimizer</span>
+            <span class="tag tag-l">Keyword Match</span>
+            <span class="tag tag-e">Cover Letter</span>
+          </div>
+        </div>
+        <div class="ai-visual" aria-label="AI resume tailoring chat preview">
+          <div class="ai-row">
+            <div class="ai-av user" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="#4ADE80"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+            <div class="ai-bubble">Tailor my resume for the Google SWE Intern role. Focus on distributed systems and Python.</div>
+          </div>
+          <div class="ai-row">
+            <div class="ai-av bot" aria-hidden="true">AI</div>
+            <div class="ai-bubble response">
+              Optimizing for <span class="ai-hl">Google SWE Intern</span>...<br/>
+              &#10003; Added <span class="ai-hl">Bigtable, Spanner</span> to skills<br/>
+              &#10003; Rewritten 3 bullets for <span class="ai-hl">impact and scale</span><br/>
+              &#10003; ATS score: <span class="ai-hl">94/100</span> &#8593; from 61<br/>
+              <span class="typing-dots" aria-label="AI is thinking"><span class="td"></span><span class="td"></span><span class="td"></span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="feature-card scroll-reveal" role="listitem">
+        <div class="feature-icon icon-t" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+        <h3>Application Tracker</h3>
+        <p>Manage every application in one visual pipeline. Track statuses, deadlines, notes, and contacts. Never miss a follow-up or deadline again.</p>
+        <div class="feature-tags"><span class="tag tag-t">Kanban Board</span><span class="tag tag-g">Deadline Alerts</span></div>
+      </div>
+      <div class="feature-card scroll-reveal" role="listitem">
+        <div class="feature-icon icon-l" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A3E635" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <h3>AI Cover Letters</h3>
+        <p>Generate honest, personalized cover letters in seconds. No corporate speak, no filler phrases — just a real letter that sounds like you.</p>
+        <div class="feature-tags"><span class="tag tag-l">3-Paragraph Format</span><span class="tag tag-e">PDF Export</span></div>
+      </div>
+      <div class="feature-card scroll-reveal" role="listitem">
+        <div class="feature-icon icon-e" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <h3>Insights Dashboard</h3>
+        <p>See your application success rate, response times, and interview conversion. Understand what is working and double down on your winning strategy.</p>
+        <div class="feature-tags"><span class="tag tag-e">Success Rate</span><span class="tag tag-g">Weekly Reports</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" class="section how-bg" aria-labelledby="how-heading">
+  <div class="container">
+    <div class="section-header scroll-reveal">
+      <span class="badge">How it Works</span>
+      <h2 id="how-heading">From zero to <span class="gradient-text">offer letter</span> in 3 steps</h2>
+      <p>Stacked streamlines your entire internship search into a clear, repeatable process.</p>
+    </div>
+    <div class="steps" role="list">
+      <div class="step scroll-reveal" role="listitem"><div class="step-number" aria-hidden="true">01</div><h3>Add your applications</h3><p>Paste a job URL or add manually. Stacked organizes everything into your personal pipeline instantly.</p></div>
+      <div class="step scroll-reveal" style="transition-delay:0.1s" role="listitem"><div class="step-number" aria-hidden="true">02</div><h3>Let AI tailor your resume</h3><p>Paste the job description and Stacked rewrites your resume with the right keywords and impact statements, in seconds.</p></div>
+      <div class="step scroll-reveal" style="transition-delay:0.2s" role="listitem"><div class="step-number" aria-hidden="true">03</div><h3>Track, follow up, win</h3><p>Monitor every stage, get deadline reminders, and use your analytics to continuously improve your hit rate.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section" aria-label="Stacked by the numbers">
+  <div class="container">
+    <div class="stats-grid" role="list">
+      <div class="stat-block scroll-reveal" role="listitem"><div class="stat-num gradient-text">12.4k+</div><div class="stat-label">Active Students</div></div>
+      <div class="stat-block scroll-reveal" style="transition-delay:0.1s" role="listitem"><div class="stat-num" style="color:var(--teal)">320k+</div><div class="stat-label">Applications Tracked</div></div>
+      <div class="stat-block scroll-reveal" style="transition-delay:0.2s" role="listitem"><div class="stat-num" style="color:var(--primary-lt)">94%</div><div class="stat-label">ATS Pass Rate with AI Resume</div></div>
+      <div class="stat-block scroll-reveal" style="transition-delay:0.3s" role="listitem"><div class="stat-num" style="color:var(--lime)">3.2x</div><div class="stat-label">More Interviews vs. Average</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" class="section" aria-labelledby="testimonials-heading">
+  <div class="container">
+    <div class="section-header scroll-reveal">
+      <span class="badge">Reviews</span>
+      <h2 id="testimonials-heading">Students are getting <span class="gradient-text">stacked with offers</span></h2>
+    </div>
+    <div class="testimonials-grid" role="list">
+      <div class="testimonial-card scroll-reveal" role="listitem">
+        <div class="stars" aria-label="5 out of 5 stars"><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span></div>
+        <blockquote>"The AI resume tool is absolutely insane. I went from zero callbacks to landing interviews at Google and Stripe within two weeks of using Stacked."</blockquote>
+        <div class="t-author"><div class="t-av" style="background:linear-gradient(135deg,#22C55E,#2DD4BF)" aria-hidden="true">JK</div><div><div class="t-name">Jordan Kim</div><div class="t-role">CS Junior, Carnegie Mellon</div></div></div>
+      </div>
+      <div class="testimonial-card scroll-reveal" style="transition-delay:0.1s" role="listitem">
+        <div class="stars" aria-label="5 out of 5 stars"><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span></div>
+        <blockquote>"I was applying to 15+ places and losing track of everything. Stacked's tracker is so clean. The deadline alerts alone saved me from missing my dream internship application."</blockquote>
+        <div class="t-author"><div class="t-av" style="background:linear-gradient(135deg,#A3E635,#22C55E)" aria-hidden="true">MS</div><div><div class="t-name">Maya Singh</div><div class="t-role">Business Junior, NYU Stern</div></div></div>
+      </div>
+      <div class="testimonial-card scroll-reveal" style="transition-delay:0.2s" role="listitem">
+        <div class="stars" aria-label="5 out of 5 stars"><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span></div>
+        <blockquote>"Got my offer at Airbnb's design team. The cover letter generator helped me tell a real story. This app should be required for every college student."</blockquote>
+        <div class="t-author"><div class="t-av" style="background:linear-gradient(135deg,#2DD4BF,#10B981)" aria-hidden="true">RP</div><div><div class="t-name">Riley Park</div><div class="t-role">Design Senior, RISD</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="section" aria-labelledby="pricing-heading">
+  <div class="container">
+    <div class="section-header scroll-reveal">
+      <span class="badge">Pricing</span>
+      <h2 id="pricing-heading">Start free, go <span class="gradient-text">Pro when you're ready</span></h2>
+      <p>No hidden fees. No credit card required to start. Cancel anytime.</p>
+    </div>
+    <div class="pricing-grid" role="list">
+      <div class="pricing-card scroll-reveal" role="listitem">
+        <div class="pricing-plan">Free</div>
+        <div class="pricing-price"><span class="price-amount">$0</span><span class="price-period">/ month</span></div>
+        <p class="pricing-desc">Everything you need to start organizing your internship search.</p>
+        <ul class="pricing-features" aria-label="Free plan features">
+          <li><span class="check-icon ck-y" aria-hidden="true">&#10003;</span>Track up to 20 applications</li>
+          <li><span class="check-icon ck-y" aria-hidden="true">&#10003;</span>Kanban pipeline board</li>
+          <li><span class="check-icon ck-y" aria-hidden="true">&#10003;</span>Deadline reminders</li>
+          <li><span class="check-icon ck-y" aria-hidden="true">&#10003;</span>3 AI resume tailors / month</li>
+          <li><span class="check-icon ck-y" aria-hidden="true">&#10003;</span>2 AI cover letters / month</li>
+          <li><span class="check-icon ck-n" aria-hidden="true">&#10005;</span><span style="color:var(--muted)">Unlimited AI tailoring</span></li>
+          <li><span class="check-icon ck-n" aria-hidden="true">&#10005;</span><span style="color:var(--muted)">Full Analytics Dashboard</span></li>
+        </ul>
+        <button class="btn-pricing btn-pf" id="pricingFreeBtn">Get Started Free</button>
+      </div>
+      <div class="pricing-card popular scroll-reveal" style="transition-delay:0.1s" role="listitem">
+        <span class="popular-label" aria-label="Most popular plan">Most Popular</span>
+        <div class="pricing-plan">Pro</div>
+        <div class="pricing-price"><span class="price-amount gradient-text">$12</span><span class="price-period">/ month</span></div>
+        <p class="pricing-desc">Unlimited AI power for students serious about landing top internships.</p>
+        <ul class="pricing-features" aria-label="Pro plan features">
+          <li><span class="check-icon ck-y" aria-hidden="true">&#10003;</span><strong>Unlimited</strong> applications</li>
+          <li><span class="check-icon ck-y" aria-hidden="true">&#10003;</span>Kanban pipeline board</li>
+          <li><span class="check-icon ck-y" aria-hidden="true">&#10003;</span>Deadline reminders</li>
+          <li><span class="check-icon ck-y" aria-hidden="true">&#10003;</span><strong>Unlimited</strong> AI resume tailoring</li>
+          <li><span class="check-icon ck-y" aria-hidden="true">&#10003;</span><strong>Unlimited</strong> AI cover letters</li>
+          <li><span class="check-icon ck-y" aria-hidden="true">&#10003;</span>Full Analytics Dashboard</li>
+          <li><span class="check-icon ck-y" aria-hidden="true">&#10003;</span>Priority support</li>
+        </ul>
+        <button class="btn-pricing btn-pp" id="pricingProBtn">Start 7-Day Free Trial</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" aria-labelledby="cta-heading">
+  <div class="container">
+    <div class="cta-card">
+      <h2 id="cta-heading">Ready to get <span class="gradient-text">Stacked?</span></h2>
+      <p>Join thousands of students landing top internships smarter, not harder.</p>
+      <div class="cta-actions">
+        <button class="btn-hero" id="ctaSignupBtn">Create Your Free Account</button>
+        <button class="btn-outline" id="ctaLoginBtn">Log In</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer role="contentinfo">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo" aria-label="Stacked home">Stacked</a>
+        <p>The all-in-one internship tracker and AI resume platform for students who want to land roles at their dream companies.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul role="list">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#">Changelog</a></li>
+          <li><a href="#">Roadmap</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul role="list">
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Resume Tips</a></li>
+          <li><a href="#">Interview Guide</a></li>
+          <li><a href="/app">Help Center</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul role="list">
+          <li><a href="#">About</a></li>
+          <li><a href="mailto:stackedappco@gmail.com">Contact</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&#169; 2025 Stacked. All rights reserved.</p>
+      <div class="social-links" aria-label="Social media links">
+        <a href="#" class="social-link" aria-label="Twitter / X"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="#" class="social-link" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+        <a href="#" class="social-link" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <a href="#" class="social-link" aria-label="TikTok"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.22 8.22 0 004.82 1.55V6.79a4.85 4.85 0 01-1.05-.1z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Scroll reveal ─────────────────────────────────────────────
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+  // ── Smooth anchor scrolling ───────────────────────────────────
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function(e) {
+      const t = document.querySelector(this.getAttribute('href'));
+      if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+
+  // ── Nav scroll effect ─────────────────────────────────────────
+  window.addEventListener('scroll', () => {
+    document.querySelector('nav').style.background =
+      window.scrollY > 60 ? 'rgba(8,15,12,0.97)' : 'rgba(8,15,12,0.8)';
+  }, { passive: true });
+
+  // ── Hamburger keyboard ────────────────────────────────────────
+  document.querySelector('.hamburger').addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); document.getElementById('mobileMenu').classList.toggle('open'); }
+  });
+
+  // ── Clerk Auth ────────────────────────────────────────────────
+  window.addEventListener('load', async () => {
+    if (typeof Clerk === 'undefined') return; // Clerk failed to load
+
+    await Clerk.load();
+
+    // If already signed in, redirect straight to the app
+    if (Clerk.user) {
+      window.location.href = '/app';
+      return;
+    }
+
+    const signUp = () => Clerk.openSignUp({ afterSignUpUrl: '/app', afterSignInUrl: '/app' });
+    const signIn = () => Clerk.openSignIn({ afterSignInUrl: '/app', afterSignUpUrl: '/app' });
+
+    // Wire all sign-up / sign-in buttons
+    document.getElementById('navSignupBtn').onclick   = signUp;
+    document.getElementById('navLoginBtn').onclick    = signIn;
+    document.getElementById('heroSignupBtn').onclick  = signUp;
+    document.getElementById('heroLoginBtn').onclick   = signIn;
+    document.getElementById('ctaSignupBtn').onclick   = signUp;
+    document.getElementById('ctaLoginBtn').onclick    = signIn;
+    document.getElementById('pricingFreeBtn').onclick = signUp;
+    document.getElementById('pricingProBtn').onclick  = signUp;
+    document.getElementById('mobileSignupBtn').onclick = signUp;
+  });
+</script>
+</body>
+</html>
