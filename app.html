@@ -1478,7 +1478,31 @@ let _userUsage = { tailor: 0, coverLetter: 0, tailorLimit: 3, coverLetterLimit: 
 async function initClerkAuth() {
   if (typeof Clerk === 'undefined') return; // dev mode — skip auth
   try {
-    await Clerk.load();
+    await Clerk.load({
+      appearance: {
+        variables: {
+          colorPrimary: '#22C55E',
+          colorBackground: '#0C1510',
+          colorText: '#E2EDE6',
+          colorTextSecondary: '#7A9E87',
+          colorInputBackground: '#0F1A13',
+          colorInputText: '#E2EDE6',
+          colorNeutral: '#7A9E87',
+          borderRadius: '12px',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
+        },
+        elements: {
+          card: { backgroundColor: '#0C1510', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 20px 60px rgba(0,0,0,0.6)' },
+          formButtonPrimary: { backgroundColor: '#22C55E', color: '#080C08', fontWeight: '700' },
+          footerActionLink: { color: '#4ADE80' },
+          identityPreviewEditButton: { color: '#4ADE80' },
+          formFieldInput: { backgroundColor: '#0F1A13', borderColor: 'rgba(255,255,255,0.1)', color: '#E2EDE6' },
+          dividerLine: { backgroundColor: 'rgba(255,255,255,0.08)' },
+          socialButtonsBlockButton: { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)', color: '#E2EDE6' },
+          socialButtonsBlockButtonText: { color: '#E2EDE6' },
+        }
+      }
+    });
     if (!Clerk.user) {
       window.location.href = '/';
       return;
