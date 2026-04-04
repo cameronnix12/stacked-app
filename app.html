@@ -422,17 +422,35 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .insight-sub{font-size:12px;color:var(--muted);line-height:1.5}
 
 /* PROFILE */
-.profile-header-card{display:flex;align-items:center;gap:20px;padding:24px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;backdrop-filter:blur(10px)}
-.profile-avatar-lg{width:64px;height:64px;background:linear-gradient(135deg,#4ADE80,#22C55E);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#080C08;flex-shrink:0;cursor:pointer;transition:filter 0.2s;box-shadow:0 4px 16px rgba(74,222,128,0.3)}
-.profile-avatar-lg:hover{filter:brightness(1.1)}
-.profile-header-info h2{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.4px}
-.profile-header-info p{font-size:13px;color:var(--muted);margin-top:2px}
-.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.profile-section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;backdrop-filter:blur(10px)}
+.profile-hero{display:flex;align-items:center;gap:20px;padding:28px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;position:relative;overflow:hidden}
+.profile-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(ellipse,rgba(74,222,128,0.07),transparent 70%);pointer-events:none}
+.profile-avatar-lg{width:72px;height:72px;background:linear-gradient(135deg,#4ADE80,#22C55E);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#080C08;flex-shrink:0;box-shadow:0 4px 20px rgba(74,222,128,0.35);position:relative;z-index:1}
+.profile-hero-info{flex:1;min-width:0;position:relative;z-index:1}
+.profile-hero-info h2{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.5px;margin-bottom:2px}
+.profile-hero-info p{font-size:13px;color:var(--muted)}
+.profile-hero-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.25);border-radius:99px;padding:4px 10px;font-size:11px;font-weight:700;color:#4ADE80;margin-top:8px;position:relative;z-index:1}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.profile-section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
 .profile-section.full{grid-column:span 2}
-.profile-section-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:7px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.07)}
-.profile-section-title svg{width:15px;height:15px;color:var(--primary)}
-.profile-save-row{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;grid-column:span 2}
+.profile-section-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:7px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.07);text-transform:uppercase;letter-spacing:0.06em}
+.profile-section-title svg{width:14px;height:14px;color:var(--primary)}
+.profile-info-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.profile-info-row:last-child{border-bottom:none;padding-bottom:0}
+.profile-info-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+.profile-info-val{font-size:13px;color:var(--text);font-weight:500;text-align:right}
+.profile-plan-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700}
+.profile-plan-free{background:rgba(255,255,255,0.07);color:var(--muted)}
+.profile-plan-pro{background:rgba(74,222,128,0.15);color:#4ADE80;border:1px solid rgba(74,222,128,0.3)}
+.profile-danger-btn{width:100%;padding:10px;border-radius:9px;border:1px solid rgba(248,113,113,0.25);background:rgba(248,113,113,0.07);color:#F87171;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:7px}
+.profile-danger-btn:hover{background:rgba(248,113,113,0.14);border-color:rgba(248,113,113,0.4)}
+.profile-signout-btn{width:100%;padding:12px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:7px}
+.profile-signout-btn:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15)}
+.profile-upgrade-btn{width:100%;padding:12px;border-radius:9px;border:none;background:linear-gradient(135deg,#4ADE80,#22C55E);color:#080C08;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 2px 12px rgba(74,222,128,0.3)}
+.profile-upgrade-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(74,222,128,0.4)}
+.profile-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.profile-stat-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.profile-stat-num{font-size:24px;font-weight:800;color:#4ADE80;line-height:1;margin-bottom:4px}
+.profile-stat-label{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
 
 /* ─── COVER LETTER ───────────────────────────────────────────── */
 .cl-layout{display:grid;grid-template-columns:42% 1fr;gap:18px;height:calc(100vh - 120px)}
@@ -1252,97 +1270,122 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <section class="view" id="view-profile" aria-label="Profile">
   <div class="view-header-row">
     <h1>My Profile</h1>
-    <button class="btn btn-primary" onclick="saveProfile()">
-      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293z"/></svg>
-      Save Profile
-    </button>
   </div>
-  <div class="profile-header-card">
+
+  <!-- Hero card -->
+  <div class="profile-hero">
     <div class="profile-avatar-lg" id="profileAvatarLg">?</div>
-    <div class="profile-header-info">
-      <h2 id="profileHeaderName">Your Name</h2>
-      <p id="profileHeaderSub">Add your details below to get started</p>
+    <div class="profile-hero-info">
+      <h2 id="profileHeaderName">Loading...</h2>
+      <p id="profileHeaderSub">Member since today</p>
+      <div class="profile-hero-badge" id="profilePlanBadge">
+        <svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+        Free Plan
+      </div>
     </div>
   </div>
+
   <div class="profile-grid">
-    <!-- Personal -->
+
+    <!-- Account info -->
     <div class="profile-section">
       <div class="profile-section-title">
         <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
-        Personal Info
+        Account
       </div>
-      <div class="form-grid-2">
-        <div class="form-field"><label class="form-label" for="p-fname">First Name</label><input class="form-input" id="p-fname" type="text" placeholder="First name"></div>
-        <div class="form-field"><label class="form-label" for="p-lname">Last Name</label><input class="form-input" id="p-lname" type="text" placeholder="Last name"></div>
-        <div class="form-field"><label class="form-label" for="p-email">Email</label><input class="form-input" id="p-email" type="email" placeholder="you@email.com"></div>
-        <div class="form-field"><label class="form-label" for="p-phone">Phone</label><input class="form-input" id="p-phone" type="tel" placeholder="+1 (555) 000-0000"></div>
-        <div class="form-field"><label class="form-label" for="p-linkedin">LinkedIn</label><input class="form-input" id="p-linkedin" type="text" placeholder="linkedin.com/in/yourname"></div>
-        <div class="form-field"><label class="form-label" for="p-portfolio">Portfolio / GitHub</label><input class="form-input" id="p-portfolio" type="text" placeholder="github.com/yourname"></div>
-        <div class="form-field"><label class="form-label" for="p-city">City, State</label><input class="form-input" id="p-city" type="text" placeholder="e.g. Portland, OR"></div>
+      <div class="profile-info-row">
+        <span class="profile-info-label">Name</span>
+        <span class="profile-info-val" id="pInfoName">—</span>
+      </div>
+      <div class="profile-info-row">
+        <span class="profile-info-label">Email</span>
+        <span class="profile-info-val" id="pInfoEmail">—</span>
+      </div>
+      <div class="profile-info-row">
+        <span class="profile-info-label">Plan</span>
+        <span class="profile-info-val" id="pInfoPlan"><span class="profile-plan-badge profile-plan-free">Free</span></span>
+      </div>
+      <div class="profile-info-row">
+        <span class="profile-info-label">Member Since</span>
+        <span class="profile-info-val" id="pInfoSince">—</span>
       </div>
     </div>
-    <!-- Academic -->
+
+    <!-- Usage this month -->
     <div class="profile-section">
       <div class="profile-section-title">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z"/></svg>
-        Academic Info
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+        Usage This Month
       </div>
-      <div class="form-field"><label class="form-label" for="p-uni">University</label><input class="form-input" id="p-uni" type="text" placeholder="University name"></div>
-      <div class="form-field"><label class="form-label" for="p-major">Major</label><input class="form-input" id="p-major" type="text" placeholder="e.g. Computer Science"></div>
-      <div class="form-grid-2">
-        <div class="form-field"><label class="form-label" for="p-gradyear">Grad Year</label><input class="form-input" id="p-gradyear" type="text" placeholder="2026"></div>
-        <div class="form-field"><label class="form-label" for="p-gpa">GPA</label><input class="form-input" id="p-gpa" type="text" placeholder="3.8 / 4.0"></div>
-      </div>
-    </div>
-    <!-- Summary -->
-    <div class="profile-section full">
-      <div class="profile-section-title">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm3 1h6v4H7V5zm6 6H7v2h6v-2z" clip-rule="evenodd"/></svg>
-        Professional Summary
-      </div>
-      <textarea class="form-textarea" id="p-summary" rows="3" placeholder="A short bio about yourself for AI resume tailoring. Include your background, goals, and strengths."></textarea>
-    </div>
-    <!-- Skills -->
-    <div class="profile-section full">
-      <div class="profile-section-title">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
-        Skills (used for AI resume tailoring)
-      </div>
-      <div class="tag-input-area" onclick="document.getElementById('profileSkillInput').focus()" role="list" id="profileSkillTags" aria-label="Skills"></div>
-      <input id="profileSkillInput" class="tag-text-input" style="margin-top:6px;width:100%;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;padding:8px 12px" type="text" placeholder="Type a skill and press Enter" onkeydown="addProfileSkill(event)">
-    </div>
-    <!-- Experience for AI -->
-    <div class="profile-section full">
-      <div class="profile-section-title">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5z" clip-rule="evenodd"/></svg>
-        Work Experience (used for AI resume tailoring)
-      </div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Describe your past roles. This context helps the AI tailor your resume accurately.</p>
-      <div id="profileExpEntries">
-        <div class="profile-exp-entry" style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)">
-          <div class="form-grid-2" style="margin-bottom:8px">
-            <div class="form-field"><label class="form-label">Company</label><input class="form-input p-exp-company" type="text" placeholder="Company name"></div>
-            <div class="form-field"><label class="form-label">Role</label><input class="form-input p-exp-role" type="text" placeholder="Your title"></div>
-            <div class="form-field"><label class="form-label">Start</label><input class="form-input p-exp-start" type="text" placeholder="Jun 2024"></div>
-            <div class="form-field"><label class="form-label">End</label><input class="form-input p-exp-end" type="text" placeholder="Aug 2024"></div>
-          </div>
-          <div class="form-field"><label class="form-label">Responsibilities and achievements</label><textarea class="form-textarea p-exp-desc" rows="3" placeholder="Describe what you did, what you built, and the impact you had."></textarea></div>
+      <div class="profile-stat-grid">
+        <div class="profile-stat-box">
+          <div class="profile-stat-num" id="pStatApps">0</div>
+          <div class="profile-stat-label">Applications</div>
         </div>
-        <div class="profile-exp-entry">
-          <div class="form-grid-2" style="margin-bottom:8px">
-            <div class="form-field"><label class="form-label">Company</label><input class="form-input p-exp-company" type="text" placeholder="Company name"></div>
-            <div class="form-field"><label class="form-label">Role</label><input class="form-input p-exp-role" type="text" placeholder="Your title"></div>
-            <div class="form-field"><label class="form-label">Start</label><input class="form-input p-exp-start" type="text" placeholder="Jun 2023"></div>
-            <div class="form-field"><label class="form-label">End</label><input class="form-input p-exp-end" type="text" placeholder="Aug 2023"></div>
+        <div class="profile-stat-box">
+          <div class="profile-stat-num" id="pStatTailor">0</div>
+          <div class="profile-stat-label">AI Tailors</div>
+        </div>
+        <div class="profile-stat-box">
+          <div class="profile-stat-num" id="pStatCL">0</div>
+          <div class="profile-stat-label">Cover Letters</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px 12px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid var(--border)">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em">AI Tailor Limit</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="flex:1;height:5px;background:rgba(255,255,255,0.07);border-radius:99px;overflow:hidden">
+            <div id="pTailorBar" style="height:100%;border-radius:99px;background:linear-gradient(90deg,#4ADE80,#22C55E);width:0%;transition:width 0.4s"></div>
           </div>
-          <div class="form-field"><label class="form-label">Responsibilities and achievements</label><textarea class="form-textarea p-exp-desc" rows="3" placeholder="Describe what you did, what you built, and the impact you had."></textarea></div>
+          <span id="pTailorCount" style="font-size:11px;color:var(--muted);white-space:nowrap;font-weight:600">0 / 3</span>
         </div>
       </div>
     </div>
-    <div class="profile-save-row">
-      <button class="btn btn-secondary" onclick="clearProfile()">Clear All</button>
-      <button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>
+
+    <!-- Subscription -->
+    <div class="profile-section">
+      <div class="profile-section-title">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+        Subscription
+      </div>
+      <div id="pSubFree">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">You're on the <strong style="color:var(--text)">Free plan</strong>. Upgrade to Pro for unlimited AI tailoring, unlimited cover letters, and full analytics.</p>
+        <button class="profile-upgrade-btn" onclick="switchView('billing')">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+          Upgrade to Pro — $12/mo
+        </button>
+      </div>
+      <div id="pSubPro" style="display:none">
+        <div class="profile-info-row">
+          <span class="profile-info-label">Status</span>
+          <span class="profile-info-val" id="pSubStatus">Active</span>
+        </div>
+        <div class="profile-info-row">
+          <span class="profile-info-label">Renews</span>
+          <span class="profile-info-val" id="pSubRenews">—</span>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:12px">To manage or cancel your subscription, contact us at <a href="mailto:stackedappco@gmail.com" style="color:var(--primary)">stackedappco@gmail.com</a></p>
+      </div>
     </div>
+
+    <!-- Account actions -->
+    <div class="profile-section">
+      <div class="profile-section-title">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+        Account Actions
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="profile-signout-btn" onclick="handleSignOut()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </button>
+        <button class="profile-danger-btn" onclick="handleDeleteAccount()">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+          Delete Account
+        </button>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -1520,18 +1563,18 @@ function getGreeting() {
 
 // ── SIDEBAR / PROFILE CHIP ───────────────────────────────────
 function updateSidebarUser() {
-  const fname = profile.fname || '';
-  const lname = profile.lname || '';
-  const fullName = (fname + ' ' + lname).trim();
-  const initials = ((fname[0]||'') + (lname[0]||'')).toUpperCase() || '?';
-  document.getElementById('sidebarAvatar').textContent = initials;
-  document.getElementById('sidebarName').textContent = fullName || 'Set up profile';
-  document.getElementById('sidebarRole').textContent = profile.major || 'Click to get started';
-  document.getElementById('profileAvatarLg').textContent = initials;
-  const name = fullName || 'Your Name';
-  document.getElementById('profileHeaderName').textContent = name;
-  document.getElementById('profileHeaderSub').textContent = profile.uni ? profile.major + ' at ' + profile.uni : 'Add your details below to get started';
-  document.getElementById('dashGreeting').textContent = fname ? 'Welcome, ' + fname : 'Welcome';
+  const name = _clerkUser?.fullName || profile.name || '';
+  const email = _clerkUser?.primaryEmailAddress?.emailAddress || profile.email || '';
+  const firstName = name.split(' ')[0] || '';
+  const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2) || '?';
+  const avatarEl = document.getElementById('sidebarAvatar');
+  if (avatarEl) avatarEl.textContent = initials;
+  const nameEl = document.getElementById('sidebarName');
+  if (nameEl) nameEl.textContent = name || email || 'My Account';
+  const roleEl = document.getElementById('sidebarRole');
+  if (roleEl) roleEl.textContent = _userPlan === 'pro' ? 'Pro Member' : 'Free Plan';
+  const greetEl = document.getElementById('dashGreeting');
+  if (greetEl) greetEl.textContent = firstName ? 'Welcome, ' + firstName : 'Welcome';
 }
 
 // ── VIEW SWITCHING ────────────────────────────────────────────
@@ -2710,62 +2753,100 @@ function renderAnalytics() {
 
 // ── PROFILE ───────────────────────────────────────────────────
 function loadProfileForm() {
-  const p = profile;
-  const fields = { fname:'p-fname', lname:'p-lname', email:'p-email', phone:'p-phone', linkedin:'p-linkedin', portfolio:'p-portfolio', city:'p-city', uni:'p-uni', major:'p-major', gradyear:'p-gradyear', gpa:'p-gpa', summary:'p-summary' };
-  Object.entries(fields).forEach(([k,id]) => { const el = document.getElementById(id); if (el) el.value = p[k]||''; });
-  // Skills
-  const st = document.getElementById('profileSkillTags'); st.innerHTML = '';
-  (p.skills||[]).forEach(s => addTagToContainer(st, s, 'profileSkillTags'));
-  // Experience
-  const entries = document.querySelectorAll('#profileExpEntries .profile-exp-entry');
-  const exps = p.experience || [];
-  entries.forEach((entry, i) => {
-    const exp = exps[i] || {};
-    const co = entry.querySelector('.p-exp-company'); if (co) co.value = exp.company||'';
-    const ro = entry.querySelector('.p-exp-role'); if (ro) ro.value = exp.role||'';
-    const st2 = entry.querySelector('.p-exp-start'); if (st2) st2.value = exp.start||'';
-    const en = entry.querySelector('.p-exp-end'); if (en) en.value = exp.end||'';
-    const de = entry.querySelector('.p-exp-desc'); if (de) de.value = exp.desc||'';
-  });
+  // Pull info from Clerk if available
+  const name = _clerkUser?.fullName || profile.name || '';
+  const email = _clerkUser?.primaryEmailAddress?.emailAddress || profile.email || '';
+  const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2) || '?';
+  const memberSince = _clerkUser?.createdAt
+    ? new Date(_clerkUser.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    : 'Recently';
+
+  // Hero
+  const avatarEl = document.getElementById('profileAvatarLg');
+  if (avatarEl) avatarEl.textContent = initials;
+  const nameEl = document.getElementById('profileHeaderName');
+  if (nameEl) nameEl.textContent = name || 'Your Account';
+  const subEl = document.getElementById('profileHeaderSub');
+  if (subEl) subEl.textContent = email;
+
+  // Account info rows
+  const pInfoName = document.getElementById('pInfoName');
+  if (pInfoName) pInfoName.textContent = name || '—';
+  const pInfoEmail = document.getElementById('pInfoEmail');
+  if (pInfoEmail) pInfoEmail.textContent = email || '—';
+  const pInfoSince = document.getElementById('pInfoSince');
+  if (pInfoSince) pInfoSince.textContent = memberSince;
+
+  // Plan badge
+  const isPro = _userPlan === 'pro';
+  const planBadge = document.getElementById('profilePlanBadge');
+  if (planBadge) planBadge.textContent = isPro ? 'Pro' : 'Free Plan';
+
+  const pInfoPlan = document.getElementById('pInfoPlan');
+  if (pInfoPlan) pInfoPlan.innerHTML = isPro
+    ? '<span class="profile-plan-badge profile-plan-pro">Pro</span>'
+    : '<span class="profile-plan-badge profile-plan-free">Free</span>';
+
+  // Subscription section
+  const pSubFree = document.getElementById('pSubFree');
+  const pSubPro = document.getElementById('pSubPro');
+  if (pSubFree) pSubFree.style.display = isPro ? 'none' : 'block';
+  if (pSubPro) pSubPro.style.display = isPro ? 'block' : 'none';
+  if (isPro) {
+    const renewsEl = document.getElementById('pSubRenews');
+    if (renewsEl && _userUsage?.currentPeriodEnd) {
+      renewsEl.textContent = new Date(_userUsage.currentPeriodEnd * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    }
+    const statusEl = document.getElementById('pSubStatus');
+    if (statusEl) statusEl.textContent = 'Active';
+  }
+
+  // Usage stats
+  const appsCount = applications.length;
+  const tailorUsed = _userUsage?.tailor || 0;
+  const tailorLimit = _userPlan === 'pro' ? null : (_userUsage?.tailorLimit || 3);
+  const clUsed = _userUsage?.coverLetter || 0;
+
+  const pStatApps = document.getElementById('pStatApps');
+  if (pStatApps) pStatApps.textContent = appsCount;
+  const pStatTailor = document.getElementById('pStatTailor');
+  if (pStatTailor) pStatTailor.textContent = tailorUsed;
+  const pStatCL = document.getElementById('pStatCL');
+  if (pStatCL) pStatCL.textContent = clUsed;
+
+  const pTailorBar = document.getElementById('pTailorBar');
+  const pTailorCount = document.getElementById('pTailorCount');
+  if (pTailorBar && pTailorCount) {
+    if (isPro) {
+      pTailorBar.style.width = '100%';
+      pTailorBar.style.background = 'linear-gradient(90deg,#4ADE80,#22C55E)';
+      pTailorCount.textContent = 'Unlimited';
+    } else {
+      const pct = Math.min(100, (tailorUsed / tailorLimit) * 100);
+      pTailorBar.style.width = pct + '%';
+      pTailorBar.style.background = pct >= 100 ? '#F87171' : 'linear-gradient(90deg,#4ADE80,#22C55E)';
+      pTailorCount.textContent = `${tailorUsed} / ${tailorLimit}`;
+    }
+  }
 }
 
-function saveProfile() {
-  const fields = { fname:'p-fname', lname:'p-lname', email:'p-email', phone:'p-phone', linkedin:'p-linkedin', portfolio:'p-portfolio', city:'p-city', uni:'p-uni', major:'p-major', gradyear:'p-gradyear', gpa:'p-gpa', summary:'p-summary' };
-  Object.entries(fields).forEach(([k,id]) => { const el = document.getElementById(id); if (el) profile[k] = el.value.trim(); });
-  profile.skills = Array.from(document.querySelectorAll('#profileSkillTags .skill-tag')).map(t => { const sp = t.querySelector('span'); return sp ? sp.textContent.trim() : t.textContent.replace('×','').trim(); }).filter(Boolean);
-  const exps = [];
-  document.querySelectorAll('#profileExpEntries .profile-exp-entry').forEach(entry => {
-    exps.push({ company: entry.querySelector('.p-exp-company')?.value?.trim()||'', role: entry.querySelector('.p-exp-role')?.value?.trim()||'', start: entry.querySelector('.p-exp-start')?.value?.trim()||'', end: entry.querySelector('.p-exp-end')?.value?.trim()||'', desc: entry.querySelector('.p-exp-desc')?.value?.trim()||'' });
-  });
-  profile.experience = exps;
-  saveProfileData();
-  // Sync to CV builder
-  syncProfileToCV();
-  updateSidebarUser();
-  showToast('Profile saved');
+function syncProfileToCV() { /* no-op — CV builder removed */ }
+function saveProfile() { /* no-op */ }
+function clearProfile() { /* no-op */ }
+
+function handleSignOut() {
+  if (typeof Clerk !== 'undefined' && Clerk.signOut) {
+    Clerk.signOut().then(() => window.location.href = '/');
+  } else {
+    window.location.href = '/';
+  }
 }
 
-function syncProfileToCV() {
-  const p = profile;
-  const sync = { fname:'cv-fname', lname:'cv-lname', email:'cv-email', phone:'cv-phone', linkedin:'cv-linkedin', portfolio:'cv-portfolio', uni:'cv-uni', major:'cv-degree', gradyear:'cv-gradyear', gpa:'cv-gpa', summary:'cv-summary' };
-  Object.entries(sync).forEach(([k,id]) => { const el = document.getElementById(id); if (el && p[k]) el.value = p[k]; });
-  updateCVPreview();
-}
-
-function clearProfile() {
-  if (!confirm('Clear all profile data?')) return;
-  profile = {};
-  saveProfileData();
-  loadProfileForm();
-  updateSidebarUser();
-  showToast('Profile cleared');
-}
-
-function addProfileSkill(e) {
-  if (e.key !== 'Enter') return;
-  const val = e.target.value.trim(); if (!val) return;
-  addTagToContainer(document.getElementById('profileSkillTags'), val, 'profileSkillTags');
-  e.target.value = '';
+function handleDeleteAccount() {
+  const confirmed = confirm('Are you sure you want to delete your account? This cannot be undone. Email stackedappco@gmail.com to complete deletion.');
+  if (confirmed) {
+    window.location.href = 'mailto:stackedappco@gmail.com?subject=Account Deletion Request';
+  }
 }
 
 function addTagToContainer(container, val, containerId) {
@@ -2799,16 +2880,9 @@ window.addEventListener('load', async () => {
   updateSidebarUser();
   renderDashboard();
   switchView('dashboard');
-  if (Object.keys(profile).length > 0) syncProfileToCV();
+  // profile sync no longer needed (PDF-based flow)
 
-  // Add sign-out to sidebar bottom if Clerk loaded
-  if (typeof Clerk !== 'undefined' && Clerk.user) {
-    const signOutBtn = document.createElement('div');
-    signOutBtn.style.cssText = 'padding:8px 14px;margin-top:auto;cursor:pointer;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;border-top:1px solid rgba(255,255,255,0.06);';
-    signOutBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out';
-    signOutBtn.onclick = () => Clerk.signOut().then(() => window.location.href = '/');
-    document.getElementById('sidebar').appendChild(signOutBtn);
-  }
+  // sign-out is now in the Profile page
 });
 </script>
 </body>
