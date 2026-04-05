@@ -59,7 +59,7 @@ async function handlePost(request, env) {
       email: email || '',
       metadata: { clerk_user_id: userId },
     }, env.STRIPE_SECRET_KEY);
-    if (!customerRes.ok) return jsonError('Failed to create Stripe customer', 502);
+    if (!customerRes.ok) return jsonError('Failed to create Stripe customer', 500);
     const customer = await customerRes.json();
     customerId = customer.id;
     await env.DB.prepare('UPDATE users SET stripe_customer_id = ? WHERE id = ?')
@@ -83,7 +83,7 @@ async function handlePost(request, env) {
   const sessionRes = await stripePost('https://api.stripe.com/v1/checkout/sessions', params, env.STRIPE_SECRET_KEY);
   if (!sessionRes.ok) {
     const err = await sessionRes.text();
-    return jsonError(`Stripe error: ${err.slice(0, 200)}`, 502);
+    return jsonError(`Stripe error: ${err.slice(0, 200)}`, 500);
   }
   const session = await sessionRes.json();
 
