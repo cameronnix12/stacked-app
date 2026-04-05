@@ -2223,7 +2223,7 @@ async function tailorResume() {
       body: JSON.stringify({ resumePdfBase64: _resumePdfBase64, jobDescription: jd, targetRole: role, profileInfo: getProfileInfo() })
     });
     const json = await res.json();
-    if (res.status === 403) { showUpgradeModal('tailor'); return; }
+    if (res.status === 403) { document.getElementById('resumePreviewOutput').innerHTML = '<div class="empty-resume"><p>Upgrade to Pro to tailor more resumes.</p></div>'; showUpgradeModal('tailor'); return; }
     if (!res.ok || !json.success) throw new Error(json.error || 'Unknown error from server');
     tailoredResumeData = json.data;
     renderResumePreviewFromGemini(json.data, role);
@@ -2743,7 +2743,7 @@ async function generateCoverLetter() {
       body: JSON.stringify(body)
     });
     const json = await res.json();
-    if (res.status === 403) { showUpgradeModal('coverletter'); return; }
+    if (res.status === 403) { document.getElementById('clPreviewOutput').innerHTML = '<div class="cl-empty"><p>Upgrade to Pro to generate more cover letters.</p></div>'; showUpgradeModal('coverletter'); return; }
     if (!res.ok || !json.success) throw new Error(json.error || 'Unknown error');
     _clLetterData = json.data;
     renderCoverLetterPreview(json.data);
