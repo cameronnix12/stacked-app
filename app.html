@@ -1465,6 +1465,19 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
 </div>
 
+<!-- UPGRADE MODAL -->
+<div id="upgradeOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:24px" onclick="if(event.target===this)document.getElementById('upgradeOverlay').style.display='none'">
+  <div style="background:#0C1510;border:1px solid rgba(74,222,128,0.2);border-radius:20px;padding:36px;max-width:400px;width:100%;text-align:center">
+    <div style="width:56px;height:56px;background:rgba(74,222,128,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+      <svg width="24" height="24" viewBox="0 0 20 20" fill="#4ADE80"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+    </div>
+    <h2 style="font-size:20px;font-weight:800;margin-bottom:8px;letter-spacing:-0.5px" id="upgradeModalTitle">You've hit your free limit</h2>
+    <p style="font-size:14px;color:#7A9E87;margin-bottom:24px;line-height:1.6" id="upgradeModalDesc">Upgrade to Pro for unlimited AI resume tailoring, unlimited cover letters, and full analytics.</p>
+    <button onclick="document.getElementById('upgradeOverlay').style.display='none';switchView('billing')" style="width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#22C55E,#2DD4BF);color:#080C08;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px">Upgrade to Pro — $12/mo</button>
+    <button onclick="document.getElementById('upgradeOverlay').style.display='none'" style="width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#7A9E87;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Maybe later</button>
+  </div>
+</div>
+
 <script>
 'use strict';
 
@@ -2152,9 +2165,30 @@ function showBAView(mode, btn) {
   }
 }
 
+function showUpgradeModal(type) {
+  const overlay = document.getElementById('upgradeOverlay');
+  const title = document.getElementById('upgradeModalTitle');
+  const desc = document.getElementById('upgradeModalDesc');
+  if (type === 'tailor') {
+    title.textContent = "You've used all 3 free resume tailors";
+    desc.textContent = "Upgrade to Pro for unlimited AI resume tailoring, cover letters, and full analytics.";
+  } else {
+    title.textContent = "You've used all 3 free cover letters";
+    desc.textContent = "Upgrade to Pro for unlimited cover letters, unlimited resume tailoring, and full analytics.";
+  }
+  overlay.style.display = 'flex';
+}
+
 async function tailorResume() {
   const jd = document.getElementById('jdInput').value.trim();
   const role = document.getElementById('targetRole').value.trim();
+
+  // Enforce free plan limit
+  if (_userPlan !== 'pro') {
+    const limit = _userUsage?.tailorLimit ?? 3;
+    const used = _userUsage?.tailor ?? 0;
+    if (used >= limit) { showUpgradeModal('tailor'); return; }
+  }
 
   if (!_resumePdfBase64) {
     showToast('Please upload your resume PDF first.');
@@ -2679,6 +2713,13 @@ function clearClPdf() {
 async function generateCoverLetter() {
   const jd = document.getElementById('clJdInput').value.trim();
   if (!jd) { showToast('Please paste the job description first.'); document.getElementById('clJdInput').focus(); return; }
+
+  // Enforce free plan limit
+  if (_userPlan !== 'pro') {
+    const limit = _userUsage?.coverLetterLimit ?? 3;
+    const used = _userUsage?.coverLetter ?? 0;
+    if (used >= limit) { showUpgradeModal('coverletter'); return; }
+  }
 
   const company = document.getElementById('clCompany').value.trim();
   const hiringManager = document.getElementById('clHiringManager').value.trim();

@@ -27,7 +27,6 @@ export async function onRequestPost(context) {
         const userId = session.metadata?.user_id;
         const subscriptionId = session.subscription;
         const customerId = session.customer;
-        if (!userId) break;
 
         // Fetch subscription to get period end
         const sub = await fetchStripe(
@@ -35,17 +34,30 @@ export async function onRequestPost(context) {
           env.STRIPE_SECRET_KEY
         );
 
-        await env.DB.prepare(`
-          UPDATE users SET
-            plan = 'pro',
-            stripe_customer_id = ?,
-            stripe_subscription_id = ?,
-            subscription_status = 'active',
-            current_period_end = ?
-          WHERE id = ?
-        `).bind(customerId, subscriptionId, sub.current_period_end, userId).run();
-
-        console.log('[webhook] upgraded user to pro:', userId);
+        if (userId) {
+          // Upgrade by Clerk user ID
+          await env.DB.prepare(`
+            UPDATE users SET
+              plan = 'pro',
+              stripe_customer_id = ?,
+              stripe_subscription_id = ?,
+              subscription_status = 'active',
+              current_period_end = ?
+            WHERE id = ?
+          `).bind(customerId, subscriptionId, sub.current_period_end, userId).run();
+          console.log('[webhook] upgraded user to pro by userId:', userId);
+        } else {
+          // Fallback: upgrade by stripe_customer_id
+          await env.DB.prepare(`
+            UPDATE users SET
+              plan = 'pro',
+              stripe_subscription_id = ?,
+              subscription_status = 'active',
+              current_period_end = ?
+            WHERE stripe_customer_id = ?
+          `).bind(subscriptionId, sub.current_period_end, customerId).run();
+          console.log('[webhook] upgraded user to pro by customerId:', customerId);
+        }
         break;
       }
 
