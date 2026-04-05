@@ -948,54 +948,28 @@
   });
 
   // ── Clerk Auth ────────────────────────────────────────────────
+  const SIGN_IN_URL = 'https://accounts.stackedapp.co/sign-in?redirect_url=' + encodeURIComponent('https://stackedapp.co/app');
+  const SIGN_UP_URL = 'https://accounts.stackedapp.co/sign-up?redirect_url=' + encodeURIComponent('https://stackedapp.co/app');
+
+  const signIn = () => { window.location.href = SIGN_IN_URL; };
+  const signUp = () => { window.location.href = SIGN_UP_URL; };
+
+  // Wire all sign-up / sign-in buttons immediately (no Clerk.load needed)
+  document.getElementById('navSignupBtn').onclick    = signUp;
+  document.getElementById('navLoginBtn').onclick     = signIn;
+  document.getElementById('heroSignupBtn').onclick   = signUp;
+  document.getElementById('heroLoginBtn').onclick    = signIn;
+  document.getElementById('ctaSignupBtn').onclick    = signUp;
+  document.getElementById('ctaLoginBtn').onclick     = signIn;
+  document.getElementById('pricingFreeBtn').onclick  = signUp;
+  document.getElementById('pricingProBtn').onclick   = signUp;
+  document.getElementById('mobileSignupBtn').onclick = signUp;
+
+  // If already signed in, redirect straight to the app
   window.addEventListener('load', async () => {
-    if (typeof Clerk === 'undefined') return; // Clerk failed to load
-
-    await Clerk.load({
-      appearance: {
-        variables: {
-          colorPrimary: '#22C55E',
-          colorBackground: '#0C1510',
-          colorText: '#E2EDE6',
-          colorTextSecondary: '#7A9E87',
-          colorInputBackground: '#0F1A13',
-          colorInputText: '#E2EDE6',
-          colorNeutral: '#7A9E87',
-          borderRadius: '12px',
-          fontFamily: 'Plus Jakarta Sans, sans-serif',
-        },
-        elements: {
-          card: { backgroundColor: '#0C1510', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 20px 60px rgba(0,0,0,0.6)' },
-          formButtonPrimary: { backgroundColor: '#22C55E', color: '#080C08', fontWeight: '700' },
-          footerActionLink: { color: '#4ADE80' },
-          identityPreviewEditButton: { color: '#4ADE80' },
-          formFieldInput: { backgroundColor: '#0F1A13', borderColor: 'rgba(255,255,255,0.1)', color: '#E2EDE6' },
-          dividerLine: { backgroundColor: 'rgba(255,255,255,0.08)' },
-          socialButtonsBlockButton: { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)', color: '#E2EDE6' },
-          socialButtonsBlockButtonText: { color: '#E2EDE6' },
-        }
-      }
-    });
-
-    // If already signed in, redirect straight to the app
-    if (Clerk.user) {
-      window.location.href = '/app';
-      return;
-    }
-
-    const signUp = () => Clerk.openSignUp({ afterSignUpUrl: '/app', afterSignInUrl: '/app' });
-    const signIn = () => Clerk.openSignIn({ afterSignInUrl: '/app', afterSignUpUrl: '/app' });
-
-    // Wire all sign-up / sign-in buttons
-    document.getElementById('navSignupBtn').onclick   = signUp;
-    document.getElementById('navLoginBtn').onclick    = signIn;
-    document.getElementById('heroSignupBtn').onclick  = signUp;
-    document.getElementById('heroLoginBtn').onclick   = signIn;
-    document.getElementById('ctaSignupBtn').onclick   = signUp;
-    document.getElementById('ctaLoginBtn').onclick    = signIn;
-    document.getElementById('pricingFreeBtn').onclick = signUp;
-    document.getElementById('pricingProBtn').onclick  = signUp;
-    document.getElementById('mobileSignupBtn').onclick = signUp;
+    if (typeof Clerk === 'undefined') return;
+    await Clerk.load();
+    if (Clerk.user) window.location.href = '/app';
   });
 </script>
 </body>
