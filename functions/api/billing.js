@@ -1,6 +1,8 @@
 // Cloudflare Pages Function — POST /api/billing
 // Creates a Stripe Checkout session for Pro subscription.
 
+import { verifyClerkToken } from './_clerk.js';
+
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -22,7 +24,7 @@ export async function onRequestPost(context) {
 
   let clerkPayload;
   try {
-    clerkPayload = await verifyClerkToken(token, env.CLERK_SECRET_KEY);
+    clerkPayload = await verifyClerkToken(token);
   } catch {
     return jsonError('Invalid session token', 401);
   }
@@ -96,19 +98,6 @@ function stripePost(url, params, secretKey) {
   });
 }
 
-async function verifyClerkToken(token, clerkSecretKey) {
-  // Clerk provides a /tokens/verify endpoint for server-side verification
-  const res = await fetch('https://api.clerk.com/v1/tokens/verify', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${clerkSecretKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ token }),
-  });
-  if (!res.ok) throw new Error('Token verification failed');
-  return res.json();
-}
 
 function jsonError(message, status) {
   return new Response(JSON.stringify({ success: false, error: message }), { status, headers: CORS_HEADERS });

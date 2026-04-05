@@ -2,6 +2,8 @@
 // Called from the app on first load after Clerk sign-in.
 // Creates the user row in D1 if it doesn't exist, returns plan info.
 
+import { getUserIdFromRequest } from './_clerk.js';
+
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -71,22 +73,7 @@ export async function onRequestPost(context) {
 // ── Helpers ───────────────────────────────────────────────────────
 
 async function getUserId(request, env) {
-  const authHeader = request.headers.get('Authorization') || '';
-  const token = authHeader.replace('Bearer ', '').trim();
-  if (!token) return null;
-  try {
-    const res = await fetch('https://api.clerk.com/v1/tokens/verify', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${env.CLERK_SECRET_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ token }),
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.sub || null;
-  } catch { return null; }
+  return getUserIdFromRequest(request);
 }
 
 function jsonError(message, status) {
