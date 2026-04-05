@@ -1,8 +1,6 @@
 // Cloudflare Pages Function — POST /api/billing
 // Creates a Stripe Checkout session for Pro subscription.
 
-import { verifyClerkToken } from './_clerk.js';
-
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -24,9 +22,9 @@ export async function onRequestPost(context) {
 
   let clerkPayload;
   try {
-    clerkPayload = await verifyClerkToken(token);
-  } catch {
-    return jsonError('Invalid session token', 401);
+    clerkPayload = await verifyClerkJwt(token);
+  } catch (e) {
+    return jsonError('Invalid session token: ' + e.message, 401);
   }
   const userId = clerkPayload.sub;
 
@@ -98,6 +96,39 @@ function stripePost(url, params, secretKey) {
   });
 }
 
+async function verifyClerkJwt(token) {
+  const parts = token.split('.');
+  if (parts.length !== 3) throw new Error('Malformed JWT');
+
+  const decode = (b64) => JSON.parse(atob(b64.replace(/-/g, '+').replace(/_/g, '/')));
+  const header  = decode(parts[0]);
+  const payload = decode(parts[1]);
+
+  if (payload.exp && Math.floor(Date.now() / 1000) > payload.exp) {
+    throw new Error('Token expired');
+  }
+
+  // Fetch Clerk JWKS
+  const jwksRes = await fetch('https://clerk.stackedapp.co/.well-known/jwks.json');
+  if (!jwksRes.ok) throw new Error('Failed to fetch JWKS');
+  const jwks = await jwksRes.json();
+
+  const jwk = jwks.keys.find(k => k.kid === header.kid);
+  if (!jwk) throw new Error('No matching JWK for kid: ' + header.kid);
+
+  const key = await crypto.subtle.importKey(
+    'jwk', jwk,
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+    false, ['verify']
+  );
+
+  const sigInput = new TextEncoder().encode(`${parts[0]}.${parts[1]}`);
+  const sigBytes = Uint8Array.from(atob(parts[2].replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+  const valid    = await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, sigBytes, sigInput);
+  if (!valid) throw new Error('Invalid signature');
+
+  return payload;
+}
 
 function jsonError(message, status) {
   return new Response(JSON.stringify({ success: false, error: message }), { status, headers: CORS_HEADERS });

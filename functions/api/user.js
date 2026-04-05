@@ -1,8 +1,4 @@
-// Cloudflare Pages Function — POST /api/user
-// Called from the app on first load after Clerk sign-in.
-// Creates the user row in D1 if it doesn't exist, returns plan info.
-
-import { getUserIdFromRequest } from './_clerk.js';
+// Cloudflare Pages Function — GET/POST /api/user
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -18,7 +14,7 @@ export async function onRequestOptions() {
 // GET /api/user — return current user plan + usage
 export async function onRequestGet(context) {
   const { request, env } = context;
-  const userId = await getUserId(request, env);
+  const userId = await getUserId(request);
   if (!userId) return jsonError('Unauthorized', 401);
 
   const user = await env.DB.prepare('SELECT plan, subscription_status, current_period_end FROM users WHERE id = ?')
@@ -47,7 +43,7 @@ export async function onRequestGet(context) {
 // POST /api/user — upsert user on signup/signin
 export async function onRequestPost(context) {
   const { request, env } = context;
-  const userId = await getUserId(request, env);
+  const userId = await getUserId(request);
   if (!userId) return jsonError('Unauthorized', 401);
 
   let body;
@@ -56,7 +52,6 @@ export async function onRequestPost(context) {
   const { email, name } = body;
   if (!email) return jsonError('email is required', 400);
 
-  // Upsert — create if not exists, ignore if exists
   await env.DB.prepare(`
     INSERT INTO users (id, email, name) VALUES (?, ?, ?)
     ON CONFLICT (id) DO UPDATE SET email = excluded.email, name = excluded.name
@@ -72,8 +67,47 @@ export async function onRequestPost(context) {
 
 // ── Helpers ───────────────────────────────────────────────────────
 
-async function getUserId(request, env) {
-  return getUserIdFromRequest(request);
+async function getUserId(request) {
+  const authHeader = request.headers.get('Authorization') || '';
+  const token = authHeader.replace('Bearer ', '').trim();
+  if (!token) return null;
+  try {
+    const payload = await verifyClerkJwt(token);
+    return payload.sub || null;
+  } catch { return null; }
+}
+
+async function verifyClerkJwt(token) {
+  const parts = token.split('.');
+  if (parts.length !== 3) throw new Error('Malformed JWT');
+
+  const decode = (b64) => JSON.parse(atob(b64.replace(/-/g, '+').replace(/_/g, '/')));
+  const header  = decode(parts[0]);
+  const payload = decode(parts[1]);
+
+  if (payload.exp && Math.floor(Date.now() / 1000) > payload.exp) {
+    throw new Error('Token expired');
+  }
+
+  const jwksRes = await fetch('https://clerk.stackedapp.co/.well-known/jwks.json');
+  if (!jwksRes.ok) throw new Error('Failed to fetch JWKS');
+  const jwks = await jwksRes.json();
+
+  const jwk = jwks.keys.find(k => k.kid === header.kid);
+  if (!jwk) throw new Error('No matching JWK');
+
+  const key = await crypto.subtle.importKey(
+    'jwk', jwk,
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+    false, ['verify']
+  );
+
+  const sigInput = new TextEncoder().encode(`${parts[0]}.${parts[1]}`);
+  const sigBytes = Uint8Array.from(atob(parts[2].replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+  const valid    = await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, sigBytes, sigInput);
+  if (!valid) throw new Error('Invalid signature');
+
+  return payload;
 }
 
 function jsonError(message, status) {
