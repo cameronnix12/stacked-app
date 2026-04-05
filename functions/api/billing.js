@@ -59,7 +59,10 @@ async function handlePost(request, env) {
       email: email || '',
       metadata: { clerk_user_id: userId },
     }, env.STRIPE_SECRET_KEY);
-    if (!customerRes.ok) return jsonError('Failed to create Stripe customer', 500);
+    if (!customerRes.ok) {
+      const errText = await customerRes.text();
+      return jsonError('Failed to create Stripe customer: ' + errText.slice(0, 300), 500);
+    }
     const customer = await customerRes.json();
     customerId = customer.id;
     await env.DB.prepare('UPDATE users SET stripe_customer_id = ? WHERE id = ?')
