@@ -1084,7 +1084,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </div>
 
         <!-- CTA -->
-        <button onclick="showToast('Pro plan coming soon!')" style="width:100%;padding:16px;border-radius:12px;border:none;background:#4ADE80;color:#080C08;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-0.3px;box-shadow:0 4px 24px rgba(74,222,128,0.4);transition:all 0.15s" onmouseover="this.style.background='#22C55E';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#4ADE80';this.style.transform=''">
+        <button id="upgradeBtn" onclick="handleUpgrade(this)" style="width:100%;padding:16px;border-radius:12px;border:none;background:#4ADE80;color:#080C08;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-0.3px;box-shadow:0 4px 24px rgba(74,222,128,0.4);transition:all 0.15s" onmouseover="this.style.background='#22C55E';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#4ADE80';this.style.transform=''">
           Get Pro — <span id="ctaPrice">$12/mo</span>
         </button>
         <div style="text-align:center;font-size:11px;color:rgba(255,255,255,0.35);margin-top:8px">Fall recruiting opens in April — get unlimited access before it starts</div>
@@ -2552,6 +2552,37 @@ function toggleBilling() {
     proSub.textContent = '';
     proSavings.textContent = '';
     ctaPrice.textContent = '$12/mo';
+  }
+}
+
+async function handleUpgrade(btn) {
+  const PRICE_MONTHLY = 'price_1TIavGCaApPtAfCLpgpJFjtW';
+  const PRICE_YEARLY  = 'price_1TIavbCaApPtAfCL9aReOObN';
+  const priceId = billingYearly ? PRICE_YEARLY : PRICE_MONTHLY;
+
+  const orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = 'Redirecting to checkout…';
+
+  try {
+    const token = await getToken();
+    const res = await fetch('/api/billing', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ priceId, email: Clerk.user?.primaryEmailAddress?.emailAddress }),
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      showToast(data.error || 'Something went wrong. Try again.');
+      btn.disabled = false;
+      btn.innerHTML = orig;
+    }
+  } catch (e) {
+    showToast('Network error. Please try again.');
+    btn.disabled = false;
+    btn.innerHTML = orig;
   }
 }
 
