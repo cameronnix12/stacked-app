@@ -1465,6 +1465,28 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
 </div>
 
+<!-- ONBOARDING MODAL -->
+<div id="onboardingOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:2000;align-items:center;justify-content:center;padding:24px">
+  <div style="background:#0C1510;border:1px solid rgba(74,222,128,0.2);border-radius:20px;padding:36px;max-width:420px;width:100%">
+    <div style="width:52px;height:52px;background:linear-gradient(135deg,#22C55E,#2DD4BF);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px">
+      <svg width="24" height="24" viewBox="0 0 20 20" fill="#080C08"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+    </div>
+    <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px">Welcome to Stacked!</h2>
+    <p style="font-size:14px;color:#7A9E87;margin-bottom:24px;line-height:1.6">Quick question — what's your name? We'll use it to personalize your resume and cover letters.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+      <div>
+        <label style="font-size:11px;font-weight:600;color:#7A9E87;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px">First Name</label>
+        <input id="onboardFirstName" type="text" placeholder="Cameron" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:#0F1A13;color:#E2EDE6;font-size:14px;font-family:inherit;outline:none" />
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:#7A9E87;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px">Last Name</label>
+        <input id="onboardLastName" type="text" placeholder="Nix" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:#0F1A13;color:#E2EDE6;font-size:14px;font-family:inherit;outline:none" />
+      </div>
+    </div>
+    <button onclick="submitOnboarding()" style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,#22C55E,#2DD4BF);color:#080C08;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit">Let's go →</button>
+  </div>
+</div>
+
 <!-- UPGRADE MODAL -->
 <div id="upgradeOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:24px" onclick="if(event.target===this)document.getElementById('upgradeOverlay').style.display='none'">
   <div style="background:#0C1510;border:1px solid rgba(74,222,128,0.2);border-radius:20px;padding:36px;max-width:400px;width:100%;text-align:center">
@@ -1556,9 +1578,38 @@ async function initClerkAuth() {
     if (!profile.email && Clerk.user.primaryEmailAddress) {
       profile.email = Clerk.user.primaryEmailAddress.emailAddress;
     }
+
+    // Show onboarding modal if user has no name yet
+    if (!Clerk.user.fullName) {
+      const el = document.getElementById('onboardingOverlay');
+      el.style.display = 'flex';
+      setTimeout(() => document.getElementById('onboardFirstName').focus(), 100);
+    }
   } catch (e) {
     console.warn('Clerk auth error:', e);
   }
+}
+
+async function submitOnboarding() {
+  const first = document.getElementById('onboardFirstName').value.trim();
+  const last  = document.getElementById('onboardLastName').value.trim();
+  if (!first) { document.getElementById('onboardFirstName').style.borderColor = '#C0392B'; return; }
+
+  try {
+    await Clerk.user.update({ firstName: first, lastName: last });
+    const fullName = [first, last].filter(Boolean).join(' ');
+    profile.name = fullName;
+    updateSidebarUser();
+    // Sync name to D1
+    const token = await getToken();
+    await fetch('/api/user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ email: profile.email, name: fullName }),
+    });
+  } catch(e) { console.warn('Onboarding save failed:', e); }
+
+  document.getElementById('onboardingOverlay').style.display = 'none';
 }
 
 // Helper: refresh token before API calls (tokens expire after ~1hr)
