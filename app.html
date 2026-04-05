@@ -573,6 +573,17 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     </li>
   </ul>
   <div class="sidebar-bottom">
+    <!-- Free plan usage bar -->
+    <div id="sidebarUsageBar" style="display:none;padding:10px 12px;margin-bottom:4px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.06)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:11px;font-weight:600;color:#7A9E87">AI Uses This Month</span>
+        <span style="font-size:11px;font-weight:700;color:#E2EDE6" id="sidebarUsageText">0 / 6</span>
+      </div>
+      <div style="height:4px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden">
+        <div id="sidebarUsageFill" style="height:100%;border-radius:99px;background:linear-gradient(90deg,#22C55E,#2DD4BF);transition:width 0.3s;width:0%"></div>
+      </div>
+      <button onclick="switchView('billing')" style="margin-top:8px;width:100%;padding:6px;border-radius:7px;border:none;background:rgba(74,222,128,0.1);color:#4ADE80;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:background 0.15s" onmouseover="this.style.background='rgba(74,222,128,0.2)'" onmouseout="this.style.background='rgba(74,222,128,0.1)'">Upgrade to Pro →</button>
+    </div>
     <div class="user-chip" id="profileChip" role="button" tabindex="0" aria-label="Open profile">
       <div class="avatar" id="sidebarAvatar">?</div>
       <div class="user-info">
@@ -614,6 +625,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <!-- ══ DASHBOARD ══ -->
 <section class="view active" id="view-dashboard" aria-label="Dashboard">
+
+  <!-- Deadline reminder banner -->
+  <div id="deadlineReminderBanner" style="display:none;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:10px;padding:10px 16px;margin-bottom:16px;align-items:center;justify-content:space-between;gap:12px">
+    <span style="font-size:13px;color:#F87171;font-weight:600" id="deadlineReminderMsg"></span>
+    <button onclick="switchView('applications')" style="padding:5px 14px;border-radius:99px;border:none;background:#EF4444;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">View Apps</button>
+  </div>
 
   <!-- Header: title + inline KPI stats -->
   <div class="dash-header">
@@ -793,6 +810,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <!-- ══ AI RESUME ══ -->
 <section class="view" id="view-ai-resume" aria-label="AI Resume Tailor">
+  <div id="tailorLimitBanner" style="display:none;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:10px 16px;margin-bottom:16px;display:none;align-items:center;justify-content:space-between;gap:12px">
+    <span style="font-size:13px;color:#FBB924;font-weight:600" id="tailorLimitMsg"></span>
+    <button onclick="switchView('billing')" style="padding:5px 14px;border-radius:99px;border:none;background:#FBB924;color:#080C08;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">Go Pro</button>
+  </div>
   <div class="view-header">
     <h1>AI Resume Tailor</h1>
     <p>Paste your resume and job description — get a tailored, ATS-optimized version in seconds</p>
@@ -937,6 +958,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 <!-- ══ COVER LETTER ══ -->
 <section class="view" id="view-cover-letter" aria-label="Cover Letter Generator">
+  <div id="clLimitBanner" style="display:none;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:10px 16px;margin-bottom:16px;align-items:center;justify-content:space-between;gap:12px">
+    <span style="font-size:13px;color:#FBB924;font-weight:600" id="clLimitMsg"></span>
+    <button onclick="switchView('billing')" style="padding:5px 14px;border-radius:99px;border:none;background:#FBB924;color:#080C08;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">Go Pro</button>
+  </div>
   <div class="view-header" style="margin-bottom:18px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
     <div>
       <h1>Cover Letter Generator</h1>
@@ -1570,6 +1595,7 @@ async function initClerkAuth() {
         const data = await res.json();
         _userPlan = data.plan || 'free';
         _userUsage = data.usage || _userUsage;
+        updateUsageBanners();
       }
     } catch (e) { console.warn('Usage fetch failed:', e); }
 
@@ -1652,6 +1678,45 @@ function getGreeting() {
 }
 
 // ── SIDEBAR / PROFILE CHIP ───────────────────────────────────
+function updateUsageBanners() {
+  if (_userPlan === 'pro') return;
+  const tailorUsed = _userUsage?.tailor || 0;
+  const clUsed = _userUsage?.coverLetter || 0;
+  const limit = 3;
+
+  // Tailor banner
+  const tb = document.getElementById('tailorLimitBanner');
+  const tm = document.getElementById('tailorLimitMsg');
+  if (tb && tm) {
+    const left = limit - tailorUsed;
+    if (left <= 1 && left > 0) {
+      tm.textContent = left === 1 ? '⚠️ Last tailor left this month — upgrade for unlimited' : '';
+      tb.style.display = 'flex';
+    } else if (left <= 0) {
+      tm.textContent = "You've used all 3 free tailors this month.";
+      tb.style.display = 'flex';
+    } else {
+      tb.style.display = 'none';
+    }
+  }
+
+  // Cover letter banner
+  const cb = document.getElementById('clLimitBanner');
+  const cm = document.getElementById('clLimitMsg');
+  if (cb && cm) {
+    const left = limit - clUsed;
+    if (left <= 1 && left > 0) {
+      cm.textContent = left === 1 ? '⚠️ Last cover letter left this month — upgrade for unlimited' : '';
+      cb.style.display = 'flex';
+    } else if (left <= 0) {
+      cm.textContent = "You've used all 3 free cover letters this month.";
+      cb.style.display = 'flex';
+    } else {
+      cb.style.display = 'none';
+    }
+  }
+}
+
 function updateSidebarUser() {
   const name = _clerkUser?.fullName || profile.name || '';
   const email = _clerkUser?.primaryEmailAddress?.emailAddress || profile.email || '';
@@ -1665,6 +1730,26 @@ function updateSidebarUser() {
   if (roleEl) roleEl.textContent = _userPlan === 'pro' ? 'Pro Member' : 'Free Plan';
   const greetEl = document.getElementById('dashGreeting');
   if (greetEl) greetEl.textContent = firstName ? 'Welcome, ' + firstName : 'Welcome';
+
+  // Usage bar (free plan only)
+  const usageBar = document.getElementById('sidebarUsageBar');
+  if (usageBar) {
+    if (_userPlan !== 'pro') {
+      const tailorUsed = _userUsage?.tailor || 0;
+      const clUsed = _userUsage?.coverLetter || 0;
+      const total = tailorUsed + clUsed;
+      const max = 6;
+      const pct = Math.min(100, (total / max) * 100);
+      const fill = document.getElementById('sidebarUsageFill');
+      const text = document.getElementById('sidebarUsageText');
+      if (fill) fill.style.width = pct + '%';
+      if (fill) fill.style.background = pct >= 83 ? 'linear-gradient(90deg,#EF4444,#F97316)' : pct >= 50 ? 'linear-gradient(90deg,#F59E0B,#EAB308)' : 'linear-gradient(90deg,#22C55E,#2DD4BF)';
+      if (text) text.textContent = total + ' / ' + max;
+      usageBar.style.display = 'block';
+    } else {
+      usageBar.style.display = 'none';
+    }
+  }
 }
 
 // ── VIEW SWITCHING ────────────────────────────────────────────
@@ -1797,6 +1882,26 @@ function toggleStar(id) {
 
 // ── DASHBOARD ─────────────────────────────────────────────────
 function renderDashboard() {
+  // Deadline reminder banner
+  const banner = document.getElementById('deadlineReminderBanner');
+  const bannerMsg = document.getElementById('deadlineReminderMsg');
+  if (banner && bannerMsg) {
+    const now = new Date(); now.setHours(0,0,0,0);
+    const urgent = applications.filter(a => {
+      if (!a.deadline || ['offer','rejected'].includes(a.status)) return false;
+      const diff = Math.round((new Date(a.deadline) - now) / 86400000);
+      return diff >= 0 && diff <= 3;
+    });
+    if (urgent.length > 0) {
+      const names = urgent.map(a => a.company).slice(0,2).join(', ');
+      const extra = urgent.length > 2 ? ` +${urgent.length - 2} more` : '';
+      bannerMsg.textContent = `🚨 Deadline within 3 days: ${names}${extra}`;
+      banner.style.display = 'flex';
+    } else {
+      banner.style.display = 'none';
+    }
+  }
+
   const total = applications.filter(a => a.status !== 'wishlist').length;
   const interviews = applications.filter(a => a.status === 'interview').length;
   const offers = applications.filter(a => a.status === 'offer').length;
@@ -2286,6 +2391,18 @@ async function tailorResume() {
     document.getElementById('downloadResumeBtn').style.display = '';
     document.getElementById('baToggleWrap').style.display = '';
     document.querySelectorAll('.ba-btn').forEach((b,i) => b.classList.toggle('active', i === 1));
+    // Update usage and show post-tailor nudge for free users
+    if (_userPlan !== 'pro') {
+      _userUsage.tailor = (_userUsage.tailor || 0) + 1;
+      updateSidebarUser();
+      updateUsageBanners();
+      const remaining = 3 - _userUsage.tailor;
+      if (remaining <= 0) {
+        setTimeout(() => showUpgradeModal('tailor'), 1500);
+      } else {
+        showToast(remaining === 1 ? '⚡ Last free tailor remaining — go Pro for unlimited' : `✓ Resume tailored! ${remaining} free uses left this month`);
+      }
+    }
   } catch (err) {
     document.getElementById('resumePreviewOutput').innerHTML = `<div class="empty-resume"><p style="color:#C0392B;font-weight:600">Error: ${esc(err.message)}</p><p style="font-size:11px;margin-top:6px;color:var(--muted)">Make sure your PDF uploaded correctly and try again.</p></div>`;
     showToast('Error: ' + err.message);
@@ -2799,6 +2916,18 @@ async function generateCoverLetter() {
     _clLetterData = json.data;
     renderCoverLetterPreview(json.data);
     document.getElementById('clDownloadBtn').style.display = 'flex';
+    // Update usage and show post-generation nudge for free users
+    if (_userPlan !== 'pro') {
+      _userUsage.coverLetter = (_userUsage.coverLetter || 0) + 1;
+      updateSidebarUser();
+      updateUsageBanners();
+      const remaining = 3 - _userUsage.coverLetter;
+      if (remaining <= 0) {
+        setTimeout(() => showUpgradeModal('coverletter'), 1500);
+      } else {
+        showToast(remaining === 1 ? '⚡ Last free cover letter remaining — go Pro for unlimited' : `✓ Cover letter ready! ${remaining} free uses left this month`);
+      }
+    }
   } catch (err) {
     document.getElementById('clPreviewOutput').innerHTML = `<div class="cl-empty"><p style="color:#F87171;font-weight:600">Error: ${esc(err.message)}</p></div>`;
     showToast('Error: ' + err.message);
