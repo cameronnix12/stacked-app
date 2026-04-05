@@ -57,7 +57,7 @@ async function handlePost(request, env) {
   if (!customerId) {
     const customerRes = await stripePost('https://api.stripe.com/v1/customers', {
       email: email || '',
-      metadata: { clerk_user_id: userId },
+      'metadata[clerk_user_id]': userId,
     }, env.STRIPE_SECRET_KEY);
     if (!customerRes.ok) {
       const errText = await customerRes.text();
