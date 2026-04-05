@@ -14,7 +14,14 @@ export async function onRequestOptions() {
 
 export async function onRequestPost(context) {
   const { request, env } = context;
+  try {
+    return await handlePost(request, env);
+  } catch (e) {
+    return new Response(JSON.stringify({ success: false, error: 'Unhandled: ' + e.message + ' | ' + e.stack?.slice(0, 200) }), { status: 500, headers: CORS_HEADERS });
+  }
+}
 
+async function handlePost(request, env) {
   // ── 1. Verify Clerk session token ────────────────────────────
   const authHeader = request.headers.get('Authorization') || '';
   const token = authHeader.replace('Bearer ', '').trim();
