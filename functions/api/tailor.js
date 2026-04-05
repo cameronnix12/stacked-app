@@ -64,7 +64,29 @@ export async function onRequestPost(context) {
     return jsonError('ANTHROPHIC_KEY environment variable is not configured.', 500);
   }
 
-  // ── 2. Parse + validate request body ─────────────────────────
+  // ── 2. Verify auth + check/enforce usage limit ────────────────
+  const token = (request.headers.get('Authorization') || '').replace('Bearer ', '').trim();
+  let userId = null;
+  if (token) {
+    try {
+      const payload = await verifyClerkJwt(token);
+      userId = payload.sub;
+    } catch {}
+  }
+
+  if (userId && env.DB) {
+    const month = new Date().toISOString().slice(0, 7);
+    const user = await env.DB.prepare('SELECT plan FROM users WHERE id = ?').bind(userId).first();
+    if (user && user.plan !== 'pro') {
+      const usage = await env.DB.prepare(
+        'SELECT tailor_count FROM usage WHERE user_id = ? AND month = ?'
+      ).bind(userId, month).first();
+      const count = usage?.tailor_count || 0;
+      if (count >= 3) return jsonError('Free plan limit reached. Upgrade to Pro for unlimited tailoring.', 403);
+    }
+  }
+
+  // ── 3. Parse + validate request body ─────────────────────────
   let body;
   try {
     body = await request.json();
@@ -179,6 +201,15 @@ export async function onRequestPost(context) {
     honestyWarnings:      Array.isArray(tailoredData.honestyWarnings)      ? tailoredData.honestyWarnings      : [],
   };
 
+  // ── 8. Increment usage counter ───────────────────────────────
+  if (userId && env.DB) {
+    const month = new Date().toISOString().slice(0, 7);
+    await env.DB.prepare(`
+      INSERT INTO usage (user_id, month, tailor_count, coverletter_count) VALUES (?, ?, 1, 0)
+      ON CONFLICT (user_id, month) DO UPDATE SET tailor_count = tailor_count + 1
+    `).bind(userId, month).run();
+  }
+
   return new Response(
     JSON.stringify({ success: true, data: safeData }),
     { status: 200, headers: CORS_HEADERS }
@@ -186,6 +217,26 @@ export async function onRequestPost(context) {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────
+
+async function verifyClerkJwt(token) {
+  const parts = token.split('.');
+  if (parts.length !== 3) throw new Error('Malformed JWT');
+  const decode = (b64) => JSON.parse(atob(b64.replace(/-/g, '+').replace(/_/g, '/')));
+  const header = decode(parts[0]);
+  const payload = decode(parts[1]);
+  if (payload.exp && Math.floor(Date.now() / 1000) > payload.exp) throw new Error('Token expired');
+  const jwksRes = await fetch('https://clerk.stackedapp.co/.well-known/jwks.json');
+  if (!jwksRes.ok) throw new Error('Failed to fetch JWKS');
+  const jwks = await jwksRes.json();
+  const jwk = jwks.keys.find(k => k.kid === header.kid);
+  if (!jwk) throw new Error('No matching JWK');
+  const key = await crypto.subtle.importKey('jwk', jwk, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']);
+  const sigInput = new TextEncoder().encode(`${parts[0]}.${parts[1]}`);
+  const sigBytes = Uint8Array.from(atob(parts[2].replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+  const valid = await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, sigBytes, sigInput);
+  if (!valid) throw new Error('Invalid signature');
+  return payload;
+}
 
 function jsonError(message, status) {
   return new Response(JSON.stringify({ success: false, error: message }), {
